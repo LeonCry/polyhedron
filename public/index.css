@@ -1,0 +1,28 @@
+/* 主管index界面body的css */
+body{
+    margin: 0;
+    padding: 0;
+    /* background-color: #1A191B; */
+    /* 彩色背景 */
+    background-image: linear-gradient(125deg,#57606f,#2ed573,#eccc68,#1e90ff,#ff6b81,#8e44ad);
+    /* 白色背景 */
+    /* background-image: linear-gradient(125deg,#2f3542,#a4b0be,#a5b1c2,#3d3d3d); */
+    /* 黑色背景 */
+    /* background-image: linear-gradient(125deg,#2d3436,#2C3A47,#2f3542,#1e272e); */
+    background-size: 400%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    animation: backtrans 20s infinite;
+}
+
+@keyframes backtrans{
+    0%{
+        background-position: 0% 50%;
+    }
+    50%{
+        background-position: 100% 50%;
+    }
+    100%{
+        background-position: 0% 50%;
+    }
+}
