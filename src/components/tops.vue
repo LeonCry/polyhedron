@@ -3,19 +3,14 @@
   <div class="siderbar">
     <!-- 菜单 -->
     <div>
-      <img
-        ref="menu"
-        src="../assets/menu.svg"
-        alt="菜单"
-        @click="isShow = !isShow"
-      />
+      <img src="../assets/menu.svg" alt="菜单" @click="isShow = !isShow"/>
       <!-- 下拉菜单 -->
       <transition name="dropT">
         <span v-show="isShow" class="dropdown">
           <a href="">引导</a>
           <a href="">关于</a>
           <a href="">联系</a>
-          <a href="">管理</a>
+          <a href="javascript:void(0)" @click="adminLogin">管理</a>
         </span>
       </transition>
     </div>
@@ -36,6 +31,11 @@ export default {
       isShow: false,
     };
   },
+  methods:{
+    adminLogin(){
+      this.$bus.$emit('tologin',true);
+    }
+  }
 };
 </script>
 
@@ -57,7 +57,8 @@ export default {
   transition: 0.5s;
 }
 .siderbar div:hover {
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 100px 100px;
 }
 /* 菜单下拉框 */
 .dropdown {
@@ -75,6 +76,8 @@ export default {
 }
 .dropdown a:hover {
   color: black;
+  right: 5px;
+  border-right: 5px solid rgba(0, 0, 0, 0);
   cursor: pointer;
 }
 /* 下拉框动画 */
@@ -105,4 +108,5 @@ export default {
 .iconsT-leave {
   opacity: 1;
 }
+
 </style>
