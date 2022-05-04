@@ -113,6 +113,9 @@ export default {
 .loginxT-enter-active {
   animation: ping 0.8s ease-in-out both reverse;
 }
+.loginxT-leave-active {
+  animation: ping 0s ease-in-out both;
+}
 
 
 /* loginx的属性 */

@@ -10,7 +10,8 @@
           <a href="">引导</a>
           <a href="">关于</a>
           <a href="">联系</a>
-          <a href="javascript:void(0)" @click="adminLogin">管理</a>
+          <a href="">博客</a>
+          <a href="javascript:void(0)" @click="adminLogin">后台</a>
         </span>
       </transition>
     </div>
@@ -33,6 +34,8 @@ export default {
   },
   methods:{
     adminLogin(){
+      this.isShow = false;
+      // 向adminlogin组件传达数据,展示管理员登录界面
       this.$bus.$emit('tologin',true);
     }
   }
@@ -92,7 +95,7 @@ export default {
 }
 .dropT-enter-to,
 .dropT-leave {
-  height: 150px;
+  height: 190px;
   opacity: 1;
 }
 /* sidebar动画 */

@@ -41,6 +41,36 @@ export default {
 </script>
 
 <style>
+/*//滚动条样式设计*/
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 5px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 5px;
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 100px;
+    background-color: black;
+    background-image: -webkit-linear-gradient(45deg,
+            black,
+            transparent 25%,
+            transparent 50%,
+            black,
+            black,
+            transparent 75%,
+            transparent);
+}
+
+::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+
+    background: rgba(255, 255, 255, 0);
+    border-radius: 100px;
+}
 /* 所有元素的样式 */
 * {
   margin: 0;

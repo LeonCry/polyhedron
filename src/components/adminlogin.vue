@@ -82,7 +82,7 @@ input {
   border: 0;
   outline: 0;
   padding: 10px;
-  margin-top: 0;
+  margin-top: 30px;
   border-bottom: 1px solid pink;
   transition: 0.5s;
   background-color: rgba(0, 0, 0, 0);
@@ -109,7 +109,7 @@ font-weight:bold;
 span{
     width: 30px;
     height: 30px;
-    margin-top: -50px;
+    margin-top: -20px;
     align-self: end;
     justify-self: start;
     text-align: center;
