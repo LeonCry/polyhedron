@@ -169,7 +169,7 @@ export default {
         minimizeBox(){
             this.isShow = false;
             // 最小化后将该状态再传回去
-            this.$bus.$emit('chatshow2',false);
+            this.$bus.$emit('chatshow2',this.isShow);
         }
     },
     mounted(){

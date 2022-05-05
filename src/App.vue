@@ -6,7 +6,7 @@
     <login></login>
     <user></user>
     <adminlogin v-show="isAdmain"></adminlogin>
-
+    <chats></chats>
   </div>
 </template>
 
@@ -17,9 +17,10 @@ import tops from './components/tops.vue'
 import login from './components/login.vue'
 import user from './components/user.vue'
 import adminlogin from './components/adminlogin.vue'
+import chats from './components/chats.vue'
 export default {
   name: "App",
-  components:{tops,mains,loginx,login,user,adminlogin},
+  components:{tops,mains,loginx,login,user,adminlogin,chats},
   data(){
     return{
       // 判断是否管理员登录

@@ -54,6 +54,7 @@ methods:{
     },
     // 聊天界面出现和消失
     chatAppear(){
+        this.isOption = !this.isOption;
         this.chatShow = !this.chatShow;
         // 向friends组件发送数据,进行开关
         this.$bus.$emit('chatshow',this.chatShow);
@@ -68,7 +69,7 @@ mounted(){
         }, 1500);
     });
     // 接收最小化的状态
-      this.$bus.$on('chatshow',data1=>{
+      this.$bus.$on('chatshow2',(data1)=>{
             this.chatShow = data1;
         })
 }
