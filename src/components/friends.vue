@@ -194,11 +194,11 @@ export default {
     right: 0;
     width: 280px;
     height: 35px;
-    transition: 0.75s;
+    transition: 0.55s;
     border-radius: 20px;
     background-color: #1A191B;
     z-index: 10;
-    top: 210px;
+    top: 140px;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
 }   
 /* 输入框 */
@@ -222,7 +222,7 @@ export default {
     display: flex;
     flex-flow: column nowrap;
     width: 280px;
-    height: 530px;
+    height: 600px;
     border-radius: 15px 0 0 15px;
     background-color: #1A191B;
     transition: 0.55s;
@@ -241,7 +241,7 @@ export default {
 .friend:hover+div{
         transition-delay:0.2s;
         right: 20px;
-        top: 200px;
+        top: 130px;
         box-shadow: -10px -10px 25px rgba(0, 0, 0, 0.8);
 }
 /* 仿手机栏 */

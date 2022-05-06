@@ -1,7 +1,7 @@
 // 在最近聊天中的每个好友
 <template>
 <transition name="frienditemT" appear>
-  <div v-show="isShow" class="frienditem">
+  <div v-show="isShow" class="frienditem"  @dblclick="chatboxAppear">
       <!-- 头像 -->
       <img src="../assets/touxiang.jpg" alt="">
       <!-- 网名,个签内容物 -->
@@ -36,6 +36,13 @@ export default {
     data(){
         return{
             isShow:true,
+        }
+    },
+    methods:{
+        // 显示聊天框
+        chatboxAppear(){
+            // 向chats组件发送数据,显示聊天框
+            this.$bus.$emit('chatboxappear',true);
         }
     },
     mounted(){

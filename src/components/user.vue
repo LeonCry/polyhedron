@@ -16,7 +16,7 @@
             </div>
           <!-- 设置按钮 -->
           <div class="setupbutton">
-              <img src="../assets/option.svg" alt="设置">
+              <img src="../assets/option.svg" alt="设置" @click="settingAppear">
           </div>
           <!-- 关机按钮 -->
           <div class="shutdownbutton">
@@ -45,6 +45,7 @@ data(){
         isOption: false,
         // 聊天界面是否展示
         chatShow:false,
+        isSetting:false,
     }
 },
 methods:{
@@ -58,6 +59,13 @@ methods:{
         this.chatShow = !this.chatShow;
         // 向friends组件发送数据,进行开关
         this.$bus.$emit('chatshow',this.chatShow);
+    },
+    // 设置界面的出现和消失
+    settingAppear(){
+        this.isOption = !this.isOption;
+        this.isSetting = !this.isSetting;
+        // 向setting组件发送数据,进行开关
+        this.$bus.$emit('settingappear',this.isSetting);
     }
 },
 mounted(){

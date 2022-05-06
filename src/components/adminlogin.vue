@@ -54,7 +54,7 @@ export default {
   width: 100%;
   height: 100%;
   top: 0;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   font-size: 3vh;
   font-weight: bold;

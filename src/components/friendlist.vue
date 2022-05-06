@@ -6,6 +6,13 @@
           <friendlistitem></friendlistitem>
           <friendlistitem></friendlistitem>
           <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
+          <friendlistitem></friendlistitem>
       </div>
   </div>
 </template>
