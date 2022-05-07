@@ -138,7 +138,7 @@ export default {
   name: "setting",
   data() {
     return {
-      //   是否展示该组件--聊天窗口
+      //   是否展示该组件--设置
       isShow: false,
       //   窗口移动要用到到的y坐标
       pox: 400 + "px",
@@ -170,12 +170,14 @@ export default {
       //   客服细节展开,下拉框改变方向
       serviceDetail: false,
       serviceDetailDrop: 0,
+      // 此组件Z轴高度 6 - 7
+      zIndex:6,
     };
   },
   computed: {
     //改变聊天窗口的位置
     settingLocation() {
-      return { top: this.poy - 30 + "px", left: this.pox - 100 + "px" };
+      return { top: this.poy - 30 + "px", left: this.pox - 100 + "px",zIndex:this.zIndex };
     },
     // 改变账户设置细节处下拉框转向
     userDetailDropStyle() {
@@ -288,8 +290,6 @@ export default {
             this.loginSwitchDeg = 0;
         }
     },
-
-
     //   鼠标按下,开始移动
     moveBegin(e) {
       // 获得按下的x坐标
@@ -299,10 +299,14 @@ export default {
       // 判定在按下
       this.isMove = true;
       console.log(this.isMove);
+     // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',6,6,7);
     },
     // 退出按钮
     exitChat() {
       this.isShow = false;
+      this.$bus.$emit('settingappear',this.isShow);
     },
   },
   mounted() {
@@ -324,9 +328,14 @@ export default {
       this.$bus.$on("settingappear", (data1) => {
         this.isShow = data1;
       });
+        // 接收来自其他窗口的数据,进行高度改变
+        this.$bus.$on('changeZindex',(spaceZ,chatsZ,settingZ)=>{
+          this.zIndex = settingZ;
+        });
   },
   beforeDestroy() {
     this.$bus.$off("settingappear");
+    this.$bus.$off("changeZindex");
   },
 };
 </script>
@@ -358,10 +367,16 @@ export default {
   height: 55px;
   border-radius: 25px 25px 0 0;
   display: flex;
+  transition: 0.55s;
   flex-flow: row nowrap;
   background-color: rgba(47, 53, 66, 0.25);
 }
-/* 用户名字 */
+
+.toper:hover{
+  background-color: rgba(99, 110, 114, 0.2);
+}
+
+/* 设置名字 */
 .toper > span {
   line-height: 55px;
   flex: 1;

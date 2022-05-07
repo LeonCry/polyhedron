@@ -8,6 +8,7 @@
     <adminlogin v-show="isAdmain"></adminlogin>
     <chats></chats>
     <setting></setting>
+    <starspace></starspace>
   </div>
 </template>
 
@@ -20,9 +21,10 @@ import user from './components/user.vue'
 import adminlogin from './components/adminlogin.vue'
 import chats from './components/chats.vue'
 import setting from './components/setting.vue'
+import starspace from './components/starspace.vue'
 export default {
   name: "App",
-  components:{tops,mains,loginx,login,user,adminlogin,chats,setting},
+  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace},
   data(){
     return{
       // 判断是否管理员登录
@@ -57,21 +59,19 @@ export default {
 ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 100px;
-    background-color: black;
-    background-image: -webkit-linear-gradient(45deg,
-            black,
-            transparent 25%,
-            transparent 50%,
-            black,
-            black,
-            transparent 75%,
-            transparent);
+    background-color: rgba(26, 25, 27, 1);
+    background-image: -webkit-linear-gradient(90deg,
+            transparent 0%, rgba(26, 25, 27, 1),
+            transparent 50%,rgba(26, 25, 27, 1),
+            transparent 51%,rgba(99, 110, 114, 0.1)
+            transparent 60%,rgba(99, 110, 114, 0.1),
+            transparent 61%,rgba(26, 25, 27, 1),
+            transparent 100%,);
 }
 
 ::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
-
-    background: rgba(255, 255, 255, 0);
+    background: rgba(99, 110, 114, 0.1);
     border-radius: 100px;
 }
 /* 所有元素的样式 */

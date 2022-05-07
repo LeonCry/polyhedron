@@ -18,7 +18,7 @@
           <span>''风在不住地吹，稍微转到东北方去，他知道这就是说风不会减退了。老头儿朝前面望了一望，但他看不见帆，看不见船，也看不见船上冒出的烟。只有飞鱼从船头那边飞出来，向两边仓皇地飞走，还有一簇簇黄色的马尾藻。''</span>
       </div>
       <!-- 个人空间 -->
-      <button>我的空间</button>
+      <button @click="enterMySpace">我的空间</button>
   </div>
   </transition>
 </template>
@@ -29,14 +29,22 @@ export default {
     name:'self',
     data(){
         return{
-            isShow:false
+            // 该组件是否显示
+            isShow:false,
+        }
+    },
+    methods:{
+        // 进入我的空间
+        enterMySpace(){
+            // 向starspace组件发送数据,进行开关
+            this.$bus.$emit('spaceappear',true,true);
         }
     },
     mounted(){
         // 接收friends组件数据,进行页面切换效果
         this.$bus.$on('functionchange',(data1,data2,data3)=>{
             this.isShow = data3;
-        })
+        });
     }
 }
 </script>

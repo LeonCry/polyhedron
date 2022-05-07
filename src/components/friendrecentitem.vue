@@ -22,7 +22,7 @@
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/space.svg" alt="空间">
+              <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
           </div>
       </div>
   </div>
@@ -43,6 +43,11 @@ export default {
         chatboxAppear(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
+        },
+        // 进入她的空间
+        enterHerSpace(){
+            // 向starspace组件发送数据,显示聊天框
+            this.$bus.$emit('spaceappear',true,false);
         }
     },
     mounted(){

@@ -45,6 +45,7 @@ data(){
         isOption: false,
         // 聊天界面是否展示
         chatShow:false,
+        // 设置界面是否展示
         isSetting:false,
     }
 },
@@ -79,7 +80,16 @@ mounted(){
     // 接收最小化的状态
       this.$bus.$on('chatshow2',(data1)=>{
             this.chatShow = data1;
-        })
+        });
+    // 进行展示与否
+      this.$bus.$on("settingappear", (data1) => {
+        this.isSetting = data1;
+      });
+},
+beforeDestroy(){
+     this.$bus.$off('loginSuccess');
+     this.$bus.$off('chatshow2');
+     this.$bus.$off("settingappear");
 }
 }
 </script>

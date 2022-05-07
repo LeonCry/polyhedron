@@ -82,6 +82,8 @@ export default {
           poy:500+'px',
         //   判断是否鼠标按下的判定flag
           isMove:false,
+      // 此组件Z轴高度 6 - 7
+      zIndex:6,
       }
   },
   computed:{
@@ -95,7 +97,7 @@ export default {
       },
       //改变聊天窗口的位置   
       ChatLocation(){
-          return{top:this.poy-30+'px',left:this.pox-300+'px'};
+          return{top:this.poy-30+'px',left:this.pox-300+'px',zIndex:this.zIndex};
       }
   },
   methods:{
@@ -127,6 +129,9 @@ export default {
             this.poy = e.clientY;
             // 判定在按下
             this.isMove = true;
+      // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',6,7,6);
         },
         // 退出按钮
         exitChat(){
@@ -151,10 +156,15 @@ export default {
             // 进行展示与否
             this.$bus.$on('chatboxappear',(data1)=>{
                 this.isShow = data1;
-            })
+            });
+                    // 接收来自其他窗口的数据,进行高度改变
+        this.$bus.$on('changeZindex',(spaceZ,chatsZ)=>{
+          this.zIndex = chatsZ;
+        });
       },
       beforeDestroy(){
            this.$bus.$off('chatboxappear');
+           this.$bus.$off('changeZindex');
       }
 };
 </script>
@@ -167,7 +177,7 @@ export default {
     height: 650px;
     top: 12%;
     left: 25%;
-    z-index: 5;
+    z-index: 6;
     background-color: #1A191B;
     border-radius: 15px;
     box-shadow: 0 0 25px 5px black;
@@ -187,9 +197,13 @@ export default {
         height: 55px;
         border-radius: 25px 25px 0 0;
         display: flex;
+        transition: 0.55s;
         flex-flow: row nowrap;
         background-color: rgba(47, 53, 66,0.25);
 }   
+.toper:hover{
+  background-color: rgba(99, 110, 114, 0.2);
+}
 /* 用户名字 */
 .toper > span{
     line-height: 55px;

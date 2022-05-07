@@ -1,21 +1,299 @@
 // 空间组件
 <template>
-  <div class="starspace">
+<transition name="starspaceboxT">
+  <div v-show="isShow" class="starspacebox" :style="settingLocation">
+    <!-- 头部 -->
+    <div class="toper" @mousedown="moveBegin">
+      <!-- 设置 -->
+      <span>空 间</span>
+    </div>
+    <!-- 退出按钮 -->
+    <div class="exit">
+      <img src="../assets/exit2.svg" alt="退出" @click="exitChat" />
+    </div>
+    <!-- 内容 -->
+    <div class="content">
+      <!-- 背景和头像 -->
+      <div class="backandhead">
+        <!-- 背景 -->
+        <div class="myback">
+          <img src="../assets/background.jpg" alt="背景" />
+        </div>
+        <!-- 头像网名 -->
+        <div class="myhead">
+          <img src="../assets/touxiang.jpg" alt="头像" />
+          <br />
+          <!-- 网名 -->
+          <span>LeonCry</span>
+        </div>
+      </div>
+      <!-- 写动态 -->
+      <writespace v-show="isMySpace"></writespace>
+      <!-- 下拉框分类展示 -->
+      <div v-show="isMySpace" class="seecategory">
+        <img src="../assets/eyes.svg" alt="眼睛">
+        <select name="" id="">
+          <option value="">我的动态</option>
+          <option value="">我点赞的</option>
+          <option value="">我点踩的</option>
+          <option value="">我收藏的</option>
+          <option value="">我分享的</option>
+        </select>
+      </div>
 
+      <!-- 单个动态 -->
+      <spaceitem></spaceitem>
+      <spaceitem></spaceitem>
+      <spaceitem></spaceitem>
+
+
+
+    </div>
   </div>
+</transition>
 </template>
 
 <script>
+import writespace from './writespace.vue';
+import spaceitem from './spaceitem.vue';
 export default {
-    // eslint-disable-next-line vue/multi-word-component-names
-    name:'starspace',
-}
+  components: { writespace,spaceitem},
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: "starspace",
+  data() {
+    return {
+      //   是否为我的空间
+      isMySpace:true,
+      //   是否展示该组件--聊天窗口
+      isShow: false,
+      //   窗口移动要用到到的y坐标
+      pox: 800 + "px",
+      //   窗口移动要用到到的y坐标
+      poy: 500 + "px",
+      //   判断是否鼠标按下的判定flag
+      isMove: false,
+      // 此组件Z轴高度 6 - 7
+      zIndex:6,
+    };
+  },
+  computed: {
+    //改变聊天窗口的位置
+    settingLocation() {
+      return { top: this.poy - 30 + "px", left: this.pox - 100 + "px",zIndex:this.zIndex};
+    },
+  },
+  methods: {
+    //   鼠标按下,开始移动
+    moveBegin(e) {
+      // 获得按下的x坐标
+      this.pox = e.clientX;
+      // 获得按下的y坐标
+      this.poy = e.clientY;
+      // 判定在按下
+      this.isMove = true;
+      console.log(this.isMove);
+      // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',7,6,6);
+    },
+    // 退出按钮
+    exitChat() {
+      this.isShow = false;
+      this.$bus.$emit('spaceappear',this.isShow);
+    },
+  },
+  mounted() {
+    //   实时监听鼠标移动,更改位置数据
+    window.addEventListener("mousemove", (e) => {
+      if (this.isMove) {
+        this.pox = e.clientX;
+        // 获得按下的y坐标
+        this.poy = e.clientY;
+        console.log(this.poy);
+      }
+    }),
+      //   实时监听--鼠标停止按下,则不再进行移动功能
+      window.addEventListener("mouseup", () => {
+        this.isMove = false;
+      });
+        // 接收self,friendlistitem,friendrecentitem组件数据,进行页面切换效果
+        this.$bus.$on('spaceappear',(data1,data2)=>{
+            this.isShow = data1;
+            this.isMySpace = data2;
+        });
+        // 接收来自其他窗口的数据,进行高度改变
+        this.$bus.$on('changeZindex',(spaceZ)=>{
+          this.zIndex = spaceZ;
+        });
+
+  },
+  beforeDestroy(){
+     this.$bus.$off('spaceappear');
+     this.$bus.$off('changeZindex');
+  }
+};
 </script>
 
 <style scoped>
-.starspace{
-    position: absolute;
-    
+.starspacebox {
+  position: absolute;
+  width: 400px;
+  height: 750px;
+  top: 8%;
+  left: 35%;
+  z-index: 6;
+  background-color: #1a191b;
+  border-radius: 15px;
+  box-shadow: 0 0 25px 5px black;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 1.8vh;
+  font-weight: bold;
+  color: white;
 }
+.starspacebox:hover {
+  border-radius: 25px;
+  box-shadow: 0 0 30px 10px black;
+}
+/* 抬头 */
+.toper {
+  position: relative;
+  width: 400px;
+  height: 55px;
+  border-radius: 25px 25px 0 0;
+  display: flex;
+  flex-flow: row nowrap;
+  transition: 0.55s;
+  background-color: rgba(47, 53, 66, 0.25);
+}
+.toper:hover{
+  background-color: rgba(99, 110, 114, 0.2);
+}
+/* 空间 */
+.toper > span {
+  line-height: 55px;
+  flex: 1;
+  text-align: center;
+}
+/* 退出按钮 */
+.exit {
+  position: absolute;
+  right: 0;
+  z-index: 11;
+  padding-right: 20px;
+  line-height: 65px;
+  cursor: pointer;
+}
+.exit img {
+  transition: 0.8s;
+}
+.exit img:hover {
+  transform: rotateZ(720deg) scale(1.33);
+}
+/* 内容物 */
+.content{
+  position: relative;
+  width: 100%;
+  height: 660px;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+/*头像和背景 */
+.backandhead {
+  position: relative;
+  width: 100%;
+  height: 250px;
+}
+
+/* 背景 */
+.myback {
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
+/* 背景图片 */
+.myback > img {
+  width: 100%;
+  height: 100%;
+  transition: 30s;
+}
+/* 头像 */
+.myhead {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border-radius: 50px;
+  text-align: center;
+}
+/* 头像图片 */
+.myhead > img {
+  position: relative;
+  height: 50px;
+  border-radius: 50px;
+  top: -30px;
+  border: 10px solid #1a191b;
+}
+/* 网名 */
+.myhead span {
+  position: relative;
+  top: -30px;
+}
+/* 下拉框分类展示 */
+.seecategory{
+  position: relative;
+  height: 50px;
+  width: 80%;
+  left: 10%;
+  top: 10px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid rgba(47, 53, 66,0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-flow: row nowrap;
+}
+.seecategory select{
+  width: 40%;
+  height: 35px;
+  font-size: 1.8vh;
+  color: white;
+  font-weight: bold;
+  outline: 0;
+  transition: 0.55s;
+  background-color: rgba(47, 53, 66, 0);
+  border: 0;
+}
+
+
+
+/* 该组件--空间进入退出动画 */
+.starspaceboxT-enter-active {
+  animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+.starspaceboxT-leave-active {
+  animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both
+    reverse;
+}
+/* 该组件--空间进入退出动画 */
+@keyframes swing-in-top-fwd {
+  0% {
+    -webkit-transform: rotateX(-100deg);
+    transform: rotateX(-100deg);
+    -webkit-transform-origin: top;
+    transform-origin: top;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateX(0deg);
+    transform: rotateX(0deg);
+    -webkit-transform-origin: top;
+    transform-origin: top;
+    opacity: 1;
+  }
+}
+
+
 
 </style>
