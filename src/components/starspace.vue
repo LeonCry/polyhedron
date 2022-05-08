@@ -1,7 +1,7 @@
 // 空间组件
 <template>
 <transition name="starspaceboxT">
-  <div v-show="isShow" class="starspacebox" :style="settingLocation">
+  <div v-show="isShow" class="starspacebox" :style="settingLocation" @mousedown="changeIndex">
     <!-- 头部 -->
     <div class="toper" @mousedown="moveBegin">
       <!-- 设置 -->
@@ -34,6 +34,7 @@
         <img src="../assets/eyes.svg" alt="眼睛">
         <select name="" id="">
           <option value="">我的动态</option>
+          <option value="">我评论的</option>
           <option value="">我点赞的</option>
           <option value="">我点踩的</option>
           <option value="">我收藏的</option>
@@ -92,15 +93,17 @@ export default {
       // 判定在按下
       this.isMove = true;
       console.log(this.isMove);
-      // 聚焦,改变高度,同时降低其他两个窗口的高度
-      // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',7,6,6);
     },
     // 退出按钮
     exitChat() {
       this.isShow = false;
       this.$bus.$emit('spaceappear',this.isShow);
     },
+            changeIndex(){
+      // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',7,6,6);
+        },
   },
   mounted() {
     //   实时监听鼠标移动,更改位置数据

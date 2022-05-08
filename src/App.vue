@@ -82,6 +82,9 @@ export default {
 
 /* App的样式 */
 .allback {
+  position: absolute;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

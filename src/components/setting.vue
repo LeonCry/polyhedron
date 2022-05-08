@@ -1,7 +1,7 @@
 // 设置组件
 <template>
   <transition name="settingboxT">
-    <div v-show="isShow" class="settingbox" :style="settingLocation">
+    <div v-show="isShow" class="settingbox" :style="settingLocation" @mousedown="changeIndex">
       <!-- 头部 -->
       <div class="toper" @mousedown="moveBegin">
         <!-- 设置 -->
@@ -299,15 +299,17 @@ export default {
       // 判定在按下
       this.isMove = true;
       console.log(this.isMove);
-     // 聚焦,改变高度,同时降低其他两个窗口的高度
-      // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',6,6,7);
     },
     // 退出按钮
     exitChat() {
       this.isShow = false;
       this.$bus.$emit('settingappear',this.isShow);
     },
+            changeIndex(){
+      // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',6,6,7);
+        },
   },
   mounted() {
     //   实时监听鼠标移动,更改位置数据

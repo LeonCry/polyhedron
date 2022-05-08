@@ -2,7 +2,7 @@
 <template>
 <!-- 聊天盒子 -->
 <transition name="chatboxT">
-  <div v-show="isShow" class="chatbox" :style="ChatLocation">
+  <div v-show="isShow" class="chatbox" :style="ChatLocation" @mousedown="changeIndex">
       <!-- 抬头 -->
       <div class="toper" @mousedown="moveBegin">
           <!-- 名字 -->
@@ -29,13 +29,17 @@
             <morer></morer>
           </div>
       </div>
+<transition name=emojiT>
+      <!-- 表情栏 -->
+      <emoji v-show="isEmojiShow" class="emojicomponents"></emoji>
+</transition>
       <!-- 输入栏 -->
       <div class="inputbox">
           <!-- 表情栏 -->
           <div class="expression">
               <!-- 表情图标 -->
               <div>
-                  <img src="../assets/exsmile.svg" alt="表情">
+                  <img src="../assets/exsmile.svg" alt="表情" @click="emojiShow">
                   <img src="../assets/picture.svg" alt="图片">
                   <img src="../assets/video.svg" alt="字体">
                   <img src="../assets/wind.svg" alt="吹一吹">
@@ -46,11 +50,14 @@
               </div>
           </div>
           <!-- 键入文字栏 -->
-          <div class="typetext" contenteditable>
-
+          <div class="typetext" contenteditable ref="typetext" @focus="emojiDisappear"> 
           </div>
 
       </div>
+
+
+
+
 
   </div>
 </transition>
@@ -60,10 +67,11 @@
 import morer from './morer.vue'
 import leftchater from './leftchater.vue'
 import rightchater from './rightchater.vue'
+import emoji from './emoji.vue';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,leftchater,rightchater},
+  components:{morer,leftchater,rightchater,emoji},
   data(){
       return{
         //   是否展示该组件--聊天窗口
@@ -84,6 +92,10 @@ export default {
           isMove:false,
       // 此组件Z轴高度 6 - 7
       zIndex:6,
+    //   表情栏是否展示
+    isEmojiShow:false,
+    // 收到的emoji
+    receiveEmoji:'',
       }
   },
   computed:{
@@ -98,6 +110,13 @@ export default {
       //改变聊天窗口的位置   
       ChatLocation(){
           return{top:this.poy-30+'px',left:this.pox-300+'px',zIndex:this.zIndex};
+      },
+  },
+  watch:{
+    //   监视接收到的emoji,并添加到输入框中
+      receiveEmoji(val){
+          this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + val;
+          this.receiveEmoji = '';
       }
   },
   methods:{
@@ -129,15 +148,25 @@ export default {
             this.poy = e.clientY;
             // 判定在按下
             this.isMove = true;
-      // 聚焦,改变高度,同时降低其他两个窗口的高度
-      // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',6,7,6);
         },
         // 退出按钮
         exitChat(){
             this.isShow = false;
+        },
+        // 当前窗口鼠标点击改变index
+        changeIndex(){
+      // 聚焦,改变高度,同时降低其他两个窗口的高度
+      // 从左往右分别为 空间\聊天\设置
+      this.$bus.$emit('changeZindex',6,7,6);
+        },
+        // 出现表情栏
+        emojiShow(){
+            this.isEmojiShow = !this.isEmojiShow;
+        },
+        // 当输入框focus时,取消表情栏显示
+        emojiDisappear(){
+            this.isEmojiShow = false;
         }
-
   },
   mounted(){
     //   实时监听鼠标移动,更改位置数据
@@ -161,10 +190,15 @@ export default {
         this.$bus.$on('changeZindex',(spaceZ,chatsZ)=>{
           this.zIndex = chatsZ;
         });
+        // 接收emoji组件的emoji信息,进行添加到输入框
+        this.$bus.$on('chatemoji',(emojitext)=>{
+            this.receiveEmoji = emojitext;
+        })
       },
       beforeDestroy(){
            this.$bus.$off('chatboxappear');
            this.$bus.$off('changeZindex');
+           this.$bus.$off('chatemoji');
       }
 };
 </script>
@@ -297,7 +331,10 @@ export default {
     right: 0;
      cursor: pointer;
 }
-
+/* 表情栏 */
+.emojicomponents{
+    top: 180px;
+}
 
 
 /* 输入框 */
@@ -328,19 +365,27 @@ export default {
 .chatboxT-leave-active{
     animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
 }
+/* 表情栏动画 */
+.emojiT-enter-active{
+    animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.emojiT-leave-active{
+    animation: swing-in-top-fwd 0.35s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
+
 @keyframes swing-in-top-fwd {
   0% {
     -webkit-transform: rotateX(-100deg);
             transform: rotateX(-100deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
+    -webkit-transform-origin: bottom;
+            transform-origin: bottom;
     opacity: 0;
   }
   100% {
     -webkit-transform: rotateX(0deg);
             transform: rotateX(0deg);
-    -webkit-transform-origin: top;
-            transform-origin: top;
+    -webkit-transform-origin: bottom;
+            transform-origin: bottom;
     opacity: 1;
   }
 }
