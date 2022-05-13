@@ -1,69 +1,128 @@
 <template>
   <div class="login" :class="loginBoxPullup">
     <transition name="loginboxT">
-    <div  v-show="islogin" class="loginbox" :class="{loginboxinregiest:registerState}">
-      <div class="imgbox">
-        <img src="../assets/smile.svg" alt="笑脸" />
+      <div
+        v-show="islogin"
+        class="loginbox"
+        :class="{ loginboxinregiest: registerState }"
+      >
+        <div class="imgbox">
+          <img :src="smileSvg" :class="{ smileshake: isShake }" alt="笑脸" />
+        </div>
+        <!-- 错误提示 -->
+        <errornotice></errornotice>
+        <!-- <form action=" " target="blankFrame"> -->
+        <div class="inputbox">
+          <transition-group name="inputboxesT" appear>
+            <!-- 正常登录box -->
+            <div key="1" class="inputboxes" v-show="normalState">
+              用户名:<input
+                type="text"
+                required
+                v-model="userNameState1"
+                maxlength="24"
+              />
+              <hr />
+              密 码:<input
+                type="password"
+                required
+                v-model="userPasswordState1"
+                maxlength="32"
+              />
+            </div>
+            <!-- QQ快速登录box -->
+            <div key="2" class="inputboxes" v-show="QQstate">
+              <span class="backward" @click="backward">◀</span>
+              QQ号:<input
+                type="text"
+                required
+                v-model="userNameState2"
+                maxlength="10"
+              />
+              <hr />
+            </div>
+            <!-- 注册box -->
+            <div key="3" class="inputboxes" v-show="registerState">
+              <span class="backward" @click="backward">◀</span>
+              用户名:<input type="email" required v-model="userNameState3" />
+              <hr />
+              邮 箱:<input type="email" required v-model="userEmailState3" />
+              <br />
+              密 码:<input
+                type="password"
+                required
+                v-model="userPasswordState3"
+              />
+              <br />
+              验证码:<input
+                type="text"
+                required
+                v-model.number="userCodeState3"
+              />
+              <button
+                @click="verfiryCode"
+                :style="{ zIndex: verfiryButtonShow }"
+              >
+                验证 {{ verfirytime }}
+              </button>
+              <br />
+            </div>
+            <!-- 忘记密码box -->
+            <div key="4" v-show="forgetPassState">
+              <span class="backward" @click="backward">◀</span>
+              用户名:<input type="text" required v-model="userNameState4" />
+              <hr />
+            </div>
+          </transition-group>
+        </div>
+        <button
+          class="loginbutton"
+          @click="logining"
+          :class="{ loginbuttonclick: loginButtonClickState }"
+        >
+          <img src="../assets/loginbutton.svg" alt="loginbutton" />
+        </button>
+        <!-- </form> -->
+        <div class="options">
+          <transition-group name="optionsT" appear>
+            <button key="1" @click="isoption = !isoption">·+·</button>
+            <button key="2" v-show="isoption" @click="QQquickLogin">
+              QQ快速登录
+            </button>
+            <button key="3" v-show="isoption" @click="fogetPassword">
+              忘记密码
+            </button>
+            <button key="4" v-show="isoption" @click="register">
+              用户注册
+            </button>
+          </transition-group>
+        </div>
       </div>
-      <form action=" " target="blankFrame">
-      <div class="inputbox">
-        <transition-group name="inputboxesT" appear>
-        <!-- 正常登录box -->
-        <div key="1" class="inputboxes" v-show="normalState">
-          Username:<input type="text" required/>
-          <hr/>
-          Password:<input type="password" required/>
-        </div>
-        <!-- QQ快速登录box -->
-        <div key="2" class="inputboxes" v-show="QQstate">
-          <span class="backward" @click="backward">◀</span>
-          QQ:<input type="text" required/>
-          <hr/>
-        </div>
-        <!-- 注册box -->
-        <div key="3" class="inputboxes" v-show="registerState">
-          <span class="backward" @click="backward">◀</span>
-          Email:<input type="email" required/>
-          <hr>
-          Password:<input type="password" required/>
-          <br>
-          Code:<input type="text" required/>
-          <br>
-        </div>
-        <!-- 忘记密码box -->
-        <div key="4" v-show="forgetPassState">
-          <span class="backward" @click="backward">◀</span>
-          Username:<input type="text" required/>
-          <hr/>
-        </div>
-        </transition-group>
-      </div>
-      <button class="loginbutton" @click="logining" :class="{loginbuttonclick:loginButtonClickState}">
-        <img src="../assets/loginbutton.svg" alt="loginbutton" />
-      </button>
-      </form>
-      <div class="options">
-        <transition-group name="optionsT" appear>
-          <button key="1" @click="isoption = !isoption">·+·</button>
-          <button key="2" v-show="isoption" @click="QQquickLogin">QQ快速登录</button>
-          <button key="3" v-show="isoption" @click="fogetPassword">忘记密码</button>
-          <button key="4" v-show="isoption" @click="register">用户注册</button>
-        </transition-group>
-      </div>
-    </div>
     </transition>
-  <!-- 登录成功后出现的进入主页的按钮 -->
-  <transition name="enterbuttonT">
-    <button v-show="enterstate" class="enterindex" @click="enterIndex" :class="{loginbuttonclick:enterButtonClickState}">
+    <!-- 登录成功后出现的进入主页的按钮 -->
+    <transition name="enterbuttonT">
+      <button
+        v-show="enterstate"
+        class="enterindex"
+        @click="enterIndex"
+        :class="{ loginbuttonclick: enterButtonClickState }"
+      >
         <img src="../assets/loginbutton.svg" alt="进入主页" />
-    </button>
+      </button>
     </transition>
-  <iframe src="" frameborder="0" name="blankFrame" style="display:none"></iframe>
+    <iframe
+      src=""
+      frameborder="0"
+      name="blankFrame"
+      style="display: none"
+    ></iframe>
   </div>
 </template>
 
 <script>
+import errornotice from "./errornotice.vue";
 export default {
+  components: { errornotice },
   // eslint-disable-next-line vue/multi-word-component-names
   name: "login",
   data() {
@@ -71,111 +130,410 @@ export default {
       // 选项
       isoption: false,
       // 是否登录
-      islogin : false,
+      islogin: false,
       // 登录状态
       loginingStatae: false,
+      // 笑脸的svg
+      smileSvg: require("../assets/smile.svg"),
+      // 笑脸是否左右摇动
+      isShake: false,
       // 进入主页状态-控制按钮显示
-      enterstate:false,
+      enterstate: false,
       // 登录盒子样式
-      loginBoxPullup:'',
+      loginBoxPullup: "",
       // 登录按钮点击状态
-      loginButtonClickState:false,
+      loginButtonClickState: false,
       // 进入主页按钮点击状态
-      enterButtonClickState:false,
+      enterButtonClickState: false,
       // 是否正常登录
-      normalState:true,
+      normalState: true,
       // 是否QQ快速登录
-      QQstate:false,
+      QQstate: false,
+      // 登录失败错误数
+      loginErrorTimes: 0,
+      // 登录密码错误次数
+      passwordErrorTimes: 0,
       // 是否注册
-      registerState:false,
+      registerState: false,
       // 是否忘记密码
-      forgetPassState:false,
-    }
+      forgetPassState: false,
+      // 验证用的button是否可用
+      verfiryButtonShow: 2,
+      // 倒计时:
+      verfirytime: "",
+      // 前端接收到的验证码
+      receiveCode: "",
+      // 登录界面:判断是哪个登录界面,从而控制button的请求信息
+      // 1:正常登录 2:QQ快速登录 3:忘记密码 4:用户注册
+      loginWhere: 1,
+      userNameState1: "",
+      userNameState2: "",
+      userNameState3: "",
+      userNameState4: "",
+      userPasswordState1: "",
+      userPasswordState2: "",
+      userPasswordState3: "",
+      userEmailState3: "",
+      userCodeState3: "",
+    };
   },
-  methods:{
+  watch: {
+    // 限制非中文
+    userNameState1: function () {
+      this.userNameState1 = this.userNameState1.replace(/[\W]/g, "");
+    },
+    // 限制数字
+    userNameState2: function () {
+      this.userNameState2 = this.userNameState2.replace(/[^0-9]/g, "");
+    },
+    // 限制非中文
+    userNameState3: function () {
+      this.userNameState3 = this.userNameState3.replace(/[\W]/g, "");
+    },
+    // 限制非中文
+    userNameState4: function () {
+      this.userNameState4 = this.userNameState4.replace(/[\W]/g, "");
+    },
+    // smilesvg改变
+    loginErrorTimes: function () {
+      if (this.loginErrorTimes == 1) {
+        console.log("1");
+      } else if (this.loginErrorTimes == 2) {
+        this.smileSvg = require("../assets/smile_normal.svg");
+      } else if (this.loginErrorTimes == 3) {
+        this.smileSvg = require("../assets/smile_cry.svg");
+      } else if (this.loginErrorTimes == 4) {
+        this.smileSvg = require("../assets/smile_reverse.svg");
+      } else if (this.loginErrorTimes == 5) {
+        this.smileSvg = require("../assets/smile_death.svg");
+      } else {
+        this.smileSvg = require("../assets/smile_death.svg");
+      }
+    },
+  },
+  methods: {
+    // 成功/失败响应,停止loading旋转,并向loginx发送显示message
+    responseMessage(message) {
+      // 仅取消loading旋转
+      this.loginingStatae = false;
+      this.$bus.$emit("loading", this.loginingStatae, -1);
+      this.$bus.$emit("errormessage", message);
+    },
+    // 笑脸shake动画--只有错误时触发
+    smileShake() {
+      this.isShake = true;
+      setTimeout(() => {
+        this.isShake = false;
+      }, 300);
+      this.loginErrorTimes++;
+    },
     // QQ快速登录
-    QQquickLogin(){
+    QQquickLogin() {
       this.normalState = false;
       this.QQstate = true;
       this.registerState = false;
       this.forgetPassState = false;
       this.isoption = false;
+      this.loginWhere = 2;
       // 向loginx图标组件发送数据,更改响应的svg
-      this.$bus.$emit('svgchange',require('../assets/QQ.svg'),require('../assets/login_v.svg'));
-
+      this.$bus.$emit(
+        "svgchange",
+        require("../assets/QQ.svg"),
+        require("../assets/login_v.svg")
+      );
     },
     // 忘记密码
-    fogetPassword(){
+    fogetPassword() {
       this.normalState = false;
       this.QQstate = false;
       this.registerState = false;
       this.forgetPassState = true;
       this.isoption = false;
+      this.loginWhere = 3;
       // 向loginx图标组件发送数据,更改响应的svg
-      this.$bus.$emit('svgchange',require('../assets/login_x.svg'),require('../assets/keys.svg'));
+      this.$bus.$emit(
+        "svgchange",
+        require("../assets/login_x.svg"),
+        require("../assets/keys.svg")
+      );
     },
     // 用户注册
-    register(){
+    register() {
       this.normalState = false;
       this.QQstate = false;
       this.registerState = true;
       this.forgetPassState = false;
       this.isoption = false;
+      this.loginWhere = 4;
       // 向loginx图标组件发送数据,更改响应的svg
-      this.$bus.$emit('svgchange',require('../assets/login_x.svg'),require('../assets/login_add.svg'));
+      this.$bus.$emit(
+        "svgchange",
+        require("../assets/login_x.svg"),
+        require("../assets/login_add.svg")
+      );
     },
     // 返回按钮
-    backward(){
+    backward() {
       this.normalState = true;
       this.QQstate = false;
       this.registerState = false;
       this.forgetPassState = false;
       this.isoption = false;
+      this.loginWhere = 1;
       // 向loginx图标组件发送数据,更改响应的svg
-      this.$bus.$emit('svgchange',require('../assets/login_x.svg'),require('../assets/login_v.svg'));
+      this.$bus.$emit(
+        "svgchange",
+        require("../assets/login_x.svg"),
+        require("../assets/login_v.svg")
+      );
+    },
+    // 向邮箱发送验证代码
+    verfiryCode() {
+      // 邮箱验证
+      var regEmail =
+        /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (
+        this.userNameState3 == "" ||
+        this.userPasswordState3 == "" ||
+        this.userEmailState3 == ""
+      ) {
+        this.smileShake();
+        this.$bus.$emit("errormessage", "请先填好用户名,邮箱和密码再验证哦~");
+      } else if (!regEmail.test(this.userEmailState3)) {
+        this.smileShake();
+        this.$bus.$emit("errormessage", "邮箱格式错误,请填写正确邮箱格式");
+      } else {
+        // 发送请求
+        var sendData = { userEmail: this.userEmailState3 };
+        console.log("发送的数据", sendData);
+        // loading旋转
+        this.loginingStatae = true;
+        this.verfiryButtonShow = -1;
+        this.$bus.$emit("loading", this.loginingStatae, 2);
+        this.$axios.post("/api/userRegisterCode", sendData).then(
+          (response) => {
+            console.log("得到了响应:", response.data);
+            this.receiveCode = response.data;
+            // 得到了响应,仅取消loading旋转
+            this.responseMessage(
+              "已发送,请注意查看邮箱,60s后才可以再次发送验证码"
+            );
+            // 按钮不可点击
+            this.verfiryButtonShow = -1;
+            // 倒计时
+            this.verfirytime = 60;
+            // 倒计时每秒递减
+            var id = setInterval(() => {
+              this.verfirytime = this.verfirytime - 1;
+            }, 1000);
+            // 60s后清除倒计时,并按钮可点击
+            setTimeout(() => {
+              this.verfiryButtonShow = 2;
+              clearInterval(id);
+              this.verfirytime = "";
+            }, 60000);
+          },
+          (error) => {
+            this.verfiryButtonShow = 2;
+            // 无法发送成功,仅取消loading旋转
+            this.smileShake();
+            this.responseMessage(error.message);
+          }
+        );
+      }
     },
     // 点击登录按钮后,向兄弟组件发送logining状态,以加载loading特效,也是登录功能
-    logining(){
-      this.loginingStatae = true;
-      this.$bus.$emit('loading',this.loginingStatae);
+    logining() {
+      // 首先判断是什么界面下按的登录按钮
+      // 如果是正常登录界面
+      if (this.loginWhere == 1) {
+        // 若未输入东西
+        if (this.userNameState1 == "" || this.userPasswordState1 == "") {
+          this.smileShake();
+          this.$bus.$emit("errormessage", "用户名和密码不可为空哦~");
+        } else {
+          // loading旋转
+          this.loginingStatae = true;
+          this.$bus.$emit("loading", this.loginingStatae, 2);
+          // ajax请求数据Json
+          var data1 = {
+            userQQ: this.userNameState1,
+            userPassword: this.userPasswordState1,
+          };
+          this.$axios.post("/api/userLogin", data1).then(
+            (response) => {
+              console.log("请求成功了!", response.data);
+              // 读取返回的响应码
+              var responseCode = response.data;
+              // loading取消旋转
+              this.loginingStatae = false;
+              if (responseCode == 0) {
+                // 无法登录成功,仅取消loading旋转,发送错误信息
+                this.smileShake();
+                this.responseMessage("未查找到该用户,请先注册哦~");
+              } else if (responseCode == -1) {
+                this.passwordErrorTimes++;
+                // 密码错误
+                this.smileShake();
+                if (this.passwordErrorTimes == 1) {
+                  this.responseMessage("用户名或密码错误,请核对后登录哦~");
+                } else if (this.passwordErrorTimes == 2) {
+                  this.responseMessage("密码错误,请检查大小写再登录");
+                } else if (this.passwordErrorTimes == 3) {
+                  this.responseMessage("密码错误 3 次,请仔细检查再登录");
+                } else if (this.passwordErrorTimes == 4) {
+                  this.responseMessage("密码错误!请问这是您的账号吗?");
+                } else if (this.passwordErrorTimes == 5) {
+                  this.responseMessage("密码错误!更多选项忘记密码找回吧");
+                } else if (this.passwordErrorTimes == 6) {
+                  this.responseMessage("密码错误!再输错误一次将锁定");
+                } else if (this.passwordErrorTimes == 7) {
+                  this.islogin = false;
+                }
+              } else {
+                // 登陆成功
+                this.responseMessage("登录成功!");
+
+                setTimeout(() => {
+                  // 取得该用户的所有信息
+                  this.$axios
+                    .post("/api/getUser", { userQQ: this.userNameState1 })
+                    .then(
+                      (response) => {
+                        console.log("得到用户信息:", response.data);
+                      },
+                      (error) => {
+                        this.smileShake();
+                        this.responseMessage(error.message);
+                      }
+                    );
+
+                  //取消loading旋转并且取消loginx组件和此组件的显示
+                  this.$bus.$emit("loading", this.loginingStatae, 1);
+                  this.$bus.$emit("loginSuccess", this.enterstate);
+                  // 登录成功,将loginbox删除
+                  this.islogin = false;
+                  // 进入主页按钮显示
+                  this.enterstate = true;
+                }, 2500);
+              }
+            },
+            (error) => {
+              this.smileShake();
+              this.responseMessage(error.message);
+            }
+          );
+        }
+      }
+      // 如果是注册界面
+      if (this.loginWhere == 4) {
+        // 若未输入东西
+        if (
+          this.userNameState3 == "" ||
+          this.userPasswordState3 == "" ||
+          this.userEmailState3 == "" ||
+          this.userCodeState3 == ""
+        ) {
+          this.smileShake();
+          this.$bus.$emit("errormessage", "您有未填项哦~");
+        }
+        // 若输入的验证码不匹配
+        else if (this.userCodeState3 != this.receiveCode) {
+          this.smileShake();
+          this.$bus.$emit("errormessage", "验证码不匹配");
+        } else {
+          // loading旋转
+          this.loginingStatae = true;
+          this.$bus.$emit("loading", this.loginingStatae, 2);
+          // ajax请求数据Json
+          var data4 = {
+            userQQ: this.userNameState3,
+            userPassword: this.userPasswordState3,
+            userEmail: this.userEmailState3,
+          };
+          this.$axios.post("/api/userRegister", data4).then(
+            (response) => {
+              console.log("注册:", response.data);
+              // 注册失败,用户已存在
+              if (response.data == -1) {
+                this.smileShake();
+                this.responseMessage("注册失败,用户已存在!");
+              } else {
+                this.$bus.$emit("errormessage", "注册成功!");
+                // 取消已输入的内容
+                this.userNameState1 = this.userNameState3;
+                this.userNameState3 = "";
+                this.userPasswordState3 = "";
+                this.userEmailState3 = "";
+                this.userCodeState3 = "";
+                // 转到登录界面
+                setTimeout(() => {
+                  this.backward();
+                }, 1000);
+              }
+              this.loginingStatae = false;
+              this.$bus.$emit("loading", this.loginingStatae, -1);
+            },
+            (error) => {
+              this.smileShake();
+              this.responseMessage(error.message);
+            }
+          );
+        }
+      }
+      // 如果是忘记密码界面
+      if (this.loginWhere == 3) {
+        // 用户名为空
+        if (this.userNameState4 == "") {
+          this.smileShake();
+          this.$bus.$emit("errormessage", "请输入用户名");
+        } else {
+          // loading旋转
+          this.loginingStatae = true;
+          this.$bus.$emit("loading", this.loginingStatae, 2);
+          var data3 = { userName: this.userNameState4 };
+          this.$axios.post("/api/userForgetPassword", data3).then(
+            (response) => {
+              console.log("forgetmessage", response.data);
+              if (response.data == "该用户未注册") {
+                this.smileShake();
+              }
+              this.responseMessage(response.data);
+            },
+            (error) => {
+              this.smileShake();
+              this.responseMessage(error.message);
+            }
+          );
+        }
+      }
+      //
+
       // 点击后给该按钮一个点击反馈
       this.loginButtonClickState = true;
       setTimeout(() => {
-         this.loginButtonClickState = false;
+        this.loginButtonClickState = false;
       }, 800);
-      // "TTEST":此处仅做模仿测试用
-      setTimeout(() => {
-      this.loginingStatae = false;
-      // 传给兄弟组件,登录成功通知
-      this.$bus.$emit('loading',this.loginingStatae);
-      this.$bus.$emit('loginSuccess',this.enterstate);
-      // 登录成功,将loginbox删除
-      this.islogin = false;
-      // 进入主页按钮显示
-      this.enterstate = true;
-      }, 5000);
-      // "TTEST"
     },
     // 进入主页的按钮响应
-    enterIndex(){
+    enterIndex() {
       // 点击后给该按钮一个点击反馈
       this.enterButtonClickState = true;
       setTimeout(() => {
-         this.enterButtonClickState = false;
+        this.enterButtonClickState = false;
       }, 800);
-    }
+    },
   },
-  mounted(){
+  mounted() {
     // 接收兄弟组件loginx状态
-    this.$bus.$on('loginxState',(islogin)=>{
+    this.$bus.$on("loginxState", (islogin) => {
       this.islogin = islogin;
-      this.loginBoxPullup = 'loginBoxPullup';
-    })
+      this.loginBoxPullup = "loginBoxPullup";
+    });
   },
-  beforeDestroy(){
-    this.$bus.$off('loginxState');
-  }
-
+  beforeDestroy() {
+    this.$bus.$off("loginxState");
+  },
 };
 </script>
 
@@ -186,11 +544,11 @@ export default {
   height: 165px;
   display: flex;
   justify-content: center;
-    /* display: none; */
+  /* display: none; */
 }
 /* 登录时盒子上拉 */
-.loginBoxPullup{
-	animation: slide-in-blurred-bottom 1s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+.loginBoxPullup {
+  animation: slide-in-blurred-bottom 1s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 /* 登录盒子 */
 .loginbox {
@@ -206,10 +564,10 @@ export default {
   display: flex;
 }
 /* 在注册状态下的loginbox盒子 */
-.loginboxinregiest{
-    height: 250px;
+.loginboxinregiest {
+  height: 250px;
 }
-.loginbox:hover{
+.loginbox:hover {
   border-radius: 30px;
   box-shadow: 20px 20px 20px rgba(0, 0, 0, 0.45);
 }
@@ -228,20 +586,19 @@ export default {
   letter-spacing: NaNem;
 }
 /* 不同情况下的input输入盒子 */
-.inputboxes{
+.inputboxes {
   padding: 2px;
 }
 /* 返回按钮 */
-.backward{
+.backward {
   display: block;
   width: 30px;
   height: 30px;
   margin-top: -45px;
   margin-bottom: 15px;
   transition: 0.55s;
-
 }
-.backward:hover{
+.backward:hover {
   cursor: pointer;
   color: black;
   background-color: white;
@@ -297,21 +654,21 @@ button:hover {
   border: 5px solid rgba(255, 255, 255, 0.85);
   transition: 0.5s;
 }
-.loginbutton img{
-    position: relative;
-    transition: 0.8s;
+.loginbutton img {
+  position: relative;
+  transition: 0.8s;
 }
-.loginbutton:hover{
-      border: 50px solid black;
-      background: black;
+.loginbutton:hover {
+  border: 50px solid black;
+  background: black;
 }
-.loginbutton:hover img{
-    transform: rotateY(180deg);
-    top: -20px;
-    left: -15px;
+.loginbutton:hover img {
+  transform: rotateY(180deg);
+  top: -20px;
+  left: -15px;
 }
 /* 点击按钮反馈样式 */
-.loginbuttonclick{
+.loginbuttonclick {
   cursor: pointer;
   border: 50px solid white !important;
 }
@@ -328,24 +685,28 @@ button:hover {
   border: 5px solid rgba(255, 255, 255, 0.85);
   transition: 0.5s;
 }
-.enterindex img{
-    transform: rotateY(180deg);
-    position: relative;
-    transition: 0.8s;
+.enterindex img {
+  transform: rotateY(180deg);
+  position: relative;
+  transition: 0.8s;
 }
-.enterindex:hover{
-      border: 50px solid black;
-      background: black;
+.enterindex:hover {
+  border: 50px solid black;
+  background: black;
 }
-.enterindex:hover img{
-    transform: rotateZ(90deg);
-    top: -20px;
-    left: -20px;
+.enterindex:hover img {
+  transform: rotateZ(90deg);
+  top: -20px;
+  left: -20px;
 }
 /* 进入按钮点击按钮反馈样式 */
-.loginbuttonclick{
+.loginbuttonclick {
   cursor: pointer;
   border: 50px solid white !important;
+}
+/* smile摇头动画 */
+.smileshake {
+  animation: shake-horizontal 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
 }
 
 /* 登录选项进入退出动画 */
@@ -364,8 +725,8 @@ button:hover {
   transform: translateX(0);
 }
 /* 登录盒子退出 */
-.loginboxT-leave-active{
-   animation: scale-out-center 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+.loginboxT-leave-active {
+  animation: scale-out-center 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 /* 进入主页进入退出动画 */
 .enterbuttonT-enter,
@@ -383,8 +744,8 @@ button:hover {
   transform: translateX(0) rotateZ(0deg);
 }
 /* 许多input盒子组的进入退出动画 */
-.inputboxesT-enter-active{
-animation: tracking-in-contract 0.55s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+.inputboxesT-enter-active {
+  animation: tracking-in-contract 0.55s cubic-bezier(0.215, 0.61, 0.355, 1) both;
 }
 /* .inputboxesT-leave-active{
 animation: tracking-in-contract 0s cubic-bezier(0.215, 0.610, 0.355, 1.000) both reverse;
@@ -393,21 +754,21 @@ animation: tracking-in-contract 0s cubic-bezier(0.215, 0.610, 0.355, 1.000) both
 /* 登录box上升的动画 */
 @keyframes slide-in-blurred-bottom {
   0% {
-    -webkit-transform: translateY(0)  scaleY(2.5) scaleX(0.2);
-            transform: translateY(0)  scaleY(2.5) scaleX(0.2);
+    -webkit-transform: translateY(0) scaleY(2.5) scaleX(0.2);
+    transform: translateY(0) scaleY(2.5) scaleX(0.2);
     -webkit-transform-origin: 50% 100%;
-            transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
     -webkit-filter: blur(40px);
-            filter: blur(40px);
+    filter: blur(40px);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(-225px) scaleY(1) scaleX(1);
-            transform: translateY(-225px)  scaleY(1) scaleX(1);
+    transform: translateY(-225px) scaleY(1) scaleX(1);
     -webkit-transform-origin: 50% 50%;
-            transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
     -webkit-filter: blur(0);
-            filter: blur(0);
+    filter: blur(0);
     opacity: 1;
   }
 }
@@ -415,12 +776,12 @@ animation: tracking-in-contract 0s cubic-bezier(0.215, 0.610, 0.355, 1.000) both
 @keyframes scale-out-center {
   0% {
     -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
     opacity: 1;
   }
   100% {
     -webkit-transform: scale(0);
-            transform: scale(0);
+    transform: scale(0);
     opacity: 1;
   }
 }
@@ -438,6 +799,33 @@ animation: tracking-in-contract 0s cubic-bezier(0.215, 0.610, 0.355, 1.000) both
     opacity: 1;
   }
 }
-
-
+/* smile摇头动画 */
+@keyframes shake-horizontal {
+  0%,
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70% {
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60% {
+    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  80% {
+    -webkit-transform: translateX(8px);
+    transform: translateX(8px);
+  }
+  90% {
+    -webkit-transform: translateX(-8px);
+    transform: translateX(-8px);
+  }
+}
 </style>

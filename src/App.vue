@@ -22,6 +22,7 @@ import adminlogin from './components/adminlogin.vue'
 import chats from './components/chats.vue'
 import setting from './components/setting.vue'
 import starspace from './components/starspace.vue'
+
 export default {
   name: "App",
   components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace},

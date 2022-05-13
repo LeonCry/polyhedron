@@ -53,15 +53,20 @@ export default {
   },
   mounted(){
     // 接收来自login处登录时传来的数据,控制loading及其他特效
-    this.$bus.$on('loading',(loginingStatae)=>{
-      console.log('loading:'+loginingStatae);
+    this.$bus.$on('loading',(loginingStatae,isFail)=>{
       // 加载loading特效
-      if(loginingStatae){
+      if(loginingStatae==true && isFail==2){
         this.loadingstate1 = false;
         this.loadingstate2 = true;
       }
-      // 停止加载loading特效//登录成功[目前]
-      else{
+      // 登录失败
+      if(loginingStatae==false && isFail==-1){
+        // 停止加载loading特效
+        this.loadingstate1 = true;
+        this.loadingstate2 = false;
+      }
+      // 登录成功
+      if (loginingStatae==false && isFail== 1){
         this.svgMove = true;
         this.changeTop =false;
         this.loginx = true;
