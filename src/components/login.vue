@@ -44,20 +44,22 @@
             <!-- 注册box -->
             <div key="3" class="inputboxes" v-show="registerState">
               <span class="backward" @click="backward">◀</span>
-              用户名:<input type="email" required v-model="userNameState3" />
+              用户名:<input type="email" required v-model="userNameState3" maxlength="24"/>
               <hr />
-              邮 箱:<input type="email" required v-model="userEmailState3" />
+              邮 箱:<input type="email" required v-model="userEmailState3" maxlength="100"/>
               <br />
               密 码:<input
                 type="password"
                 required
                 v-model="userPasswordState3"
+                maxlength="32"
               />
               <br />
               验证码:<input
                 type="text"
                 required
                 v-model.number="userCodeState3"
+                maxlength="6"
               />
               <button
                 @click="verfiryCode"
@@ -70,7 +72,7 @@
             <!-- 忘记密码box -->
             <div key="4" v-show="forgetPassState">
               <span class="backward" @click="backward">◀</span>
-              用户名:<input type="text" required v-model="userNameState4" />
+              用户名:<input type="text" required v-model="userNameState4" maxlength="24"/>
               <hr />
             </div>
           </transition-group>
@@ -121,6 +123,7 @@
 
 <script>
 import errornotice from "./errornotice.vue";
+import { mapActions } from "vuex";
 export default {
   components: { errornotice },
   // eslint-disable-next-line vue/multi-word-component-names
@@ -212,6 +215,9 @@ export default {
     },
   },
   methods: {
+    // vuex全局状态
+    ...mapActions("userInfo", ["uploadUserInfo","uploadUserSetting"]),
+
     // 成功/失败响应,停止loading旋转,并向loginx发送显示message
     responseMessage(message) {
       // 仅取消loading旋转
@@ -219,6 +225,19 @@ export default {
       this.$bus.$emit("loading", this.loginingStatae, -1);
       this.$bus.$emit("errormessage", message);
     },
+    // 登录成功,进入主界面
+    enterMainInterface() {
+      //取消loading旋转并且取消loginx组件和此组件的显示
+      this.$bus.$emit("loading", this.loginingStatae, 1);
+      this.$bus.$emit("loginSuccess", this.enterstate);
+      // 向兄弟组件发送loginx的状态
+      this.$bus.$emit("loginxState", true);
+      // 登录成功,将loginbox删除
+      this.islogin = false;
+      // 进入主页按钮显示
+      this.enterstate = true;
+    },
+
     // 笑脸shake动画--只有错误时触发
     smileShake() {
       this.isShake = true;
@@ -227,7 +246,7 @@ export default {
       }, 300);
       this.loginErrorTimes++;
     },
-    // QQ快速登录
+    // QQ快速登录按钮
     QQquickLogin() {
       this.normalState = false;
       this.QQstate = true;
@@ -242,7 +261,7 @@ export default {
         require("../assets/login_v.svg")
       );
     },
-    // 忘记密码
+    // 忘记密码按钮
     fogetPassword() {
       this.normalState = false;
       this.QQstate = false;
@@ -257,7 +276,7 @@ export default {
         require("../assets/keys.svg")
       );
     },
-    // 用户注册
+    // 用户注册按钮
     register() {
       this.normalState = false;
       this.QQstate = false;
@@ -342,7 +361,158 @@ export default {
         );
       }
     },
-    // 点击登录按钮后,向兄弟组件发送logining状态,以加载loading特效,也是登录功能
+    // 正常登陆
+    normalLogin() {
+      var data1 = {
+        userQQ: this.userNameState1,
+        userPassword: this.userPasswordState1,
+      };
+      this.$axios.post("/api/userLogin", data1).then(
+        (response) => {
+          console.log("请求成功了!", response.data);
+          // 读取返回的响应码
+          var responseCode = response.data;
+          // loading取消旋转
+          this.loginingStatae = false;
+          // 未找到该用户
+          if (responseCode == 0) {
+            this.smileShake();
+            this.responseMessage("未查找到该用户,请先注册哦~");
+          }
+          // 密码错误
+          else if (responseCode == -1) {
+            this.passwordError();
+          }
+          // 成功登录
+          else {
+            this.loginSuccess();
+          }
+        },
+        (error) => {
+          this.smileShake();
+          this.responseMessage(error.message);
+        }
+      );
+    },
+    // 正常登陆--密码错误
+    passwordError() {
+      this.passwordErrorTimes++;
+      // 密码错误
+      this.smileShake();
+      if (this.passwordErrorTimes == 1) {
+        this.responseMessage("用户名或密码错误,请核对后登录哦~");
+      } else if (this.passwordErrorTimes == 2) {
+        this.responseMessage("密码错误,请检查大小写再登录");
+      } else if (this.passwordErrorTimes == 3) {
+        this.responseMessage("密码错误 3 次,请仔细检查再登录");
+      } else if (this.passwordErrorTimes == 4) {
+        this.responseMessage("密码错误!请问这是您的账号吗?");
+      } else if (this.passwordErrorTimes == 5) {
+        this.responseMessage("密码错误!更多选项忘记密码找回吧");
+      } else if (this.passwordErrorTimes == 6) {
+        this.responseMessage("密码错误!再输错误一次将锁定");
+      } else if (this.passwordErrorTimes == 7) {
+        this.islogin = false;
+      }
+    },
+    // 正常登陆--登录成功
+    loginSuccess() {
+      this.responseMessage("登录成功!");
+      setTimeout(() => {
+        // 取得该用户的所有信息
+        this.getUserInfo(this.userNameState1);
+        // 取得该用户的设置信息
+        this.getUserSetting(this.userNameState1);
+        // 登录成功,进入主界面
+        this.enterMainInterface();
+      }, 2500);
+    },
+    // 取得用户的个人信息, -1表示error.message
+    getUserInfo(userQQ){
+     this.$axios.post("/api/getUser", {"userQQ": userQQ}).then(
+        (response) => {
+            // console.log("得到用户信息:", response.data);
+            // 向store中加入用户的个人信息
+            this.uploadUserInfo(response.data);
+          },
+          (error) => {
+            this.smileShake();
+            this.responseMessage(error.message);
+          }
+        );
+    },
+    // 取得用户的设置信息  -1表示error.message
+    getUserSetting(userQQ){
+     this.$axios.post("/api/getUserSetting",{"userQQ":userQQ}).then(
+        response=>{
+          // console.log("取得用户的设置信息");
+          this.uploadUserSetting(response.data);
+          
+        },error=>{
+          console.log("取得用户设置出错:",error.message);
+        });
+    },
+    // 用户注册
+    userRegister() {
+      // loading旋转
+      this.loginingStatae = true;
+      this.$bus.$emit("loading", this.loginingStatae, 2);
+      // ajax请求数据Json
+      var data4 = {
+        userQQ: this.userNameState3,
+        userPassword: this.userPasswordState3,
+        userEmail: this.userEmailState3,
+      };
+      this.$axios.post("/api/userRegister", data4).then(
+        (response) => {
+          console.log("注册:", response.data);
+          // 注册失败,用户已存在
+          if (response.data == -1) {
+            this.smileShake();
+            this.responseMessage("注册失败,用户已存在!");
+          } else {
+            this.$bus.$emit("errormessage", "注册成功!");
+            // 取消已输入的内容
+            this.userNameState1 = this.userNameState3;
+            this.userNameState3 = "";
+            this.userPasswordState3 = "";
+            this.userEmailState3 = "";
+            this.userCodeState3 = "";
+            // 转到登录界面
+            setTimeout(() => {
+              this.backward();
+            }, 1000);
+          }
+          this.loginingStatae = false;
+          this.$bus.$emit("loading", this.loginingStatae, -1);
+        },
+        (error) => {
+          this.smileShake();
+          this.responseMessage(error.message);
+        }
+      );
+    },
+    // 忘记密码
+    forgetPassword() {
+      // loading旋转
+      this.loginingStatae = true;
+      this.$bus.$emit("loading", this.loginingStatae, 2);
+      var data3 = { userName: this.userNameState4 };
+      this.$axios.post("/api/userForgetPassword", data3).then(
+        (response) => {
+          console.log("forgetmessage", response.data);
+          if (response.data == "该用户未注册") {
+            this.smileShake();
+          }
+          this.responseMessage(response.data);
+        },
+        (error) => {
+          this.smileShake();
+          this.responseMessage(error.message);
+        }
+      );
+    },
+    // 点击登录按钮后,正常登陆\注册\忘记密码\快速登录
     logining() {
       // 首先判断是什么界面下按的登录按钮
       // 如果是正常登录界面
@@ -355,74 +525,8 @@ export default {
           // loading旋转
           this.loginingStatae = true;
           this.$bus.$emit("loading", this.loginingStatae, 2);
-          // ajax请求数据Json
-          var data1 = {
-            userQQ: this.userNameState1,
-            userPassword: this.userPasswordState1,
-          };
-          this.$axios.post("/api/userLogin", data1).then(
-            (response) => {
-              console.log("请求成功了!", response.data);
-              // 读取返回的响应码
-              var responseCode = response.data;
-              // loading取消旋转
-              this.loginingStatae = false;
-              if (responseCode == 0) {
-                // 无法登录成功,仅取消loading旋转,发送错误信息
-                this.smileShake();
-                this.responseMessage("未查找到该用户,请先注册哦~");
-              } else if (responseCode == -1) {
-                this.passwordErrorTimes++;
-                // 密码错误
-                this.smileShake();
-                if (this.passwordErrorTimes == 1) {
-                  this.responseMessage("用户名或密码错误,请核对后登录哦~");
-                } else if (this.passwordErrorTimes == 2) {
-                  this.responseMessage("密码错误,请检查大小写再登录");
-                } else if (this.passwordErrorTimes == 3) {
-                  this.responseMessage("密码错误 3 次,请仔细检查再登录");
-                } else if (this.passwordErrorTimes == 4) {
-                  this.responseMessage("密码错误!请问这是您的账号吗?");
-                } else if (this.passwordErrorTimes == 5) {
-                  this.responseMessage("密码错误!更多选项忘记密码找回吧");
-                } else if (this.passwordErrorTimes == 6) {
-                  this.responseMessage("密码错误!再输错误一次将锁定");
-                } else if (this.passwordErrorTimes == 7) {
-                  this.islogin = false;
-                }
-              } else {
-                // 登陆成功
-                this.responseMessage("登录成功!");
-
-                setTimeout(() => {
-                  // 取得该用户的所有信息
-                  this.$axios
-                    .post("/api/getUser", { userQQ: this.userNameState1 })
-                    .then(
-                      (response) => {
-                        console.log("得到用户信息:", response.data);
-                      },
-                      (error) => {
-                        this.smileShake();
-                        this.responseMessage(error.message);
-                      }
-                    );
-
-                  //取消loading旋转并且取消loginx组件和此组件的显示
-                  this.$bus.$emit("loading", this.loginingStatae, 1);
-                  this.$bus.$emit("loginSuccess", this.enterstate);
-                  // 登录成功,将loginbox删除
-                  this.islogin = false;
-                  // 进入主页按钮显示
-                  this.enterstate = true;
-                }, 2500);
-              }
-            },
-            (error) => {
-              this.smileShake();
-              this.responseMessage(error.message);
-            }
-          );
+          // 经过前期检验,向服务器发起请求,检查用户名密码是否正确
+          this.normalLogin();
         }
       }
       // 如果是注册界面
@@ -441,44 +545,9 @@ export default {
         else if (this.userCodeState3 != this.receiveCode) {
           this.smileShake();
           this.$bus.$emit("errormessage", "验证码不匹配");
+          // 进入注册流程
         } else {
-          // loading旋转
-          this.loginingStatae = true;
-          this.$bus.$emit("loading", this.loginingStatae, 2);
-          // ajax请求数据Json
-          var data4 = {
-            userQQ: this.userNameState3,
-            userPassword: this.userPasswordState3,
-            userEmail: this.userEmailState3,
-          };
-          this.$axios.post("/api/userRegister", data4).then(
-            (response) => {
-              console.log("注册:", response.data);
-              // 注册失败,用户已存在
-              if (response.data == -1) {
-                this.smileShake();
-                this.responseMessage("注册失败,用户已存在!");
-              } else {
-                this.$bus.$emit("errormessage", "注册成功!");
-                // 取消已输入的内容
-                this.userNameState1 = this.userNameState3;
-                this.userNameState3 = "";
-                this.userPasswordState3 = "";
-                this.userEmailState3 = "";
-                this.userCodeState3 = "";
-                // 转到登录界面
-                setTimeout(() => {
-                  this.backward();
-                }, 1000);
-              }
-              this.loginingStatae = false;
-              this.$bus.$emit("loading", this.loginingStatae, -1);
-            },
-            (error) => {
-              this.smileShake();
-              this.responseMessage(error.message);
-            }
-          );
+          this.userRegister();
         }
       }
       // 如果是忘记密码界面
@@ -487,24 +556,9 @@ export default {
         if (this.userNameState4 == "") {
           this.smileShake();
           this.$bus.$emit("errormessage", "请输入用户名");
+          // 进入忘记密码流程
         } else {
-          // loading旋转
-          this.loginingStatae = true;
-          this.$bus.$emit("loading", this.loginingStatae, 2);
-          var data3 = { userName: this.userNameState4 };
-          this.$axios.post("/api/userForgetPassword", data3).then(
-            (response) => {
-              console.log("forgetmessage", response.data);
-              if (response.data == "该用户未注册") {
-                this.smileShake();
-              }
-              this.responseMessage(response.data);
-            },
-            (error) => {
-              this.smileShake();
-              this.responseMessage(error.message);
-            }
-          );
+          this.forgetPassword();
         }
       }
       //
@@ -515,6 +569,35 @@ export default {
         this.loginButtonClickState = false;
       }, 800);
     },
+    // 检查是否存在cookie
+    cookieCheck(){
+    console.log("检查是否存在cookie...");
+    if (this.$cookies.isKey("userQQ")) {
+      var userQQ = this.$cookies.get("userQQ");
+      var userPassword = this.$cookies.get("userPassword");
+      // 向服务器发送请求,检查密码是否正确
+      this.$axios
+        .post("/api/userLogin", { userQQ: userQQ, userPassword: userPassword })
+        .then(
+          (response) => {
+            // 密码正确,则直接进入已登录界面,并更新store中的user和usersetting
+            if (response.data != -1) {
+              this.enterMainInterface();
+              // 请求并向store中加入userInfo用户的信息
+              this.getUserInfo(userQQ);
+               // 请求向store中加入usersetting的信息
+              this.getUserSetting(userQQ);
+
+            }
+
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
+    }
+    },
+
     // 进入主页的按钮响应
     enterIndex() {
       // 点击后给该按钮一个点击反馈
@@ -530,6 +613,9 @@ export default {
       this.islogin = islogin;
       this.loginBoxPullup = "loginBoxPullup";
     });
+
+    // 检查是否有cookie
+    this.cookieCheck();
   },
   beforeDestroy() {
     this.$bus.$off("loginxState");

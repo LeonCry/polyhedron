@@ -1,7 +1,7 @@
 // 设置组件
 <template>
   <transition name="settingboxT">
-    <div v-show="isShow" class="settingbox" :style="settingLocation" @mousedown="changeIndex">
+    <div v-show="isShow" class="settingbox" :style="settingLocation" @mousedown="changeIndex" >
       <!-- 头部 -->
       <div class="toper" @mousedown="moveBegin">
         <!-- 设置 -->
@@ -28,36 +28,45 @@
             <!-- 用户QQ -->
             <div>
               <span>用户QQ</span>
-              <input type="text" value="1395346178" disabled />
+              <input type="text" v-model="userQQ" disabled/>
             </div>
             <!-- 用户名 -->
             <div>
               <span>用户名</span>
-              <input type="text" value="Leoncry" />
+              <input type="text" v-model="userName" maxlength="24" @blur="verifryUserName"/>
+            </div>
+            <!-- 用户密码 -->
+            <div>
+              <span>密 码</span>
+              <input type="password" v-model="userPassword" maxlength="32" @blur="verifryUserPassword"/>
             </div>
             <!-- 用户邮箱 -->
             <div>
               <span>用户邮箱</span>
-              <input type="text" value="1395346178@qq.com" />
+              <input type="text" v-model="userEmail"  maxlength="100" @blur="verfiryUserEmail"/>
             </div>
             <!-- 个性签名 -->
             <div>
               <span>个性签名</span>
-              <input type="text" value="风不住的往北吹..." />
+              <input type="text" v-model="userSign" maxlength="300"/>
             </div>
             <!-- 头像 -->
             <div>
               <span>头像</span>
-              <button class="upload">
+              <div class="upload">
+              <input ref="uploadHead"  @change="uploadHead" type="file" accept="image/png,image/jpeg" name="file">
                 <img src="../assets/upload.svg" alt="上传" />
-              </button>
+                  <span>{{headRou}}</span>
+               </div>
             </div>
             <!-- 个人背景 -->
             <div>
-              <span>个人背景</span>
-              <button class="upload">
+              <span>背景</span>
+              <div class="upload">
+              <input ref="uploadBack"  @change="uploadBack" type="file" accept="image/png,image/jpeg" name="file">
                 <img src="../assets/upload.svg" alt="上传" />
-              </button>
+                <span>{{backRou}}</span>
+              </div>
             </div>
           </div>
         </transition>
@@ -87,11 +96,6 @@
             <div>
               <span>空间动态邮箱通知</span>
               <img class="switch" src="../assets/switch.svg" alt="开关" @click="spaceSwitch" :style="spaceSwitchStyle"/>
-            </div>
-            <!-- 添/删好友邮箱通知 -->
-            <div>
-              <span>添/删好友邮箱通知</span>
-              <img class="switch" src="../assets/switch.svg" alt="开关" @click="changeSwitch" :style="changeSwitchStyle"/>
             </div>
             <!-- 登录邮箱通知 -->
             <div>
@@ -126,14 +130,21 @@
       </div>
       <!-- 保存按钮 -->
       <div class="savediv">
-        <button class="save">保存</button>
+        <button class="save" @click="saveSetting">保存</button>
       </div>
+      <!-- 加载界面 -->
+      <loading></loading>
+      <errorshow></errorshow>
     </div>
   </transition>
 </template>
 
 <script>
+import loading from './loading.vue';
+import {mapState,mapActions} from 'vuex'
+import errorshow from './errorshow.vue';
 export default {
+  components: {loading,errorshow},
   // eslint-disable-next-line vue/multi-word-component-names
   name: "setting",
   data() {
@@ -146,18 +157,19 @@ export default {
       poy: 500 + "px",
       //   判断是否鼠标按下的判定flag
       isMove: false,
+      // 上传头像路径
+      headRou:'点击上传',
+      // 上传背景路径
+      backRou:'点击上传',
       //   声音通知,按钮方向判定
       voiceNotice: false,
       voiceSwitchDeg:0,
       //   消息通知,按钮方向判定
-      friendNotice: false,
-      friendSwitchDeg:0,
+      messageNotice: false,
+      messageSwitchDeg:0,
       //   空间通知通知,按钮方向判定
       spaceNotice: false,
       spaceSwitchDeg:0,
-      //   增删通知,按钮方向判定
-      changeNotice: false,
-      changeSwitchDeg:0,
       //   登录通知,按钮方向判定
       loginNotice: false,
       loginSwitchDeg:0,
@@ -172,9 +184,25 @@ export default {
       serviceDetailDrop: 0,
       // 此组件Z轴高度 6 - 7
       zIndex:6,
+      // 用户信息相关数据
+      userQQ:'',
+      userName:'',
+      userPassword:'',
+      userEmail:'',
+      userSign:'',
+      userHead:'',
+      userBack:'',
+      
+
     };
   },
+
+
   computed: {
+
+    ...mapState('userInfo',['user','userSetting','loadingOver']),
+  
+
     //改变聊天窗口的位置
     settingLocation() {
       return { top: this.poy - 30 + "px", left: this.pox - 100 + "px",zIndex:this.zIndex };
@@ -197,15 +225,11 @@ export default {
     },
     // 好友通知按钮转向
     friendSwitchStyle(){
-        return { transform: "rotateZ(" + this.friendSwitchDeg + ")" };
+        return { transform: "rotateZ(" + this.messageSwitchDeg + ")" };
     },
     // 空间通知按钮转向
     spaceSwitchStyle(){
         return { transform: "rotateZ(" + this.spaceSwitchDeg + ")" };
-    },
-    // 添删通知按钮转向
-    changeSwitchStyle(){
-        return { transform: "rotateZ(" + this.changeSwitchDeg + ")" };
     },
     // 登录通知按钮转向
     loginSwitchStyle(){
@@ -213,6 +237,76 @@ export default {
     },
   },
   methods: {
+
+    ...mapActions('userInfo',['updateUserInfo','updateUserSettingInfo']),
+
+    // 上传头像
+    uploadHead(event){
+      // 获得文件名
+      this.headRou = event.target.files[0].name;
+    },
+    // 上传背景
+    uploadBack(event){
+      // 获得文件名
+      this.backRou = event.target.files[0].name;
+    },
+
+
+
+    // 邮箱及格式验证
+    verfiryUserEmail() {
+      // 邮箱验证
+      var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (this.userEmail == '') {
+        this.$bus.$emit("errorshow", "邮箱不可为空~");
+      } 
+      else if (!regEmail.test(this.userEmail)) {
+        this.$bus.$emit("errorshow", "邮箱格式错误,请填写正确邮箱格式");
+      }
+    },
+    // 用户名验证
+    verifryUserName(){
+      if (this.userName == ''){
+        this.$bus.$emit("errorshow", "用户名不可为空~");
+      }
+    },
+    // 密码验证
+    verifryUserPassword(){
+           if (this.userPassword == ''){
+        this.$bus.$emit("errorshow", "密码不可为空~");
+      }
+    },
+
+    // 初始化用户信息相关数据
+    userInfoInitialization(){
+      this.userQQ = this.user.userQQ;
+      this.userName = this.user.userName;
+      this.userPassword = this.user.userPassword;
+      this.userEmail = this.user.userEmail;
+      this.userSign = this.user.userSign;
+      this.userHead = this.user.userHead;
+      this.userBack = this.user.userBack;
+    },
+    // 初始化用户设置相关数据
+    userSettingInitialization(){
+      if(this.userSetting.voiceNotice){
+        this.voiceNotice = true;
+        this.voiceSwitchDeg = 540 + 'deg';
+      }
+      if(this.userSetting.messageNotice){
+        this.messageNotice = true;
+        this.messageSwitchDeg = 540 + 'deg';
+      }
+      if(this.userSetting.spaceNotice){
+        this.spaceNotice = true;
+        this.spaceSwitchDeg = 540 + 'deg';
+      }
+      if(this.userSetting.loginNotice){
+        this.loginNotice = true;
+        this.loginSwitchDeg = 540 + 'deg';
+      }
+    },
+
     // 账户设置细节出现
     userDetailAppear() {
       this.userDetail = !this.userDetail;
@@ -252,12 +346,12 @@ export default {
     },
     // 好友消息提示按钮转换+数据更改
     friendSwitch(){
-        this.friendNotice = !this.friendNotice;
-        if(this.friendNotice){
-            this.friendSwitchDeg = 540 + 'deg';
+        this.messageNotice = !this.messageNotice;
+        if(this.messageNotice){
+            this.messageSwitchDeg = 540 + 'deg';
         }
         else{
-            this.friendSwitchDeg = 0;
+            this.messageSwitchDeg = 0;
         }
     },
     // 空间动态提示按钮转换+数据更改
@@ -290,6 +384,53 @@ export default {
             this.loginSwitchDeg = 0;
         }
     },
+    // 保存按钮提交前验证 -1:表示有错误
+    saveVerfiry(){
+      var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      // 有未填的选项
+      if(this.userName==''||this.userPassword==''||this.userEmail==''||this.userEmail==''){
+        this.$bus.$emit('errorshow',"请检查,您有未填项~");
+        return -1;
+      }
+     // 邮箱格式错误
+      else if(!regEmail.test(this.userEmail)) {
+        this.$bus.$emit("errorshow", "邮箱格式错误,请填写正确邮箱格式");
+        return -1;
+      }
+    },
+    // 按下保存按钮
+    saveSetting(){
+      // 先进行提交前验证
+      if(this.saveVerfiry()==-1){
+        console.log("error");
+      }
+      // 验证通过
+      else{
+        // loading出现
+        this.$bus.$emit('weareloading',true,"上传中");
+        // store里面提交
+        var userInfoObj = {"userQQ":this.userQQ,"userPassword":this.userPassword,"userEmail":this.userEmail,
+                           "userName":this.userName,"userSign":this.userSign,"userHead":this.userHead,"userBack":this.userBack};
+        // 属性转换--boolean转number
+        if(this.voiceNotice){this.voiceNotice= 1 }else{this.voiceNotice= 0 }
+        if(this.messageNotice){this.messageNotice= 1 }else{this.messageNotice= 0 }
+        if(this.spaceNotice){this.spaceNotice= 1 }else{this.spaceNotice= 0 }
+        if(this.loginNotice){this.loginNotice= 1 }else{this.loginNotice= 0 }
+        var userSettingInfoObj = {"userQQ":this.userQQ,"voiceNotice":this.voiceNotice,"messageNotice":this.messageNotice,
+                                  "spaceNotice":this.spaceNotice,"loginNotice":this.loginNotice};
+        this.updateUserInfo(userInfoObj);
+        this.updateUserSettingInfo(userSettingInfoObj);
+        // 清除loading,因为vuex store里面无法使用$emit
+        var id = setInterval(() => {
+          if(this.loadingOver){
+            this.$bus.$emit('weareloading',false,"上传中");
+            this.$bus.$emit('errorshow',true,"个人设置更改成功!");
+            clearInterval(id);
+          }
+        }, 100);
+      }
+    },
+
     //   鼠标按下,开始移动
     moveBegin(e) {
       // 获得按下的x坐标
@@ -302,16 +443,21 @@ export default {
     },
     // 退出按钮
     exitChat() {
-      this.isShow = false;
+      // 重新初始化一遍
+      this.userSettingInitialization();
+      this.userInfoInitialization();
       this.$bus.$emit('settingappear',this.isShow);
     },
-            changeIndex(){
+    changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',6,6,7);
         },
   },
   mounted() {
+    
+
+
     //   实时监听鼠标移动,更改位置数据
     window.addEventListener("mousemove", (e) => {
       if (this.isMove) {
@@ -327,8 +473,11 @@ export default {
       }),
       // 接收来自user组件的数据
       // 进行展示与否
-      this.$bus.$on("settingappear", (data1) => {
-        this.isShow = data1;
+      this.$bus.$on("settingappear", () => {
+        this.isShow = !this.isShow;
+      // 用户信息/设置初始化--每次点击设置的时候都会初始化
+      this.userInfoInitialization();
+      this.userSettingInitialization();
       });
         // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ,chatsZ,settingZ)=>{
@@ -339,6 +488,7 @@ export default {
     this.$bus.$off("settingappear");
     this.$bus.$off("changeZindex");
   },
+
 };
 </script>
 
@@ -476,21 +626,45 @@ input:focus {
   background-color: rgba(99, 110, 114, 0.1);
   color: greenyellow;
 }
-/* 上传按钮 */
+/* 上传按钮div */
 .upload {
+  position: relative;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0);
   color: pink;
+  flex: 0.55;
   border-radius: 15px;
   transition: 0.55s;
   border: 0;
-  width: 40%;
+  z-index: 8;
   height: 100%;
 }
 .upload:hover {
+  cursor: pointer;
   box-shadow: 0px 0px 25px rgba(99, 110, 114, 0.8);
   background-color: rgba(99, 110, 114, 0.6);
 }
+.upload input{
+  cursor: pointer;
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+}
+.upload img{
+  position: absolute;
+  z-index: -1;
+  left: 9%;
+}
+.upload span{
+  position: absolute;
+  font-size: 1.4vh;
+  z-index: -1;
+  left: 10%;
+}
+
+
+
+
 /* 开关按钮 */
 .switch {
   cursor: pointer;

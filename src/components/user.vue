@@ -20,7 +20,7 @@
           </div>
           <!-- 关机按钮 -->
           <div class="shutdownbutton">
-              <img src="../assets/shutdown.svg" alt="退出登录">
+              <img src="../assets/shutdown.svg" alt="退出登录" @click="quitLogin">
           </div>
           </div>
       </transition>
@@ -67,6 +67,12 @@ methods:{
         this.isSetting = !this.isSetting;
         // 向setting组件发送数据,进行开关
         this.$bus.$emit('settingappear',this.isSetting);
+    },
+    // 退出登录
+    quitLogin(){
+        this.$cookies.remove("userQQ");
+        this.$cookies.remove("userPassword");
+        window.location.reload();
     }
 },
 mounted(){
