@@ -5,9 +5,9 @@
       <div class="friend">
       <!-- friend界面顶端仿手机栏 -->
       <div class="friend-topui">
-          <!-- 最小化窗口 -->
-          <div class="minimize" @click="minimizeBox">
-              <img src="../assets/minimize.svg" alt="">
+          <!-- 添加好友 -->
+          <div class="add" @click="friendAdd">
+              <img src="../assets/add.svg" alt="">
           </div>
           <!-- 空div占位置 -->
           <div></div>
@@ -17,7 +17,12 @@
           </div>
           
           <!-- 模仿摄像头 空div-->
-          <div class="camera"></div>
+          <div class="camera">
+            <!-- 最小化窗口 -->
+          <div class="minimize" @click="minimizeBox">
+              <img src="../assets/exit2.svg" alt="">
+          </div>
+          </div>
           <!-- 信号 -->
           <div>
               <img src="../assets/singnal.svg" alt="">
@@ -48,22 +53,42 @@
         </div>
         <!-- friend界面的组件界面 -->
         <div class="friend-compont">
+            
                 <!-- 最近会话界面 -->
             <friendrecent v-show="isRecent"></friendrecent>
                 <!-- 好友列表界面 -->
             <friendlist v-show="isList"></friendlist>
                 <!-- 个人界面 -->
             <self v-show="isSelf"></self>
-
+            <transition-group name="searchpageT">
+            <!-- 搜索好友界面 -->
+            <searchpage key="1" v-show="isSearchPageShow"></searchpage>
+            <!-- 搜索好友添加界面 -->
+            <searchaddpage key="2" v-show="isAddPageShow"></searchaddpage>
+            </transition-group>
+        
+        
+        
         </div>
+    <friend-notice></friend-notice>
+    <friend-loading></friend-loading>
     </div>
     <transition name="searchT" appear>
       <!-- 好友搜索框 -->
       <div v-show="isSearch" class="searchbox">
-          <input type="text" name="" id="" placeholder="好友搜索...">
+          <input type="text"  placeholder="好友搜索..." @focus="searchFriend" v-model="searchContent">
+      </div>
+      </transition>
+
+    <transition name="searchT" appear>
+      <!-- 好友添加搜索 -->
+      <div v-show="isAdd" class="searchbox">
+          <input type="text"  placeholder="输入好友用户名或昵称..." required v-model="searchContent">
+          <button @click="searchAddFriend">搜索</button>
       </div>
       </transition>
   </div>
+
   </transition>
 </template>
 
@@ -71,33 +96,49 @@
 import friendrecent from './friendrecent.vue';
 import friendlist from './friendlist.vue';
 import self from './self.vue';
+import searchpage from './searchpage.vue';
+import searchaddpage from './searchaddpage.vue';
+import FriendNotice from './friendNotice.vue';
+import { mapState } from 'vuex';
+import FriendLoading from './friendLoading.vue';
+
+
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'friends',
-    components:{friendrecent,friendlist,self},
+    components:{friendrecent,friendlist,self, searchpage,searchaddpage, FriendNotice, FriendLoading},
     data(){
         return{
             isShow:false,
             // 最近会话button的flex及背景色
-            historyChatFlex:2,
-            historyChatBack:'#a4b0be',
+            historyChatFlex:1,
+            historyChatBack:'#2f3542',
             // 好友列表button的flex及背景色
             friendListFlex:1,
             friendListBack:'#2f3542',
             // 个人button的flex及背景色
-            selfFlex:1,
-            selfBack:'#2f3542',
+            selfFlex:2,
+            selfBack:'#a4b0be',
             // 搜索状态
             isSearch:false,
+            // 添加好友状态
+            isAdd:false,
             // 是否切换到最近会话界面
-            isRecent:true,
+            isRecent:false,
             // 是否切换到好友列表界面
             isList:false,
             // 是否切换到个人界面
-            isSelf:false,
+            isSelf:true,
+            // 搜索好友界面是否展示
+            isSearchPageShow:false,
+            // 搜索添加好友是否展示
+            isAddPageShow:false,
+            // 搜索内容
+            searchContent:'',
         }
     },
     computed:{
+        ...mapState('userInfo',['user']),
         // 控制最近会话的样式
         historyChatStyle(){
             return {'flex':this.historyChatFlex,'background-color':this.historyChatBack};
@@ -164,19 +205,74 @@ export default {
         // 好友搜索按钮
         friendSeach(){
             this.isSearch = !this.isSearch;
+            this.isSearchPageShow = false;
+            this.isAddPageShow = false;
+            this.isAdd = false;
+            this.searchContent = '';
+        },
+        // 好友添加搜索按钮
+        friendAdd(){
+            this.isAdd = !this.isAdd;
+            this.isAddPageShow = false;
+            this.isSearchPageShow = false;
+            this.isSearch = false;
+            this.searchContent = '';
         },
         // 最小化该组件界面
         minimizeBox(){
             this.isShow = false;
             // 最小化后将该状态再传回去
             this.$bus.$emit('chatshow2',this.isShow);
+        },
+        // 添加好友搜索框中的搜索按钮
+        searchAddFriend(){
+            if(this.searchContent==''){
+                this.$bus.$emit("friendNotice",false,"不能搜索为空的用户哦~");
+            }
+            else{
+                this.isAddPageShow = true;
+                this.$bus.$emit('friendLoading',true,'查找中..');
+                // 发送请求-查询数据库
+                this.$axios.post("/api/findUsers",{"userQQ":this.searchContent}).then(response=>{
+                    console.log(response.data);
+                    // 向searchaddpage发送数据库查找到的数据
+                    this.$bus.$emit('findUsers',response.data,this.searchContent);
+                    this.$bus.$emit('friendLoading',false,'查找中..');
+                },error=>{
+                    console.log(error.message);
+                    this.$bus.$emit('friendLoading',false,'查找中..');
+                });
+                
+            }
+
+        },
+        // 搜索好友搜索框中@change状态
+        searchFriend(){
+            setTimeout(() => {
+               this.isSearchPageShow = true; 
+            }, 500);
         }
     },
     mounted(){
         // 接收来自user组件进行开关展示
         this.$bus.$on('chatshow',data1=>{
             this.isShow = data1;
-        })
+        });
+        // 接收来自searchaddpage组件数据,进行那个组件的开关
+        this.$bus.$on('quitSearchAddPage',(show,searchshow)=>{
+            this.isAddPageShow = show;
+            this.isAdd = searchshow;
+        });
+        // 接收来自searchpage组件数据,进行那个组件的开关
+        this.$bus.$on('quitSearchPage',(show,searchshow)=>{
+            this.isSearchPageShow = show;
+            this.isSearch = searchshow;
+        });
+
+    },
+    beforeDestroy(){
+         this.$bus.$off('chatshow');
+         this.$bus.$off('quitSearchAddPage');
     }
 }
 </script>
@@ -193,11 +289,11 @@ export default {
     position: absolute;
     right: 0;
     width: 280px;
+    flex-flow: row nowrap;
     height: 35px;
     transition: 0.55s;
     border-radius: 20px;
     background-color: #1A191B;
-    z-index: 10;
     top: 140px;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
 }   
@@ -216,6 +312,27 @@ export default {
   font-size: 2vh;
   color: greenyellow;
 }
+.searchbox button{
+  position: absolute;
+  align-self: center;
+  width: 50px;
+  height: 100%;
+  left: 125px;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1.6vh;
+  font-weight: normal;
+  cursor: pointer;
+  color: white;
+  border-radius: 15px;
+  transition: 0.55s;
+  border: 0;
+  margin-left: 38%;
+}
+.searchbox button:hover {
+  box-shadow: 0px 0px 25px rgba(99, 110, 114, 0.5);
+  background-color: rgba(99, 110, 114, 0.33);
+}
+
 /* friend样式 */
 .friend{
     position: absolute;
@@ -238,12 +355,14 @@ export default {
         box-shadow: -10px -10px 25px rgba(0, 0, 0, 0.8);
 }
 /* friend整个界面hover时带动search搜索框 */
-.friend:hover+div{
+/* friend整个界面hover时带动好友添加框 */
+.friend:hover~div{
         transition-delay:0.2s;
         right: 20px;
         top: 130px;
         box-shadow: -10px -10px 25px rgba(0, 0, 0, 0.8);
 }
+
 /* 仿手机栏 */
 .friend-topui{
     position: relative;
@@ -260,19 +379,47 @@ export default {
     transition: 0.55s;
 }
 /* 最小化按钮 */
-.minimize:hover{
-    transform: rotatez(810deg);
+.minimize{
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    top: 2px;
+    left: 21px;
+}
+.friend:hover > div:nth-of-type(1) > div:nth-of-type(4) > div{
+    opacity: 1;
+    transform: rotate(360deg);
+}
+.minimize img{
+    transition: 1s ease-in-out;
+}
+.minimize:hover img{
+    transform: rotate(720deg);
+
+}
+/* 添加好友框 */
+.add{
+    transform: scale(0.88); 
+    transition: 0.55s;
+}
+.add:hover{
+    transform: scale(1.15);
     cursor: pointer;
 }
+
 /* 搜索框 */
 .search:hover{
-    transform: scale(1.55);
+    transform: scale(1.4);
     cursor: pointer;
 }
 /* 模仿摄像头 */
 .camera{
     position: relative;
-    width: 100px;
+    width: 85px;
     height: 100%;
     border-radius: 0 0 20px 20px;
     background-color: black;
@@ -324,7 +471,29 @@ export default {
 .friendsT-leave,.friendsT-enter-to{
    opacity: 1;
 }
-
+/* 搜索出来的页面动画 */
+.searchpageT-enter-active{
+animation: swing-in-top-fwd 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.searchpageT-leave-active{
+animation: swing-in-top-fwd 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275) reverse both;
+}
+@keyframes swing-in-top-fwd {
+  0% {
+    -webkit-transform: rotateX(-100deg);
+            transform: rotateX(-100deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateX(0deg);
+            transform: rotateX(0deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 1;
+  }
+}
 /* 搜索框进入退出动画 */
 @keyframes scale-in-center {
   0% {

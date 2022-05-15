@@ -1,6 +1,6 @@
 <template>
   <div class="userbox">
-     
+      <message-notice class="message"></message-notice>
       <transition name="userappearT" appear>
          <!-- 用户头像 -->  
       <div v-show="isShow" class="user" @click="optionAppear">
@@ -33,10 +33,11 @@
 
 <script>
 import friends from './friends.vue'
+import MessageNotice from './messageNotice.vue'
 export default {
 // eslint-disable-next-line vue/multi-word-component-names
 name:'user',
-components:{friends},
+components:{friends,MessageNotice},
 data(){
     return{
         // 用户组件是否展示
@@ -135,6 +136,7 @@ beforeDestroy(){
     bottom: 10px;
     z-index: 5;
 }
+
 .optionbox:hover{
     background-color: rgba(255, 255, 255, 0.25);
     border-radius: 20px 0 0 20px;

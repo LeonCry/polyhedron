@@ -1,13 +1,11 @@
 // 最近聊天界面
 <template>
-  <div>
       <!-- 包裹div -->
       <div class="mainbody">
           <friendrecentitem></friendrecentitem>
           <friendrecentitem></friendrecentitem>
           <friendrecentitem></friendrecentitem>
       </div>
-  </div>
 </template>
 
 <script>

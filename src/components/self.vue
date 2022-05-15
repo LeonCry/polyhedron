@@ -4,18 +4,18 @@
   <div class="selfbox">
       <!-- 背景 -->
       <div class="myback">
-          <img src="../assets/background.jpg" alt="背景">
+          <img :src="require(`../assets/Backs/${this.user.userBack}`)" alt="背景">
       </div>
       <!-- 头像网名 -->
       <div class="myhead">
-          <img src="../assets/touxiang.jpg" alt="头像">
+          <img :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
           <br>
           <!-- 网名 -->
-          <span>LeonCry</span>
+          <span>[ {{user.userName}} ]</span>
       </div>
       <!-- 个签 -->
       <div class="mysign">
-          <span>''风在不住地吹，稍微转到东北方去，他知道这就是说风不会减退了。老头儿朝前面望了一望，但他看不见帆，看不见船，也看不见船上冒出的烟。只有飞鱼从船头那边飞出来，向两边仓皇地飞走，还有一簇簇黄色的马尾藻。''</span>
+          <span>'' {{user.userSign}} ''</span>
       </div>
       <!-- 个人空间 -->
       <button @click="enterMySpace">我的空间</button>
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'self',
@@ -32,6 +33,9 @@ export default {
             // 该组件是否显示
             isShow:false,
         }
+    },
+    computed:{
+        ...mapState('userInfo',['user','userSetting']),
     },
     methods:{
         // 进入我的空间
@@ -71,7 +75,10 @@ export default {
 .myback > img{
     width: 100%;
     height: 100%;
-    transition: 30s;
+    transition: 0.55s;
+}
+.myback:hover img{
+    transform: scale(1.05);
 }
 /* 头像 */
 .myhead{
@@ -92,11 +99,14 @@ export default {
 /* 网名 */
 .myhead span{
     position: relative;
+    color: pink;
+    font-weight: bolder;
     top: -30px;
 }
 /* 个签 */
 .mysign{
     position: relative;
+    text-align: center;
     width: 90%;
     left: 5%;
     top: 30px;

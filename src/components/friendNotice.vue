@@ -1,4 +1,4 @@
-// 置顶信息提示,emit为errorshow,即可正确信息,也可错误信息
+// 置顶信息提示,emit为friendNotice,即可正确信息,也可错误信息
 <template>
 <transition name="errorT">
   <div v-show="isShow" class="errorbox" :class="{greenboxclass:greenbox}">
@@ -12,7 +12,7 @@
 <script>
 export default {
 // eslint-disable-next-line vue/multi-word-component-names
-name:'errorShow',
+name:'friendNotice',
 data(){
     return{
         errorMessage:'',
@@ -21,7 +21,7 @@ data(){
     }
 },
 mounted(){
-    this.$bus.$on('errorshow',(isGreenbox,message)=>{
+    this.$bus.$on('friendNotice',(isGreenbox,message)=>{
         this.errorMessage = message;
         this.isShow = true;
         this.greenbox = isGreenbox;
@@ -60,6 +60,7 @@ beforeDestroy(){
         font-size: 1.8vh;
         color: aliceblue;
         font-weight: bold;
+        z-index: 99;
     }
     .greenboxclass{
         position: absolute;

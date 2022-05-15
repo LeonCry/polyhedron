@@ -134,17 +134,18 @@
       </div>
       <!-- 加载界面 -->
       <loading></loading>
-      <errorshow></errorshow>
+      <error-show></error-show>
     </div>
   </transition>
 </template>
 
 <script>
 import loading from './loading.vue';
-import {mapState,mapActions} from 'vuex'
-import errorshow from './errorshow.vue';
+import {mapState,mapActions, mapMutations} from 'vuex'
+import ErrorShow from './errorShow.vue';
+
 export default {
-  components: {loading,errorshow},
+  components: {loading, ErrorShow},
   // eslint-disable-next-line vue/multi-word-component-names
   name: "setting",
   data() {
@@ -157,10 +158,6 @@ export default {
       poy: 500 + "px",
       //   判断是否鼠标按下的判定flag
       isMove: false,
-      // 上传头像路径
-      headRou:'点击上传',
-      // 上传背景路径
-      backRou:'点击上传',
       //   声音通知,按钮方向判定
       voiceNotice: false,
       voiceSwitchDeg:0,
@@ -192,7 +189,14 @@ export default {
       userSign:'',
       userHead:'',
       userBack:'',
-      
+       // 上传头像路径
+      headRou:'点击上传',
+      // 上传背景路径
+      backRou:'点击上传',
+      // 上传头像文件
+      userHeadfile:'',
+      // 上传背景文件
+      userBackfile:'',
 
     };
   },
@@ -200,7 +204,7 @@ export default {
 
   computed: {
 
-    ...mapState('userInfo',['user','userSetting','loadingOver']),
+    ...mapState('userInfo',['user','userSetting','loadingOver','isHeadUpdate','isBackUpdate']),
   
 
     //改变聊天窗口的位置
@@ -238,47 +242,67 @@ export default {
   },
   methods: {
 
-    ...mapActions('userInfo',['updateUserInfo','updateUserSettingInfo']),
-
+    ...mapActions('userInfo',['updateUserInfo','updateUserSettingInfo','updateHead','updateBack']),
+    ...mapMutations('userInfo',['SETHEADSTATE','SETBACKSTATE']),
     // 上传头像
-    uploadHead(event){
-      // 获得文件名
-      this.headRou = event.target.files[0].name;
+    uploadHead(e){
+      // 获得文件名和文件
+      if(e.target.files[0].name == ''){
+        this.headRou = '';
+      }
+      this.headRou = e.target.files[0].name;
+      this.userHeadfile = e.target.files[0];
+      // 限制大小 < 2m
+      console.log(this.userHeadfile.size/1024/1024);
+      
+      if(this.userHeadfile.size/1024/1024>2){
+      this.headRou = '文件大小超出2M';
+      this.$bus.$emit('errorshow',false,"头像文件大小限制在2MB以内.");
+      }
     },
     // 上传背景
-    uploadBack(event){
-      // 获得文件名
-      this.backRou = event.target.files[0].name;
+    uploadBack(e){
+      // 获得文件名和文件
+      if(e.target.files[0].name == ''){
+        this.backRou = '';
+      }
+      this.backRou = e.target.files[0].name;
+      this.userBackfile = e.target.files[0];
+      // 限制大小 < 5m
+      if(this.userHeadfile.size/1024/1024>5){
+      this.backRou = '文件大小超出5M';
+      this.$bus.$emit('errorshow',false,"背景文件大小限制在5MB以内.");
+      }
     },
-
-
-
     // 邮箱及格式验证
     verfiryUserEmail() {
       // 邮箱验证
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
       if (this.userEmail == '') {
-        this.$bus.$emit("errorshow", "邮箱不可为空~");
+        this.$bus.$emit("errorshow",false, "邮箱不可为空~");
       } 
       else if (!regEmail.test(this.userEmail)) {
-        this.$bus.$emit("errorshow", "邮箱格式错误,请填写正确邮箱格式");
+        this.$bus.$emit("errorshow",false, "邮箱格式错误,请填写正确邮箱格式");
       }
     },
     // 用户名验证
     verifryUserName(){
       if (this.userName == ''){
-        this.$bus.$emit("errorshow", "用户名不可为空~");
+        this.$bus.$emit("errorshow", false,"用户名不可为空~");
       }
     },
     // 密码验证
     verifryUserPassword(){
            if (this.userPassword == ''){
-        this.$bus.$emit("errorshow", "密码不可为空~");
+        this.$bus.$emit("errorshow",false,"密码不可为空~");
       }
     },
 
     // 初始化用户信息相关数据
     userInfoInitialization(){
+      this.userId = this.user.userId;
+      this.userMoney = this.user.userMoney;
+      this.isOnline = this.user.isOnline;
       this.userQQ = this.user.userQQ;
       this.userName = this.user.userName;
       this.userPassword = this.user.userPassword;
@@ -286,9 +310,14 @@ export default {
       this.userSign = this.user.userSign;
       this.userHead = this.user.userHead;
       this.userBack = this.user.userBack;
+      this.headRou = '点击上传(<2MB)';
+      this.backRou = '点击上传(<5MB)';
+      this.userBackfile = '';
+      this.userHeadfile = '';
     },
     // 初始化用户设置相关数据
     userSettingInitialization(){
+
       if(this.userSetting.voiceNotice){
         this.voiceNotice = true;
         this.voiceSwitchDeg = 540 + 'deg';
@@ -389,14 +418,23 @@ export default {
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
       // 有未填的选项
       if(this.userName==''||this.userPassword==''||this.userEmail==''||this.userEmail==''){
-        this.$bus.$emit('errorshow',"请检查,您有未填项~");
+        this.$bus.$emit('errorshow',false,"请检查,您有未填项~");
         return -1;
       }
      // 邮箱格式错误
       else if(!regEmail.test(this.userEmail)) {
-        this.$bus.$emit("errorshow", "邮箱格式错误,请填写正确邮箱格式");
+        this.$bus.$emit("errorshow",false,"邮箱格式错误,请填写正确邮箱格式");
         return -1;
       }
+      else if(this.userHeadfile.size/1024/1024>2){
+        this.$bus.$emit("errorshow",false, "头像文件大小限制在2MB以内");
+        return -1;
+      }
+      else if(this.userBackfile.size/1024/1024>5){
+        this.$bus.$emit("errorshow",false, "背景文件大小限制在2MB以内");
+        return -1;
+      }
+
     },
     // 按下保存按钮
     saveSetting(){
@@ -409,8 +447,7 @@ export default {
         // loading出现
         this.$bus.$emit('weareloading',true,"上传中");
         // store里面提交
-        var userInfoObj = {"userQQ":this.userQQ,"userPassword":this.userPassword,"userEmail":this.userEmail,
-                           "userName":this.userName,"userSign":this.userSign,"userHead":this.userHead,"userBack":this.userBack};
+        var userInfoObj = {"userId":this.userId,"userQQ":this.userQQ,"userPassword":this.userPassword,"userEmail":this.userEmail,"userMoney":this.userMoney,"userName":this.userName,"userSign":this.userSign,"userHead":this.userHead,"userBack":this.userBack,"isOnline":this.isOnline};
         // 属性转换--boolean转number
         if(this.voiceNotice){this.voiceNotice= 1 }else{this.voiceNotice= 0 }
         if(this.messageNotice){this.messageNotice= 1 }else{this.messageNotice= 0 }
@@ -418,8 +455,19 @@ export default {
         if(this.loginNotice){this.loginNotice= 1 }else{this.loginNotice= 0 }
         var userSettingInfoObj = {"userQQ":this.userQQ,"voiceNotice":this.voiceNotice,"messageNotice":this.messageNotice,
                                   "spaceNotice":this.spaceNotice,"loginNotice":this.loginNotice};
+        // 上传个人信息和设置信息
         this.updateUserInfo(userInfoObj);
         this.updateUserSettingInfo(userSettingInfoObj);
+        // 若用户上传了头像图片   
+        if(this.userHeadfile!=''){
+          this.SETHEADSTATE(true);
+           this.updateHead({"file":this.userHeadfile,"userQQ":this.userQQ});
+        }
+        // 若用户上传了背景图片
+        if(this.userBackfile!=''){
+           this.SETBACKSTATE(true);
+           this.updateBack({"file":this.userBackfile,"userQQ":this.userQQ});
+        }
         // 清除loading,因为vuex store里面无法使用$emit
         var id = setInterval(() => {
           if(this.loadingOver){
@@ -427,7 +475,7 @@ export default {
             this.$bus.$emit('errorshow',true,"个人设置更改成功!");
             clearInterval(id);
           }
-        }, 100);
+        }, 1000);
       }
     },
 

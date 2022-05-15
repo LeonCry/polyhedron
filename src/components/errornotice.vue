@@ -1,4 +1,4 @@
-// 错误提示
+// 错误提示---仅在登录时
 <template>
 <transition name="errornoticeT">
   <div v-show="isShow" class="errornoticebox">

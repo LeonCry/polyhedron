@@ -1,6 +1,5 @@
 // 好友列表界面
 <template>
-   <div>
       <!-- 包裹div -->
       <div class="mainbody">
           <friendlistitem></friendlistitem>
@@ -14,7 +13,6 @@
           <friendlistitem></friendlistitem>
           <friendlistitem></friendlistitem>
       </div>
-  </div>
 </template>
 
 <script>
