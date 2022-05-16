@@ -12,8 +12,8 @@
               <div class="username">
                   <!-- 用户名 -->
                   <span>用户名</span>
-                  <!-- 互粉信息 -->
-                  <img src="../assets/heart.svg" alt="互粉">
+                  <!-- 消息数目 -->
+                 <span class="messagenum">9</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
@@ -73,7 +73,7 @@ export default {
     margin-top: 5px;
     margin-bottom: 10px;
     transition: 0.55s;
-    height: 55px;
+    height: 60px;
     font-size: 1.6vh;
     color: rgba(255, 255, 255, 0.7)
 }
@@ -138,7 +138,18 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
 }
-
+/* 消息个数样式 */
+.messagenum{
+    position: absolute;
+    background-color: rgba(242, 63, 63, 0.885);
+    border-radius: 25px;
+    max-width: 30px;
+    left: -25px;
+    min-width: 20px;
+    font-weight: bold;
+    text-align: center;
+    height: 20px;
+}
 /* 个人空间 */
 .starspace{
     position: relative;
@@ -159,6 +170,9 @@ export default {
 }
 .starspace:hover > img{
     transform: rotateZ(720deg);
+    border-radius: 50%;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0 15px yellow;
 }
 /* 更改字体滑过时鼠标 */
 span{

@@ -67,7 +67,7 @@ export default {
     margin-top: 5px;
     margin-bottom: 10px;
     transition: 0.55s;
-    height: 55px;
+    height: 60px;
     font-size: 1.6vh;
     color: rgba(255, 255, 255, 0.7)
 }

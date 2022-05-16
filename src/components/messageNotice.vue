@@ -14,9 +14,6 @@ data(){
         isShow:false,
     }
 },
-mounted(){
-    this.$refs.audio.play();
-}
 }
 </script>
 

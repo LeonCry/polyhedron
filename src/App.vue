@@ -9,6 +9,7 @@
     <chats></chats>
     <setting></setting>
     <starspace></starspace>
+    <system-page></system-page>
   </div>
 </template>
 
@@ -22,10 +23,11 @@ import adminlogin from './components/adminlogin.vue'
 import chats from './components/chats.vue'
 import setting from './components/setting.vue'
 import starspace from './components/starspace.vue'
+import SystemPage from './components/systemPage.vue'
 
 export default {
   name: "App",
-  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace},
+  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace, SystemPage},
   data(){
     return{
       // 判断是否管理员登录

@@ -2,11 +2,7 @@
 <template>
       <!-- 包裹div -->
       <div class="mainbody">
-          <friendlistitem></friendlistitem>
-          <friendlistitem></friendlistitem>
-          <friendlistitem></friendlistitem>
-          <friendlistitem></friendlistitem>
-          <friendlistitem></friendlistitem>
+          <system-message></system-message>
           <friendlistitem></friendlistitem>
           <friendlistitem></friendlistitem>
           <friendlistitem></friendlistitem>
@@ -17,10 +13,11 @@
 
 <script>
 import friendlistitem from './friendlistitem.vue'
+import SystemMessage from './systemMessage.vue'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'friendlist',
-    components:{friendlistitem},
+    components:{friendlistitem,SystemMessage},
 }
 </script>
 

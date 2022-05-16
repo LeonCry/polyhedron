@@ -2,6 +2,7 @@
 <template>
       <!-- 包裹div -->
       <div class="mainbody">
+          <search-add-loading></search-add-loading>
           <button class="quitbutton" @click="quitSearchAddPage">
               <img src="../assets/rightnrror.svg" alt="">
           </button>
@@ -20,10 +21,11 @@
 
 <script>
 import addfrienditem from './addfrienditem.vue'
+import SearchAddLoading from './searchAddLoading.vue';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'searchaddpage',
-    components:{addfrienditem},
+    components:{addfrienditem, SearchAddLoading},
     data(){
         return{
             // 接收到的users

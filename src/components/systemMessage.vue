@@ -1,9 +1,9 @@
-// 在最近聊天中的每个好友
+// 系统提示[例如:添加好友通知,动态通知]
 <template>
-<transition name="frienditemT" appear>
-  <div v-show="isShow" class="frienditem"  @dblclick="chatboxAppear">
+    <transition name="frienditemT" appear>
+  <div v-show="isShow" class="frienditem" @dblclick="systemPageShow">
       <!-- 头像 -->
-      <img src="../assets/touxiang.jpg" alt="">
+      <img src="../assets/systemHead.svg" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -11,54 +11,51 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>用户名</span>
-                  <!-- 最后消息时间 -->
-                  <span>22:00</span>
-                  <!-- 消息数目 -->
-                 <span class="messagenum">9</span>
+                  <span>系统通知</span>
+                  <!-- 互粉信息 -->
+                  <img src="../assets/systemmessage.svg" alt="铃声">
               </div>
-              <!-- 聊天内容 -->
-              <div class="chats">
-                  <span>你在干什么?</span>
+              <!-- 个性签名 -->
+              <div class="signs">
+                  <span>新的好友请求..</span>
               </div>
-
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
+              <span>9</span>
           </div>
       </div>
   </div>
-</transition>
+  </transition>
 </template>
+
 
 <script>
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
-    name:'friendrecentitem',
+    name:'systemMessage',
     data(){
         return{
-            isShow:true,
+            isShow:false,
+            // 空间展示
+            isSpaceShow:false,
         }
     },
     methods:{
         // 显示聊天框
-        chatboxAppear(){
+        systemPageShow(){
             // 向chats组件发送数据,显示聊天框
-            this.$bus.$emit('chatboxappear',true);
+            this.$bus.$emit('systemPageShow',true);
+            
         },
-        // 进入她的空间
-        enterHerSpace(){
-            // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false);
-        }
     },
     mounted(){
         // 接收friends组件数据,进行页面切换效果
-        this.$bus.$on('functionchange',(data1)=>{
-            this.isShow = data1;
+        this.$bus.$on('functionchange',(data1,data2)=>{
+            this.isShow = data2;
         })
     }
+    
 }
 </script>
 
@@ -74,7 +71,9 @@ export default {
     transition: 0.55s;
     height: 60px;
     font-size: 1.6vh;
-    color: rgba(255, 255, 255, 0.7)
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 50px 0 0 50px;
+    background-color: rgba(255, 172, 247, 0.1);
 }
 .frienditem:hover{
     background-color: rgba(61, 61, 61,1.0);
@@ -103,12 +102,7 @@ export default {
 .content:hover .nameandsign{
     flex: 4;
 }
-/* 更改个人空间 */
-.content:hover .starspace{
-    cursor: pointer;
-    flex: 1;
-    opacity: 1;
-}
+
 /* 名字和签名 */
 .nameandsign{
     position: relative;
@@ -129,7 +123,7 @@ export default {
     justify-content: space-between;
 }
 /* 个性签名 */
-.chats{
+.signs{
     position: relative;
     margin-top: 10px;
     display: flex;
@@ -137,47 +131,35 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
 }
-/* 消息个数样式 */
-.messagenum{
-    position: absolute;
-    background-color: rgba(242, 63, 63, 0.885);
-    left: -25px;
-    border-radius: 25px;
-    max-width: 30px;
-    min-width: 20px;
-    font-weight: bold;
-    text-align: center;
-    height: 20px;
-}
 
-/* 个人空间 */
+/* 消息通知 */
 .starspace{
     position: relative;
     flex: 0;
-    opacity: 0;
     height: 20px;
     transition: 0.55s;
     margin-top: 25px;
     display: flex;
+    flex: 1;
+    opacity: 1;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-    border-left: 2px solid white;
 }
-/* 个人空间hover时img的变化 */
-.starspace > img{
-    transition: 1s;
-}
-.starspace:hover > img{
-    transform: rotateZ(720deg);
-    border-radius: 50%;
-    background-color: darkgoldenrod;
-    box-shadow: 0 0 15px yellow;
-}
+
 /* 更改字体滑过时鼠标 */
 span{
     cursor: default;
 }
+.starspace span{
+    background-color: rgba(242, 63, 63, 0.885);
+    border-radius: 25px;
+    max-width: 30px;
+    min-width: 20px;
+    text-align: center;
+    height: 20px;
+}
+
 /* 好友个体进入退出动画 */
 .frienditemT-enter-active{
     animation: slide-in-blurred-right 0.3s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;

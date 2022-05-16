@@ -1,7 +1,7 @@
-// 在最近聊天中的每个好友
+// 系统界面通知-单个friend
 <template>
 <transition name="frienditemT" appear>
-  <div v-show="isShow" class="frienditem"  @dblclick="chatboxAppear">
+  <div v-show="isShow" :class="{hasAccept:isAccept,hasRefuse:isRefuse,frienditem:isNormal}">
       <!-- 头像 -->
       <img src="../assets/touxiang.jpg" alt="">
       <!-- 网名,个签内容物 -->
@@ -11,21 +11,22 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>用户名</span>
+                  <span>{{notice.sendUserQQ}} <span style="color:pink">申请添加好友</span></span>
                   <!-- 最后消息时间 -->
-                  <span>22:00</span>
-                  <!-- 消息数目 -->
-                 <span class="messagenum">9</span>
+                  <span>{{new Date(parseInt(notice.noticeTime)).toLocaleString()}}</span>
               </div>
               <!-- 聊天内容 -->
               <div class="chats">
-                  <span>你在干什么?</span>
+                  <span>{{notice.remarks}}</span>
               </div>
 
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
+              <img class="star" src="../assets/space.svg" alt="空间" @click="enterHerSpace">
+              <img v-show="consider" class="accpet" src="../assets/yes.svg" alt="接受" @click="accpetAsFriend">
+              <img v-show="consider" class="refuse" src="../assets/x.svg" alt="拒绝" @click="refuseAsFriend">
+              <img  v-show="!consider" class="delete" src="../assets/delete.svg" alt="删除" @click="deleteNotice">
           </div>
       </div>
   </div>
@@ -35,29 +36,52 @@
 <script>
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
-    name:'friendrecentitem',
+    name:'systemfrienditem',
+    props:['noticeprops'],
     data(){
         return{
             isShow:true,
+            // 是否接受作为好友
+            isAccept:false,
+            // 是否拒绝接受作为好友
+            isRefuse:false,
+            // 是否未作响应
+            isNormal:true,
+            // 删除按钮出现
+            consider:true,
+            // 一个notice对象
+            notice:this.noticeprops,
         }
     },
     methods:{
-        // 显示聊天框
-        chatboxAppear(){
-            // 向chats组件发送数据,显示聊天框
-            this.$bus.$emit('chatboxappear',true);
-        },
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
             this.$bus.$emit('spaceappear',true,false);
+        },
+        // 接受为好友
+        accpetAsFriend(){
+            this.isAccept = true;
+            this.isRefuse = false;
+            this.isNormal = false;
+            this.consider = false;
+            this.$bus.$emit('systemNotice',true,"已接受该好友请求~");
+        },
+        // 拒绝为好友
+        refuseAsFriend(){
+            this.isAccept = false;
+            this.isRefuse = true;
+            this.isNormal = false;
+            this.consider = false;
+            this.$bus.$emit('systemNotice',false,"已拒绝该好友请求~");
+        },
+        // 删除该条通知
+        deleteNotice(){
+            this.isShow = false;
         }
+
     },
     mounted(){
-        // 接收friends组件数据,进行页面切换效果
-        this.$bus.$on('functionchange',(data1)=>{
-            this.isShow = data1;
-        })
     }
 }
 </script>
@@ -74,6 +98,8 @@ export default {
     transition: 0.55s;
     height: 60px;
     font-size: 1.6vh;
+    border-radius: 50px 0 0 50px;
+    background-color: rgba(61, 61, 61,0.5);
     color: rgba(255, 255, 255, 0.7)
 }
 .frienditem:hover{
@@ -94,7 +120,7 @@ export default {
 /* 网名,个签内容物 */
 .content{
     position: relative;
-    width:220px;
+    width:450px;
     display: flex;
     flex-flow: row nowrap;
     height: 55px;
@@ -106,13 +132,13 @@ export default {
 /* 更改个人空间 */
 .content:hover .starspace{
     cursor: pointer;
-    flex: 1;
+    flex: 1.5;
     opacity: 1;
 }
 /* 名字和签名 */
 .nameandsign{
     position: relative;
-    flex: 4;
+    flex: 8;
     display: flex;
     flex-flow: column nowrap;
     transition: 0.55s;
@@ -149,30 +175,118 @@ export default {
     text-align: center;
     height: 20px;
 }
+/* 接受作为好友 */
+.hasAccept{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    transition: 0.55s;
+    height: 60px;
+    font-size: 1.6vh;
+    border-radius: 50px 0 0 50px;
+    background-color: rgb(44, 124, 44);
+    box-shadow: 0 0 8px greenyellow;
+    color: pink;
+}
+.hasAccept:hover{
+    border-radius: 50px 0 0 50px;
+    box-shadow: 0 0 15px greenyellow;
+}
+/* 头像 */
+.hasAccept > img{
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    margin-left:2.5px;
+    border: 5px solid rgba(61, 61, 61, 0.33);
+}
+/* 拒绝作为好友 */
+.hasRefuse{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    transition: 0.55s;
+    height: 60px;
+    font-size: 1.6vh;
+    border-radius: 50px 0 0 50px;
+    background-color: darkred;
+    box-shadow: 0 0 8px orangered;
+    color: pink;
+}
+.hasRefuse:hover{
+    border-radius: 50px 0 0 50px;
+    box-shadow: 0 0 15px orangered;
+}
+/* 头像 */
+.hasRefuse > img{
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    margin-left:2.5px;
+    border: 5px solid rgba(61, 61, 61, 0.33);
+}
 
 /* 个人空间 */
 .starspace{
     position: relative;
-    flex: 0;
+    flex: 1;
     opacity: 0;
     height: 20px;
     transition: 0.55s;
     margin-top: 25px;
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
     border-left: 2px solid white;
 }
 /* 个人空间hover时img的变化 */
-.starspace > img{
+.star{
     transition: 1s;
+    margin-left: 10px;
 }
-.starspace:hover > img{
-    transform: rotateZ(720deg);
+.accpet{
+    transition: 0.55s;
+    margin-left: 10px;
+}
+.refuse{
+    transition: 0.55s;
+    margin-left: 10px;
+}
+.delete{
+    transition: 0.55s;
+    margin-left: 10px;
+}
+.starspace:hover > img:nth-of-type(1){
+    transform: rotateZ(360deg);
+}
+.accpet:hover{
+    border-radius: 50%;
+    background-color: darkgreen;
+    box-shadow: 0 0 15px yellowgreen;
+}
+.refuse:hover{
+    border-radius: 50%;
+    background-color: brown;
+    box-shadow: 0 0 15px orangered;
+}
+.star:hover{
     border-radius: 50%;
     background-color: darkgoldenrod;
     box-shadow: 0 0 15px yellow;
+}
+.delete:hover{
+    border-radius: 50%;
+    background-color: palevioletred;
+    box-shadow: 0 0 15px pink;
 }
 /* 更改字体滑过时鼠标 */
 span{
