@@ -6,7 +6,7 @@
       <!-- 抬头 -->
       <div class="toper" @mousedown="moveBegin">
           <!-- 名字 -->
-          <span>你的名字</span>
+          <span>{{friend.user.userName}} <span v-show="friend.friendRemarkName!=''"> ({{friend.friendRemarkName}})</span></span>
           <!-- 退出按钮 -->
       </div>
       <!-- 退出按钮 -->
@@ -55,10 +55,6 @@
 
       </div>
 
-
-
-
-
   </div>
 </transition>
 </template>
@@ -96,6 +92,8 @@ export default {
     isEmojiShow:false,
     // 收到的emoji
     receiveEmoji:'',
+    // 收到的friend数据
+    friend:{user:{userName:''},friendRemarkName:''},
       }
   },
   computed:{
@@ -194,6 +192,11 @@ export default {
         this.$bus.$on('chatemoji',(emojitext)=>{
             this.receiveEmoji = emojitext;
         })
+        // 接收点击事件触发对象的数据传送
+        this.$bus.$on('toChatBox',(data)=>{
+            this.friend = data;
+        })
+
       },
       beforeDestroy(){
            this.$bus.$off('chatboxappear');

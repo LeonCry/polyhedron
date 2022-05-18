@@ -79,7 +79,7 @@ export default {
             // loading 加载
             this.$bus.$emit('searchAddLoading',true,"发送好友请求中..");
             // 向服务器发送添加好友请求
-            var data = {"receiveUserQQ":this.user.userQQ,"sendUserQQ":this.getUser.userQQ,"noticeType":1,"remarks":this.addMessage,"noticeTime":Date.now()};
+            var data = {"sendUserQQ":this.user.userQQ,"receiveUserQQ":this.getUser.userQQ,"noticeType":1,"remarks":this.addMessage,"noticeTime":Date.now()};
             this.addMessage = '';
             this.$axios.post('api/addOneNotice',data).then(
                 response=>{
@@ -87,6 +87,12 @@ export default {
                     this.$bus.$emit('searchAddLoading',false,"发送好友请求中..");
                     if(response.data==-1){
                         this.$bus.$emit('friendNotice',false,"您已向TA发送过好友请求了");
+                    }
+                    else if(response.data==-2){
+                        this.$bus.$emit('friendNotice',false,"对方已向你发送好友请求了");
+                    }
+                    else if(response.data==-3){
+                        this.$bus.$emit('friendNotice',false,"你们已经成为好友啦");
                     }
                     else{
                         console.log("添加好友:",response.data);

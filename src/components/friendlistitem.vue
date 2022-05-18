@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img src="../assets/touxiang.jpg" alt="">
+      <img :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -11,13 +11,13 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>用户名</span>
+                  <span>{{friend.user.userName}} <span v-show="friend.friendRemarkName!=''"> ({{friend.friendRemarkName}})</span></span>
                   <!-- 消息数目 -->
                  <span class="messagenum">9</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span>风不住的往北吹...</span>
+                  <span>{{friend.user.userSign}}</span>
               </div>
           </div>
           <!-- 个人空间 -->
@@ -34,11 +34,14 @@
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'friendlistitem',
+    props:['friendProp'],
     data(){
         return{
             isShow:false,
             // 空间展示
             isSpaceShow:false,
+            // 好友item
+            friend:this.friendProp,
         }
     },
     methods:{
@@ -46,12 +49,14 @@ export default {
         chatboxAppear(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
+            this.$bus.$emit('toChatBox',this.friend);
         },
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
             this.$bus.$emit('spaceappear',true,false);
-        }
+        },
+
     },
     mounted(){
         // 接收friends组件数据,进行页面切换效果

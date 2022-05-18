@@ -25,7 +25,7 @@
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
+              <img src="../assets/delete.svg" alt="删除" @click="deleteThis">
           </div>
       </div>
   </div>
@@ -47,10 +47,10 @@ export default {
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
         },
-        // 进入她的空间
-        enterHerSpace(){
-            // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false);
+        // 删除最近聊天
+        deleteThis(){
+            // 删除最近聊天
+            
         }
     },
     mounted(){
@@ -169,10 +169,9 @@ export default {
     transition: 1s;
 }
 .starspace:hover > img{
-    transform: rotateZ(720deg);
-    border-radius: 50%;
-    background-color: darkgoldenrod;
-    box-shadow: 0 0 15px yellow;
+  border-radius: 50%;
+  background-color: rgb(255, 192, 203,0.45);
+  box-shadow: 0 0 20px pink;
 }
 /* 更改字体滑过时鼠标 */
 span{

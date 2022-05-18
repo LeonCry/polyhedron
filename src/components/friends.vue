@@ -183,9 +183,27 @@ export default {
             this.isRecent = false;
             this.isList = true;
             this.isSelf = false;
+            // 发送请求
+            this.getFriendList();
              // 传送数据组件界面切换
             this.$bus.$emit('functionchange',this.isRecent,this.isList,this.isSelf);
         },
+
+        // 请求,获得所有好友列表
+        getFriendList(){
+            this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
+                console.log("获得了所有的好友信息",response.data);
+                this.$bus.$emit('getAllFriends',response.data);
+            },error=>{
+                console.log(error.message);
+                
+            });
+        },
+
+
+
+
+
         // 个人-功能
         selectSelf(){
             // 控制flex长度以及背景颜色

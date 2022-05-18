@@ -32,7 +32,7 @@ export default {
 
 <style scoped>
 div{
-    margin-top: 275px;
+    margin-top: 250px;
     position: relative;
     text-align: center;
 }
@@ -161,7 +161,7 @@ img:hover{
             transform-origin: 50% 100%;
     -webkit-filter: blur(40px);
             filter: blur(40px);
-    opacity: 1;
+    opacity: 0;
   }
   100% {
     -webkit-transform: translateY(-100px) scaleY(1) scaleX(1);
