@@ -4,9 +4,9 @@ import Vuex from 'vuex'
 // 引入store配置
 import store from './store/index.js'
 
-// elementui引入
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+// // elementui引入
+// import ElementUI from 'element-ui';
+// import 'element-ui/lib/theme-chalk/index.css';
 
 // emoji引入
 import emoji from 'node-emoji';
@@ -22,8 +22,8 @@ import  VueCookies  from 'vue-cookies';
 import axios from 'axios';
 
 import App from './App.vue';
-// elementui使用
-Vue.use(ElementUI);
+// // elementui使用
+// Vue.use(ElementUI);
 // Vuex的适用
 Vue.use(Vuex);
 // vue-cookies的使用

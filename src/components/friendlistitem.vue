@@ -31,6 +31,7 @@
 
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'friendlistitem',
@@ -44,13 +45,31 @@ export default {
             friend:this.friendProp,
         }
     },
+    computed:{
+        ...mapState('userInfo',['user']),
+    },
+
     methods:{
         // 显示聊天框
         chatboxAppear(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
             this.$bus.$emit('toChatBox',this.friend);
+            this.returnChats();
         },
+        // 发送请求,返回聊天记录
+        returnChats(){
+            this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:0,pageEnd:20}).then(response=>{
+                console.log(response.data);
+                this.$bus.$emit('receiveChat',response.data);
+            },error=>{
+                console.log(error.message);
+                
+            });
+            
+
+        },
+
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框

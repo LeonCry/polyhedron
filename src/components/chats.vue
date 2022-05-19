@@ -1,3 +1,4 @@
+/* eslint-disable vue/use-v-on-exact */
 // 聊天组件
 <template>
 <!-- 聊天盒子 -->
@@ -15,14 +16,10 @@
           </div>
       <!-- 内容 -->
       <div class="content">
-          <!-- 左侧聊天栏 -->
-          <div class="chatter">
-              <leftchater></leftchater>
-              <rightchater></rightchater>
-              <leftchater></leftchater>
-              <rightchater></rightchater>
-              <leftchater></leftchater>
-              <rightchater></rightchater>
+          <!-- 左侧聊天栏  包含了所有的人的聊天内容 -->
+          <div ref="chatters" class="chatter" >
+              <chat-loading></chat-loading>
+              <rightchater :friendProp="friend" :chatProp="chat" v-for="chat of receiveChatsSum" :key="chat.chatId"></rightchater>
           </div>
           <!-- 右侧更多栏 -->
           <div class="morer" :style="morerStyle">
@@ -50,9 +47,10 @@
               </div>
           </div>
           <!-- 键入文字栏 -->
-          <div class="typetext" contenteditable ref="typetext" @focus="emojiDisappear"> 
+          <div  contenteditable ref="typetext" :class="{typetextactive:SendActice,typetext:!SendActice}"  @focus="emojiDisappear" @keydown.enter.prevent="sendMessage" @keydown.shift.enter="iskeyEnter = true"> 
+              
           </div>
-
+        <button @click="sendMessage" :class="{sendMessageActive:SendActice,sendMessage:!SendActice}">发送/Enter</button>
       </div>
 
   </div>
@@ -61,13 +59,16 @@
 
 <script>
 import morer from './morer.vue'
-import leftchater from './leftchater.vue'
-import rightchater from './rightchater.vue'
 import emoji from './emoji.vue';
+import { mapState } from 'vuex';
+import rightchater from './rightchater.vue';
+import ChatLoading from './chatLoading.vue';
+import {createSocket,sendWSPush} from '../common/websocket';
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,leftchater,rightchater,emoji},
+  components:{morer,emoji,rightchater, ChatLoading},
   data(){
       return{
         //   是否展示该组件--聊天窗口
@@ -94,9 +95,23 @@ export default {
     receiveEmoji:'',
     // 收到的friend数据
     friend:{user:{userName:''},friendRemarkName:''},
+
+    // 键入的消息
+    message:'',
+    // 是否为换行
+    iskeyEnter:false,
+
+    // 发送程序已激活
+    SendActice:false,
+
+    // 数据请求到的聊天json list sum
+    receiveChatsSum:[],
+    // 仅一次请求获得的聊天json list sum
+    receiveChats:[],
       }
   },
   computed:{
+      ...mapState('userInfo',['user']),
       //   控制侧边栏的样式
       morerStyle(){
           return{'flex':this.moreFlex,'opacity': this.moreOpaticty,'filter:':' blur('+this.moreBlur+'px)'};
@@ -164,7 +179,111 @@ export default {
         // 当输入框focus时,取消表情栏显示
         emojiDisappear(){
             this.isEmojiShow = false;
-        }
+        },
+        // 发送消息
+        sendMessage(){
+            // 如果为空
+            if(this.$refs.typetext.innerHTML == ''){
+                console.log("空");
+                
+            }
+            else{
+                // this.sendWSPush("socket测试...");
+             // 清除键入的内容
+            setTimeout(() => {
+            if(!this.iskeyEnter){
+            this.SendActice = true;
+            this.message = this.$refs.typetext.innerHTML;
+            this.strRplace();
+            this.receiveChatsSum.push({chatContent:this.message,chatTime:Date.now()});
+            this.sendMessageRequest();
+            setTimeout(() => {
+               this.$refs.typetext.innerHTML = ''; 
+               this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+            }, 10);
+            }
+            else{
+                this.iskeyEnter = false; 
+            }
+            }, 100);
+
+            setTimeout(() => {
+               this.SendActice = false; 
+            }, 350);
+
+            }
+           
+        },
+        // 特殊字符替换
+        strRplace(){
+            // str.replace(/需要替换的字符串/g，"新字符串") 一种方法
+            // split . join另一种方法,但是只能在中间
+            // this.message.split("&nbsp;").join(" ");
+            // this.message.replaceAll("&nbsp;"," ");
+            this.message.replace(" ",'阿萨德');
+            this.message.replace(/&gt;/g,">");
+            this.message.replace(/&amp;/g,"&");
+        },
+        // 判断滚动条是否滑动到了顶部
+        isScrollTop(){
+            if(this.$refs.chatters.scrollTop==0){
+                // 开启加载
+                this.$bus.$emit('chatLoading',true,"加载聊天记录中..");
+                // 先移除事件监听
+                this.$refs.chatters.removeEventListener('scroll',this.isScrollTop);
+                // 记录下未发请求前的scroll高度
+                var scrollHighBefore = this.$refs.chatters.scrollHeight;
+                // 请求聊天记录--一次请求20条聊天记录
+                var start = this.receiveChatsSum.length;
+                var end =  20;
+                this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
+                console.log(response.data);
+                this.$bus.$emit('receiveChat',response.data);
+                // 停止加载
+                this.$bus.$emit('chatLoading',false,"加载聊天记录中..");
+                // 如果已经没有数据了
+                if(response.data==''){
+                    this.$bus.$emit('chatLoading',true,"___________________________已经到头啦____________________________");
+                    setTimeout(() => {
+                        this.$bus.$emit('chatLoading',false,"已经到头啦");
+                    }, 2500);
+                }
+
+                //再添加事件监听
+                setTimeout(() => {
+                // 在记录下当前已发送请求后的高度
+                var scrollHighAfter = this.$refs.chatters.scrollHeight;
+                // 则当前高度为两者之差
+                this.$refs.chatters.scrollTop = scrollHighAfter - scrollHighBefore;
+                   this.$refs.chatters.addEventListener('scroll',this.isScrollTop); 
+                }, 10);
+            },error=>{
+                console.log(error.message);
+                
+            });    
+
+            }
+            
+        },
+
+        // 发送消息向数据库发送请求
+        sendMessageRequest(){
+            this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:this.message,chatTime:Date.now()}).then(response=>{
+                console.log("添加成功",response.data);
+                
+            },error=>{
+                console.log(error.message);
+                
+            });
+            
+        },
+
+    //     //socket 接收消息
+    // getsocketData(e){  // 创建接收消息函数
+    // const data = e && e.detail.data
+    // console.log(data)
+    // },
+        
   },
   mounted(){
     //   实时监听鼠标移动,更改位置数据
@@ -183,6 +302,7 @@ export default {
             // 进行展示与否
             this.$bus.$on('chatboxappear',(data1)=>{
                 this.isShow = data1;
+                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
             });
                     // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ,chatsZ)=>{
@@ -195,7 +315,23 @@ export default {
         // 接收点击事件触发对象的数据传送
         this.$bus.$on('toChatBox',(data)=>{
             this.friend = data;
+            
         })
+        this.$bus.$on('receiveChat',(data)=>{
+            this.receiveChats = [];
+            this.receiveChats = data;
+            this.receiveChats.forEach(chat => {
+               this.receiveChatsSum.unshift(chat); 
+            });
+            
+        })
+
+        // 滚动条滚动到顶部的触发函数
+        this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
+
+
+        // 注册监听事件--socket
+        // window.addEventListener('onmessageWS', this.getsocketData);
 
       },
       beforeDestroy(){
@@ -338,14 +474,47 @@ export default {
 .emojicomponents{
     top: 180px;
 }
+/* 发送消息按钮 */
+.sendMessage{
+position: absolute;
+right: 5px;
+bottom: 8px;
+transition: 0.3s;
+outline: 0;
+border-radius: 10px;
+border: 1px solid rgba(255, 255, 255, 0.2);
+background-color: rgba(0, 0, 0, 0);
+color: darkgray;
+padding: 5px;
+}
+.sendMessage:hover{
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+}
 
+/* 发送消息按钮激活 */
+.sendMessageActive{
+position: absolute;
+right: 5px;
+bottom: 8px;
+transition: 0.3s;
+outline: 0;
+border-radius: 5px;
+border: 1px solid black;
+background-color: white;
+color: black;
+padding: 5px;
+}
 
 /* 输入框 */
 .typetext{
     position: relative;
     width: 95%;
     height: 85px;
-    font-size: 2vh;
+    font-size: 1.8vh;
     font-weight: bold;
     color: white;
     transition: 0.55s;
@@ -360,6 +529,26 @@ export default {
 .typetext:focus{
     outline: 0.5px solid rgba(0, 0, 0, 0);
 }
+.typetextactive{
+    position: relative;
+    width: 95%;
+    height: 85px;
+    font-size: 1.8vh;
+    font-weight: bold;
+    color: white;
+    transition: 0.2s;
+    border-radius: 0 0 15px 15px;
+    background-color: rgba(47, 53, 66,0.25);
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    line-height: 25px;
+    overflow-y: auto;
+    box-shadow: 0 0 8px white;
+    outline: 0.1px solid white;
+}
+
+
+
 
 /* 该组件--聊天框进入退出动画 */
 .chatboxT-enter-active{
@@ -374,6 +563,31 @@ export default {
 }
 .emojiT-leave-active{
     animation: swing-in-top-fwd 0.35s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
+
+    /* 进入的动画 */
+    .chaterboxT-enter-active{
+         animation: slide-in-blurred-right 0.55s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+    }
+  @keyframes slide-in-blurred-right {
+  0% {
+    -webkit-transform: translateX(300px) scaleX(2.5) scaleY(0.2);
+            transform: translateX(300px) scaleX(2.5) scaleY(0.2);
+    -webkit-transform-origin: 0% 50%;
+            transform-origin: 0% 50%;
+    -webkit-filter: blur(40px);
+            filter: blur(40px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) scaleY(1) scaleX(1);
+            transform: translateX(0) scaleY(1) scaleX(1);
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
 }
 
 @keyframes swing-in-top-fwd {

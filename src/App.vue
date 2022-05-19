@@ -62,19 +62,20 @@ export default {
 ::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 100px;
-    background-color: rgba(26, 25, 27, 1);
+    background-color: rgba(99, 110, 114, 0.1);
+    border: 0.12px solid rgba(0,0,0,0.5);
     background-image: -webkit-linear-gradient(90deg,
-            transparent 0%, rgba(26, 25, 27, 1),
-            transparent 50%,rgba(26, 25, 27, 1),
-            transparent 51%,rgba(99, 110, 114, 0.1)
-            transparent 60%,rgba(99, 110, 114, 0.1),
-            transparent 61%,rgba(26, 25, 27, 1),
+            transparent 0%, rgba(99, 110, 114, 0.1),
+            transparent 50%,rgba(99, 110, 114, 0.1),
+            transparent 51%,rgba(26, 25, 27, 1),
+            transparent 60%,rgba(26, 25, 27, 1),
+            transparent 61%,rgba(99, 110, 114, 0.1),
             transparent 100%,);
 }
 
 ::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
-    background: rgba(99, 110, 114, 0.1);
+    background: rgba(99, 110, 114, 0);
     border-radius: 100px;
 }
 /* 所有元素的样式 */

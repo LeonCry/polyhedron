@@ -3,26 +3,39 @@
     <transition name="chaterboxT">
   <div class="chaterbox">
       <!-- 头像 -->
-      <img src="../assets/touxiang2.jpg" alt="头像">
+      <img :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
       <!-- 消息box -->
       <div>
           <!-- 消息 -->
           <span>
-              发生什么事了？发生什么事了？发生什么事了？   
+             {{chat.chatContent}}
           </span>
       </div>
       <!-- 发送时间 -->
       <span>
-          5-6 13:11
+          {{new Date(parseInt(chat.chatTime))
+                .toLocaleString()
+                .slice(5)}}
       </span>
   </div>
   </transition>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
 // eslint-disable-next-line vue/multi-word-component-names
 name:'leftchater',
+     props:['friendProp','chatProp'],
+     computed:{
+         ...mapState('userInfo',['user']),
+     },
+     data(){
+         return{
+             friend:this.friendProp,
+             chat:this.chatProp,
+         }
+     }
 }
 </script>
 

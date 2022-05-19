@@ -123,6 +123,7 @@
 
 <script>
 import errornotice from "./errornotice.vue";
+import {createSocket} from '../common/websocket';
 import { mapActions } from "vuex";
 export default {
   components: { errornotice },
@@ -587,7 +588,8 @@ export default {
               this.getUserInfo(userQQ);
                // 请求向store中加入usersetting的信息
               this.getUserSetting(userQQ);
-
+              // 加入Websocket初始化
+              this.webSocketIntilization(userQQ);
             }
 
           },
@@ -596,6 +598,10 @@ export default {
           }
         );
     }
+    },
+    // Websocket初始化
+    webSocketIntilization(userQQ){
+      createSocket("ws://localhost:8088/imserver/" + userQQ);
     },
 
     // 进入主页的按钮响应

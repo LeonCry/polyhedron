@@ -12,7 +12,15 @@ module.exports = {
         changeOrigin: true,
         pathRewrite:{
           '^/api':''
-        },
+        }
+      },
+        "/socket": {
+          target: 'ws://localhost:8088',
+          // ws: true,
+          changeOrigin: true,
+          pathRewrite:{
+            '^/socket':''
+          },
       },
       "/QQicon": {
         target: 'http://q2.qlogo.cn',
