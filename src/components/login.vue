@@ -44,9 +44,19 @@
             <!-- 注册box -->
             <div key="3" class="inputboxes" v-show="registerState">
               <span class="backward" @click="backward">◀</span>
-              用户名:<input type="email" required v-model="userNameState3" maxlength="24"/>
+              用户名:<input
+                type="email"
+                required
+                v-model="userNameState3"
+                maxlength="24"
+              />
               <hr />
-              邮 箱:<input type="email" required v-model="userEmailState3" maxlength="100"/>
+              邮 箱:<input
+                type="email"
+                required
+                v-model="userEmailState3"
+                maxlength="100"
+              />
               <br />
               密 码:<input
                 type="password"
@@ -72,7 +82,12 @@
             <!-- 忘记密码box -->
             <div key="4" v-show="forgetPassState">
               <span class="backward" @click="backward">◀</span>
-              用户名:<input type="text" required v-model="userNameState4" maxlength="24"/>
+              用户名:<input
+                type="text"
+                required
+                v-model="userNameState4"
+                maxlength="24"
+              />
               <hr />
             </div>
           </transition-group>
@@ -123,7 +138,6 @@
 
 <script>
 import errornotice from "./errornotice.vue";
-import {createSocket} from '../common/websocket';
 import { mapActions } from "vuex";
 export default {
   components: { errornotice },
@@ -217,7 +231,11 @@ export default {
   },
   methods: {
     // vuex全局状态
-    ...mapActions("userInfo", ["uploadUserInfo","uploadUserSetting"]),
+    ...mapActions("userInfo", [
+      "uploadUserInfo",
+      "uploadUserSetting",
+      "saveAllusers",
+    ]),
 
     // 成功/失败响应,停止loading旋转,并向loginx发送显示message
     responseMessage(message) {
@@ -425,33 +443,36 @@ export default {
         // 取得该用户的设置信息
         this.getUserSetting(this.userNameState1);
         // 登录成功,进入主界面
-        this.enterMainInterface();
       }, 2500);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     },
     // 取得用户的个人信息, -1表示error.message
-    getUserInfo(userQQ){
-     this.$axios.post("/api/getUser", {"userQQ": userQQ}).then(
+    getUserInfo(userQQ) {
+      this.$axios.post("/api/getUser", { userQQ: userQQ }).then(
         (response) => {
-            // console.log("得到用户信息:", response.data);
-            // 向store中加入用户的个人信息
-            this.uploadUserInfo(response.data);
-          },
-          (error) => {
-            this.smileShake();
-            this.responseMessage(error.message);
-          }
-        );
+          // console.log("得到用户信息:", response.data);
+          // 向store中加入用户的个人信息
+          this.uploadUserInfo(response.data);
+        },
+        (error) => {
+          this.smileShake();
+          this.responseMessage(error.message);
+        }
+      );
     },
     // 取得用户的设置信息  -1表示error.message
-    getUserSetting(userQQ){
-     this.$axios.post("/api/getUserSetting",{"userQQ":userQQ}).then(
-        response=>{
+    getUserSetting(userQQ) {
+      this.$axios.post("/api/getUserSetting", { userQQ: userQQ }).then(
+        (response) => {
           // console.log("取得用户的设置信息");
           this.uploadUserSetting(response.data);
-          
-        },error=>{
-          console.log("取得用户设置出错:",error.message);
-        });
+        },
+        (error) => {
+          console.log("取得用户设置出错:", error.message);
+        }
+      );
     },
     // 用户注册
     userRegister() {
@@ -571,38 +592,82 @@ export default {
       }, 800);
     },
     // 检查是否存在cookie
-    cookieCheck(){
-    console.log("检查是否存在cookie...");
-    if (this.$cookies.isKey("userQQ")) {
-      var userQQ = this.$cookies.get("userQQ");
-      var userPassword = this.$cookies.get("userPassword");
-      // 向服务器发送请求,检查密码是否正确
-      this.$axios
-        .post("/api/userLogin", { userQQ: userQQ, userPassword: userPassword })
-        .then(
-          (response) => {
-            // 密码正确,则直接进入已登录界面,并更新store中的user和usersetting
-            if (response.data != -1) {
-              this.enterMainInterface();
-              // 请求并向store中加入userInfo用户的信息
-              this.getUserInfo(userQQ);
-               // 请求向store中加入usersetting的信息
-              this.getUserSetting(userQQ);
-              // 加入Websocket初始化
-              this.webSocketIntilization(userQQ);
+    cookieCheck() {
+      console.log("检查是否存在cookie...");
+      if (this.$cookies.isKey("userQQ")) {
+        var userQQ = this.$cookies.get("userQQ");
+        var userPassword = this.$cookies.get("userPassword");
+        // 向服务器发送请求,检查密码是否正确
+        this.$axios
+          .post("/api/userLogin", {
+            userQQ: userQQ,
+            userPassword: userPassword,
+          })
+          .then(
+            (response) => {
+              // 密码正确,则直接进入已登录界面,并更新store中的user和usersetting
+              if (response.data != -1) {
+                this.enterMainInterface();
+                // 请求并向store中加入userInfo用户的信息
+                this.getUserInfo(userQQ);
+                // 请求向store中加入usersetting的信息
+                this.getUserSetting(userQQ);
+                // 加入Websocket初始化
+                this.webSocketIntilization(userQQ);
+                
+              }
+            },
+            (error) => {
+              console.log(error.message);
             }
-
-          },
-          (error) => {
-            console.log(error.message);
-          }
-        );
-    }
+          );
+      }
     },
     // Websocket初始化
-    webSocketIntilization(userQQ){
-      createSocket("ws://localhost:8088/imserver/" + userQQ);
+    webSocketIntilization(userQQ) {
+      // _this 当前组件
+      let socket = null;
+      let _this = this;
+      if (typeof WebSocket == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+      } else {
+        console.log("您的浏览器支持WebSocket");
+        if (socket != null) {
+          socket.close();
+          socket = null;
+        }
+        // 开启一个websocket服务
+        socket = new WebSocket("ws://localhost:8088/imserver/" + userQQ);
+        socket.onopen = function () {
+          console.log("websocket已打开..");
+        };
+
+
+        // 接收消息  // 浏览器接收服务端发送过来的消息:所有在线用户,和发送的消息
+        socket.onmessage = function (msg) {
+          console.log("接收到的socket数据为:", msg.data);
+          let data = JSON.parse(msg.data);
+          // 如果获取的是在线人员
+          if (data.users) {
+                // 向Vuex全局中加入在线用户信息
+            _this.$store.commit("userInfo/SAVEALLUSERSS",data.users);
+          }
+          // 否则就是聊天信息{后续应该会有升级},将该信息传到聊天组件
+          else { 
+            _this.$bus.$emit("getSocketMessage", data);
+          }
+
+        };
+        // 全局存入socket
+        this.$store.commit('userInfo/SAVESOCKET',socket);
+        //发生了错误
+        socket.onerror = function () {
+          console.log("websocket发生了错误");
+        };
+      }
     },
+
+
 
     // 进入主页的按钮响应
     enterIndex() {
@@ -625,6 +690,7 @@ export default {
   },
   beforeDestroy() {
     this.$bus.$off("loginxState");
+    // socket关闭
   },
 };
 </script>

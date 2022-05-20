@@ -36,9 +36,6 @@ Vue.prototype.emoji = emoji;
 // axios的适用
 Vue.prototype.$axios = axios;
 
-
-
-
 Vue.config.productionTip = false
 
 new Vue({

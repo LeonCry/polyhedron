@@ -115,8 +115,7 @@ export default{
 
                 }
             )
-        }
-
+        },
 
 
 
@@ -189,17 +188,29 @@ export default{
             console.log("改变背景上传状态 changed");
             state.isBackUpdate = value;
         },
+        // 存储下来服务器上目前所有用户
+        SAVEALLUSERSS(state,value){
+            state.allusers = value;
+        },
+        // 保存socket
+        SAVESOCKET(state,value){
+            state.socket = value;
+        }
 
     },
     // 状态
     state:{
         user:'',
         userSetting:'',
+        // 服务器上目前所有的用户
+        allusers:'',
         // 是否loading结束
         loadingOver:false,
         // 是否头像上传中
         isHeadUpdate:false,
          // 是否背景上传中
         isBackUpdate:false,
+        // socket
+        socket:'',
     }
 }

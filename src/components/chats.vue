@@ -63,7 +63,6 @@ import emoji from './emoji.vue';
 import { mapState } from 'vuex';
 import rightchater from './rightchater.vue';
 import ChatLoading from './chatLoading.vue';
-import {createSocket,sendWSPush} from '../common/websocket';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -111,7 +110,7 @@ export default {
       }
   },
   computed:{
-      ...mapState('userInfo',['user']),
+      ...mapState('userInfo',['user','socket']),
       //   控制侧边栏的样式
       morerStyle(){
           return{'flex':this.moreFlex,'opacity': this.moreOpaticty,'filter:':' blur('+this.moreBlur+'px)'};
@@ -185,7 +184,6 @@ export default {
             // 如果为空
             if(this.$refs.typetext.innerHTML == ''){
                 console.log("空");
-                
             }
             else{
                 // this.sendWSPush("socket测试...");
@@ -194,6 +192,8 @@ export default {
             if(!this.iskeyEnter){
             this.SendActice = true;
             this.message = this.$refs.typetext.innerHTML;
+            // socket发送消息
+            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:this.message}));
             this.strRplace();
             this.receiveChatsSum.push({chatContent:this.message,chatTime:Date.now()});
             this.sendMessageRequest();
@@ -214,15 +214,18 @@ export default {
             }
            
         },
+
+
+
+
         // 特殊字符替换
         strRplace(){
             // str.replace(/需要替换的字符串/g，"新字符串") 一种方法
             // split . join另一种方法,但是只能在中间
             // this.message.split("&nbsp;").join(" ");
-            // this.message.replaceAll("&nbsp;"," ");
-            this.message.replace(" ",'阿萨德');
-            this.message.replace(/&gt;/g,">");
-            this.message.replace(/&amp;/g,"&");
+            // this.message.replaceAll("&nbsp;"," ");    
+            this.message = this.message.replace("<img","<img style='max-width:400px;max-height:400px'");
+            // this.message = this.message.replace("<img","<div><img");
         },
         // 判断滚动条是否滑动到了顶部
         isScrollTop(){
@@ -278,11 +281,29 @@ export default {
             
         },
 
-    //     //socket 接收消息
-    // getsocketData(e){  // 创建接收消息函数
-    // const data = e && e.detail.data
-    // console.log(data)
-    // },
+        // 接收通过socket返回的消息
+        receiveBySocket(data){
+            console.log("接收到的socket信息:",data);
+        },
+        // 去除粘贴样式
+        removePasteStyle(event){
+        var e = event || window.event
+        // 阻止默认粘贴
+        if(e.clipboardData.getData('text/plain')==''){
+            return 0; 
+        }    
+        e.preventDefault();
+        // 粘贴事件有一个clipboardData的属性，提供了对剪贴板的访问
+        // clipboardData的getData(fomat) 从剪贴板获取指定格式的数据
+        var text =  (e.originalEvent || e).clipboardData.getData('text/plain');
+        //清除回车
+        text = text.replace(/\[\d+\]|\n|\r/ig,"")
+        // 插入
+        console.log("阻止默认粘贴");
+        this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
+        }
+
+
         
   },
   mounted(){
@@ -298,11 +319,21 @@ export default {
         window.addEventListener('mouseup',()=>{
             this.isMove = false;
             }),
+    //  监听 输入框的粘贴动作,去除粘贴样式
+        this.$refs.typetext.addEventListener('paste',(e)=>{
+            this.removePasteStyle(e);
+        })
+            
+            
+            
+            
             // 接收来自friendrecentitem和friendlistitem组件的数据
             // 进行展示与否
-            this.$bus.$on('chatboxappear',(data1)=>{
+        this.$bus.$on('chatboxappear',(data1)=>{
                 this.isShow = data1;
-                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+                setTimeout(() => {
+                    this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+                }, 50);
             });
                     // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ,chatsZ)=>{
@@ -329,9 +360,20 @@ export default {
         // 滚动条滚动到顶部的触发函数
         this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
 
-
-        // 注册监听事件--socket
-        // window.addEventListener('onmessageWS', this.getsocketData);
+        // 接收来自socket的消息
+        this.$bus.$on('getSocketMessage',(data)=>{
+            console.log(data);
+            // 如果当前聊天对象发送给我的消息,则直接展示,否则存入数据库(存入数据库已做)
+            if(data.from==this.friend.friendQQ && data.to==this.user.userQQ){
+                // 构建合法的Json
+                var receive = {sendUserQQ:this.friend.friendQQ,receiveUserQQ:this.user.userQQ,chatContent:data.text,chatTime:Date.now()};
+                this.receiveChatsSum.push(receive);
+                setTimeout(() => {
+                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;     
+                }, 10);
+            }
+            
+        })
 
       },
       beforeDestroy(){

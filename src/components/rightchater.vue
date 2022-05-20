@@ -175,4 +175,5 @@ export default {
         color: darkgrey;
         text-align: center;
     }
+
 </style>
