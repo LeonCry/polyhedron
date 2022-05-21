@@ -1,11 +1,11 @@
 // 空间组件
 <template>
 <transition name="starspaceboxT">
-  <div v-show="isShow" class="starspacebox" :style="settingLocation" @mousedown="changeIndex">
+  <div v-if="isShow" class="starspacebox" :style="settingLocation" @mousedown="changeIndex">
     <!-- 头部 -->
     <div class="toper" @mousedown="moveBegin">
       <!-- 设置 -->
-      <span>空 间</span>
+      <span>{{spaceUser.userName}}的空间</span>
     </div>
     <!-- 退出按钮 -->
     <div class="exit">
@@ -17,14 +17,14 @@
       <div class="backandhead">
         <!-- 背景 -->
         <div class="myback">
-          <img src="../assets/background.jpg" alt="背景" />
+          <img :src="require(`../assets/Backs/${spaceUser.userBack}`)" alt="背景" />
         </div>
         <!-- 头像网名 -->
         <div class="myhead">
-          <img src="../assets/touxiang.jpg" alt="头像" />
+          <img :src="require(`../assets/Heads/${spaceUser.userHead}`)" alt="头像" />
           <br />
           <!-- 网名 -->
-          <span>LeonCry</span>
+          <span>{{spaceUser.userName}}</span>
         </div>
       </div>
       <!-- 写动态 -->
@@ -34,21 +34,18 @@
         <img src="../assets/eyes.svg" alt="眼睛">
         <select name="" id="">
           <option value="">我的动态</option>
-          <option value="">我评论的</option>
+          <option value="">好友动态</option>
           <option value="">我点赞的</option>
           <option value="">我点踩的</option>
           <option value="">我收藏的</option>
           <option value="">我分享的</option>
         </select>
       </div>
-
       <!-- 单个动态 -->
-      <spaceitem></spaceitem>
-      <spaceitem></spaceitem>
-      <spaceitem></spaceitem>
-
-
-
+      <spaceitem  :spaceProp="space" v-for="space of spaceSum" :key="space.publishId"></spaceitem>
+      
+      <space-loading></space-loading>
+      <space-notice></space-notice>
     </div>
   </div>
 </transition>
@@ -57,8 +54,11 @@
 <script>
 import writespace from './writespace.vue';
 import spaceitem from './spaceitem.vue';
+import { mapState } from 'vuex';
+import SpaceLoading from './spaceLoading.vue';
+import SpaceNotice from './spaceNotice.vue';
 export default {
-  components: { writespace,spaceitem},
+  components: { writespace,spaceitem, SpaceLoading, SpaceNotice},
   // eslint-disable-next-line vue/multi-word-component-names
   name: "starspace",
   data() {
@@ -75,10 +75,13 @@ export default {
       isMove: false,
       // 此组件Z轴高度 6 - 7
       zIndex:6,
+      spaceUser:'',
+      spaceSum:[],
     };
   },
   computed: {
     //改变聊天窗口的位置
+    ...mapState('userInfo',['user']),
     settingLocation() {
       return { top: this.poy - 30 + "px", left: this.pox - 100 + "px",zIndex:this.zIndex};
     },
@@ -97,13 +100,13 @@ export default {
     // 退出按钮
     exitChat() {
       this.isShow = false;
-      this.$bus.$emit('spaceappear',this.isShow);
+      this.$bus.$emit('spaceappear',this.isShow,this.isMySpace,this.spaceUser);
     },
-            changeIndex(){
+    changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',7,6,6);
-        },
+    },
   },
   mounted() {
     //   实时监听鼠标移动,更改位置数据
@@ -120,9 +123,33 @@ export default {
         this.isMove = false;
       });
         // 接收self,friendlistitem,friendrecentitem组件数据,进行页面切换效果
-        this.$bus.$on('spaceappear',(data1,data2)=>{
+        this.$bus.$on('spaceappear',(data1,data2,friendUser)=>{
             this.isShow = data1;
             this.isMySpace = data2;
+            // 如果点击的是我的空间
+            if(this.isMySpace==true){
+              this.spaceUser = this.user;
+            }
+            // 如果点击的是别人的空间
+            else{
+              this.spaceUser = friendUser;
+            }
+
+            if(data1){
+            // 进行数据库查询,因为进入不管是我的空间还是他人的空间,默认都是出现为 this.spaceUser 的空间内容,所以这里统一查询
+            this.$axios.post('/api/selectSpaces',{publishQQ:this.spaceUser.userQQ,pageStart:0,pageEnd:10}).then(response=>{
+              this.spaceSum = [],
+              console.log(response.data);
+              
+              response.data.forEach(space => {
+                this.spaceSum.push(space);
+              });
+            },error=>{
+              console.log(error.message);
+            });
+            }
+            
+
         });
         // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ)=>{

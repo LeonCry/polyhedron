@@ -1,20 +1,20 @@
 // 单个动态组件
 <template>
-  <div class="spaceitembox">
+  <div v-if="space" class="spaceitembox">
     <!-- 头像网名 -->
     <div class="myhead">
-      <img src="../assets/touxiang2.jpg" alt="头像" />
+      <img :src="require('../assets/Heads/'+space.user.userHead)" alt="头像"/>
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>LeonCry</span>
-        <span>5-7 12:00</span>
+        <span>{{space.user.userName}}</span>
+        <span>{{new Date(parseInt(space.publishTime))
+                .toLocaleString()
+                .slice(5)}}</span>
       </div>
     </div>
     <!-- 内容 -->
     <div class="content">
-      阿斯顿南山店爱死你的家是你的电死的呢爱死你的电商ID奶是你地那你带上你悼念死到年底你爱死你的爱死你的年四年的那啥
-      啊实打实大俗报的哪设计好的卡机收到货阿克苏较好的卡就是耗电快假设
-      奥施康定几哈谁看得见华硕科技的贺卡设计好的卡加斯
+        {{space.spaceContent}}
     </div>
 <!-- 点赞收藏等操作 -->
     <div class="operation">
@@ -30,7 +30,11 @@
     </div>
 
     <!-- 谁谁谁觉得很赞 -->
-    <span class="whothinkgood">123、hhh、我是谁、萨达、as打算多、as打算多 等100人觉得很赞</span>
+    <span class="whothinkgood">
+      <span>2人觉得很赞</span>
+      <span>2人分享了动态</span>
+      <span>2人收藏了动态</span>
+      </span>
 
     <!-- 写评论功能 -->
     <div class="writecomment">
@@ -43,11 +47,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import commentbox from './commentbox.vue';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "spaceitem",
   components:{commentbox},
+  props:['spaceProp'],
   data(){
       return{
         //   状态:是否点赞
@@ -56,8 +62,21 @@ export default {
           isNoLike:false,
         //   状态:是否收藏
           isCollection:false,
+          // 接收到的space信息
+          space:this.spaceProp,
+          // 图像的显示
+          imgShow:false,
       }
   },
+  computed:{
+    ...mapState('userInfo',['user']),
+  },
+  // created:{
+  //   create(){
+  //     this.space = this.spaceProp;
+  //   }
+  // },
+
   methods:{
     //   点击收藏
       collection(){
@@ -81,6 +100,14 @@ export default {
       shares(){
           console.log('分享');
       }
+  },
+  mounted(){
+    // 当全部加载完毕才显示img,防止出现 undefined
+    // this.imgShow = true;
+    // console.log(this.spaceProp);
+    // this.space = this.spaceProp;
+    // this.imgShow = true;
+
   }
 };
 </script>
@@ -91,6 +118,7 @@ export default {
   width: 95%;
   left: 2.5%;
   margin-top: 25px;
+  margin-bottom: 15px;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -158,10 +186,24 @@ export default {
 /* 觉得赞 */
 .whothinkgood{
     width: 95%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
     justify-self: flex-start;
     font-size: 1.6vh;
     margin-top: 10px;
     color: pink;
+}
+.whothinkgood span{
+  padding: 5px;
+  cursor: pointer;
+  transition: 0.55s;
+}
+.whothinkgood span:hover{
+  color: black;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 0 15px whitesmoke;
 }
 
 /* 写评论 */

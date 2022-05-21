@@ -12,7 +12,7 @@
       <emojispace v-show="isEmojiShow"></emojispace>
     </transition>
     <br />
-    <button>发表</button>
+    <button @click="publish">发表</button>
     <img
       v-show="isLoading"
       class="loading"
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import emojispace from "./emojispace.vue";
 export default {
   components: { emojispace },
@@ -37,7 +38,11 @@ export default {
       isEmojiShow: false,
       // 收到的emoji
       receiveEmoji: "",
+      publishContent:'',
     };
+  },
+  computed:{
+    ...mapState('userInfo',['user']),
   },
   watch: {
     //   监视接收到的emoji,并添加到输入框中
@@ -53,6 +58,26 @@ export default {
     // 当输入框focus时,取消表情栏显示
     emojiDisappear() {
       this.isEmojiShow = false;
+    },
+    // 发表,进行存数据库
+    publish(){
+      // loading加载
+      this.$bus.$emit('spaceLoading',true,"发表中..!");
+      this.publishContent = this.$refs.typetext.innerHTML;
+      this.$refs.typetext.innerHTML = '';
+      let data = {publishQQ:this.user.userQQ,spaceContent:this.publishContent,publishTime:Date.now()};
+      this.$axios.post('/api/addOneSpace',data).then(response=>{
+        console.log(response.data);
+        this.$bus.$emit('spaceNotice',true,"发表成功!");
+        this.$bus.$emit('spaceLoading',false,"发表中..!");
+        this.publishContent = '';
+        // 发表成功之后应该再请求一次服务器,或者直接将发表的内容传回给starspace,以用来新增一个space
+      },error=>{
+        this.$bus.$emit('spaceNotice',false,error.message);
+        this.$bus.$emit('spaceLoading',false,"发表中..!");
+        this.publishContent = '';
+      });
+      
     },
   },
   mounted() {

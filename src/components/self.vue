@@ -1,7 +1,7 @@
 // 个人界面
 <template>
 <transition name="selfboxT">
-  <div class="selfbox">
+  <div v-if="ifShow" class="selfbox">
       <!-- 背景 -->
       <div class="myback">
           <img :src="require(`../assets/Backs/${this.user.userBack}`)" alt="背景">
@@ -32,6 +32,7 @@ export default {
         return{
             // 该组件是否显示
             isShow:false,
+            ifShow:false,
         }
     },
     computed:{
@@ -49,6 +50,9 @@ export default {
         this.$bus.$on('functionchange',(data1,data2,data3)=>{
             this.isShow = data3;
         });
+        setTimeout(() => {
+            this.ifShow = true;
+        }, 100);
     }
 }
 </script>
