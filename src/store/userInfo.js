@@ -116,9 +116,26 @@ export default{
                 }
             )
         },
-
-
-
+        // 查询spaceWith数据库并全局保存
+        findSpaceWith(context,value){
+            axios.post('/api/selectSpaceWithByUserQQ',{userQQ:value}).then(response=>{
+                for(let val in response.data[0]){
+                    if(val=='spaceWithId'||val=='userQQ'){
+                      continue;
+                    }
+                  if(response.data[0][val]!=''){
+                    response.data[0][val] = response.data[0][val].split(',');
+                  }
+                  else{
+                    response.data[0][val] = [];
+                  }
+                  }
+                context.commit('SAVESPACEWITH',response.data[0]);
+            },
+            error=>{
+                console.log(error.message);
+            })
+        }
 
     },
     // 动作
@@ -195,6 +212,20 @@ export default{
         // 保存socket
         SAVESOCKET(state,value){
             state.socket = value;
+        },
+        // 保存spaceWith
+        SAVESPACEWITH(state,value){
+            state.spaceWith = value;
+        },
+        // 从spaceitem组件更新spaceWith
+        UPDATESPACEWITH(state,value){
+            // value:{operation:'collections',publishId:'1'}
+            state.spaceWith[value.operation].push(value.publishId);
+        },
+        // 从spaceitem组件删除spaceWith部分子元素
+        DELETESPACEWITH(state,value){
+            // value:{operation:'collections',publishId:'1'}
+            state.spaceWith[value.operation].remove(value.publishId);
         }
 
     },
@@ -212,5 +243,7 @@ export default{
         isBackUpdate:false,
         // socket
         socket:'',
+        // spaceWith
+        spaceWith:'',
     }
 }

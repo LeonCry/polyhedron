@@ -3,45 +3,103 @@
   <div class="commentsbox">
     <!-- 头像名字评论时间回复按钮 -->
     <div class="myhead">
-      <img src="../assets/touxiang2.jpg" alt="头像" />
+      <img v-if="comment" :src="require(`../assets/Heads/${comment.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>LeonCry</span>
-        <span>5-8 12:00</span>
+        <span>{{comment.user.userName}}<span>#{{comment.commentFloor}}楼</span></span>
+        <span>{{new Date(parseInt(comment.commentTime))
+                .toLocaleString()
+                .slice(5)}}</span>
         <img src="../assets/reply22.svg" alt="回复" @click="commentAppear"/>
       </div>
     </div>
     <!-- 评论内容 -->
     <div class="content">
-      评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容评论内容
+      {{comment.commentContent}}
     </div>
     <transition name="writecommentT">
         <!-- 评论input模块 -->
     <div v-show="isCommentShow" class="writecomment">
-      <input type="text" placeholder="写回复.." />
-      <button>回复</button>
+      <input type="text" v-model="replyCommentContent" placeholder="写回复.." />
+      <button @click="reply">回复</button>
     </div>
     </transition>
+      <!-- 回复者 -->
+      <reply v-for="replys of allReply" :key="replys.replyId" :replyProps="replys"></reply>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import reply from './reply.vue';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "comments",
+  components:{ reply },
+  props:['commentProps'],
+  computed:{
+    ...mapState('userInfo',['user']),
+  },
   data() {
     return {
         // 评论input的出现
         isCommentShow:false,
         // 评论按钮的出现
         isButtonShow:false,
+        // 单个comment对象
+        comment:this.commentProps,
+        // 评论内容---回复的是评论
+        replyCommentContent:'',
+        // 回复闪现刷新
+        replyReflsh:true,
+        // 所有评论
+        allReply:[],
     };
   },
+  created(){
+  this.$bus.$emit('spaceLoading',true,"评论加载中..");
+  this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
+  this.allReply = response.data;
+  console.log(response.data);
+  this.$bus.$emit('spaceLoading',false,"评论加载中..");
+},error=>{
+console.log(error.message);
+});
+},
   methods: {
     //   评论input的出现
     commentAppear() {
         this.isCommentShow = !this.isCommentShow;
     },
+  async reply(){
+   // 先发送请求返回该评论下的回复,查看自己是第几层
+   let layer = 0;
+        this.$bus.$emit('spaceLoading',true,"发表回复中..");
+        await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
+        if(response.data.length!=0){
+            layer = response.data[response.data.length-1]['replyFloor'];
+        }
+          this.$bus.$emit('spaceLoading',false,"发表回复中..");
+        },error=>{
+console.log(error.message);
+          });
+      if(this.replyCommentContent==''){this.$bus.$emit('spaceNotice',false,"回复内容不可为空!")}
+      else{
+        let data = {replySpaceId:this.comment.commentSpaceId,replyQQ:this.user.userQQ,replyContent:this.replyCommentContent,
+                    replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,isReplyComment:1,myFloor:layer+1,replyTime:Date.now()}
+        this.replyCommentContent='';            
+      await  this.$axios.post('/api/insertReply',data).then(response=>{
+          this.$bus.$emit('spaceNotice',true,"回复成功!");
+          // 刷新
+          this.$bus.$emit('refshReply',true);
+          
+        },error=>{
+          console.log(error.message);
+          
+        });
+        
+      }
+    }
   },
 };
 </script>

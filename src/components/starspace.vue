@@ -32,21 +32,21 @@
       <!-- 下拉框分类展示 -->
       <div v-show="isMySpace" class="seecategory">
         <img src="../assets/eyes.svg" alt="眼睛">
-        <select name="" id="">
-          <option value="">我的动态</option>
-          <option value="">好友动态</option>
-          <option value="">我点赞的</option>
-          <option value="">我点踩的</option>
-          <option value="">我收藏的</option>
-          <option value="">我分享的</option>
+        <select v-model="selects" @change="changeSpace">
+          <option value="mySpace">我的动态</option>
+          <option value="friendSpace">好友动态</option>
+          <option value="myGooder">我点赞的</option>
+          <option value="myNoGooder">我点踩的</option>
+          <option value="myCollection">我收藏的</option>
+          <option value="myShare">我分享的</option>
         </select>
       </div>
       <!-- 单个动态 -->
-      <spaceitem  :spaceProp="space" v-for="space of spaceSum" :key="space.publishId"></spaceitem>
-      
-      <space-loading></space-loading>
-      <space-notice></space-notice>
+      <spaceitem v-show="!isEmpty"  :spaceProp="space" v-for="space of allSpaceSum" :key="space.publishId"></spaceitem>
+      <img class="empty" v-show="isEmpty" src="../assets/empty.svg" alt="空的">
     </div>
+          <space-loading></space-loading>
+      <space-notice></space-notice>
   </div>
 </transition>
 </template>
@@ -77,11 +77,15 @@ export default {
       zIndex:6,
       spaceUser:'',
       spaceSum:[],
+      allSpaceSum:[],
+      selects:"mySpace",
+      // spaceitem是否为空
+      isEmpty:false,
     };
   },
   computed: {
     //改变聊天窗口的位置
-    ...mapState('userInfo',['user']),
+    ...mapState('userInfo',['user','spaceWith']),
     settingLocation() {
       return { top: this.poy - 30 + "px", left: this.pox - 100 + "px",zIndex:this.zIndex};
     },
@@ -107,6 +111,175 @@ export default {
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',7,6,6);
     },
+
+    // 改变可见的空间范围--我的/我点赞的/...
+    changeSpace(){
+      // 我的动态
+      if(this.selects=='mySpace'){
+          this.allSpaceSum = this.spaceSum;
+      }
+      // 好友的动态
+      else if(this.selects=='friendSpace'){
+        this.friendSpace();
+      }
+      // 我点赞的
+      else if(this.selects=='myGooder'){
+        this.myGooder();
+      }
+      // 我点踩的
+      else if(this.selects=='myNoGooder'){
+        this.myNoGooder();
+      }
+      // 我收藏的
+      else if(this.selects=='myCollection'){
+        this.myCollection();
+      }
+      // 我分享的
+      else if(this.selects=='myShare'){
+        this.myShare();
+      }      
+    },
+  // 好友的动态
+async friendSpace(){
+    // 首先查询关于我的好友列表
+  let friendSpaces = [];
+  this.$bus.$emit('spaceLoading',true,"加载好友动态..");
+  await this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
+    if(response.data.length==0){
+      // 空态
+      this.isEmpty = true;
+      this.$bus.$emit('spaceLoading',false,"..");
+    }
+    else{
+      this.isEmpty = false;
+            // 遍历每一个朋友
+      response.data.forEach(friend => {
+        // 对每一个朋友查询其动态
+        this.$axios.post('/api/selectSpaces',{publishQQ:friend.friendQQ,pageStart:0,pageEnd:9999}).then(response=>{
+          response.data.forEach(space => {
+            friendSpaces.push(space);
+            this.$bus.$emit('spaceLoading',false,"加载好友动态..");
+          });
+        },error=>{
+          console.log(error.message);
+        });
+        
+      });
+    }
+    },error=>{
+      console.log(error.message);
+      
+    });
+    // 排序方法:
+// person.sort((a,b)=>{ return a.age-b.age})//升序
+// person.sort((a,b)=>{ return b.age-a.age})//降序
+friendSpaces.sort((a,b)=>{return a.publishTime-b.publishTime});
+this.allSpaceSum = friendSpaces;
+  },
+    // 我点赞的
+async myGooder(){
+// 首先查询spacewith 数据库
+let goodsSpace = [];
+this.$bus.$emit('spaceLoading',true,"加载点赞动态..");
+if(this.spaceWith['goods'].length==0){
+  // 空态
+  this.isEmpty = true;
+   this.$bus.$emit('spaceLoading',false,"..");
+}
+else{
+  this.isEmpty = false;
+// foreach 不能使用 async await,forEach 属于并发操作 需要锁定住每一次循环体,for 不是并发操作 无需锁定每一次的循环
+for (let index = 0; index < this.spaceWith['goods'].length; index++) {
+  const goods = this.spaceWith['goods'][index];
+  await this.$axios.post('/api/selectSpacesById',{publishId:goods,pageStart:0,pageEnd:9999}).then(response=>{
+        goodsSpace.push(response.data[0]);
+        this.$bus.$emit('spaceLoading',false,"加载点赞动态..");
+        },error=>{
+          console.log(error.message);
+        });
+}
+goodsSpace.sort((a,b)=>{return a.publishTime-b.publishTime});
+this.allSpaceSum = goodsSpace;
+}
+  },
+    // 我点踩的
+async myNoGooder(){
+// 首先查询spacewith 数据库
+let goodsSpace = [];
+this.$bus.$emit('spaceLoading',true,"加载点赞动态..");
+if(this.spaceWith['noGoods'].length==0){
+  // 空态
+  this.isEmpty = true;
+   this.$bus.$emit('spaceLoading',false,"..");
+}
+else{
+this.isEmpty = false;
+// foreach 不能使用 async await,forEach 属于并发操作 需要锁定住每一次循环体,for 不是并发操作 无需锁定每一次的循环
+for (let index = 0; index < this.spaceWith['noGoods'].length; index++) {
+  const goods = this.spaceWith['noGoods'][index];
+  await this.$axios.post('/api/selectSpacesById',{publishId:goods,pageStart:0,pageEnd:9999}).then(response=>{
+        goodsSpace.push(response.data[0]);
+        this.$bus.$emit('spaceLoading',false,"加载点赞动态..");
+        },error=>{
+          console.log(error.message);
+        });
+}
+goodsSpace.sort((a,b)=>{return a.publishTime-b.publishTime});
+this.allSpaceSum = goodsSpace;
+}
+  },
+    // 我收藏的
+async myCollection(){
+// 首先查询spacewith 数据库
+let goodsSpace = [];
+this.$bus.$emit('spaceLoading',true,"加载点赞动态..");
+if(this.spaceWith['collections'].length==0){
+  // 空态
+  this.isEmpty = true;
+   this.$bus.$emit('spaceLoading',false,"..");
+}
+else{
+this.isEmpty = false;
+// foreach 不能使用 async await,forEach 属于并发操作 需要锁定住每一次循环体,for 不是并发操作 无需锁定每一次的循环
+for (let index = 0; index < this.spaceWith['collections'].length; index++) {
+  const goods = this.spaceWith['collections'][index];
+  await this.$axios.post('/api/selectSpacesById',{publishId:goods,pageStart:0,pageEnd:9999}).then(response=>{
+        goodsSpace.push(response.data[0]);
+        this.$bus.$emit('spaceLoading',false,"加载点赞动态..");
+        },error=>{
+          console.log(error.message);
+        });
+}
+goodsSpace.sort((a,b)=>{return a.publishTime-b.publishTime});
+this.allSpaceSum = goodsSpace;
+}
+  },
+    // 我分享的
+async  myShare(){
+// 首先查询spacewith 数据库
+let goodsSpace = [];
+this.$bus.$emit('spaceLoading',true,"加载点赞动态..");
+if(this.spaceWith['shares'].length==0){
+  // 空态
+  this.isEmpty = true;
+   this.$bus.$emit('spaceLoading',false,"..");
+}
+else{
+this.isEmpty = false;
+// foreach 不能使用 async await,forEach 属于并发操作 需要锁定住每一次循环体,for 不是并发操作 无需锁定每一次的循环
+for (let index = 0; index < this.spaceWith['shares'].length; index++) {
+  const goods = this.spaceWith['shares'][index];
+  await this.$axios.post('/api/selectSpacesById',{publishId:goods,pageStart:0,pageEnd:9999}).then(response=>{
+        goodsSpace.push(response.data[0]);
+        this.$bus.$emit('spaceLoading',false,"加载点赞动态..");
+        },error=>{
+          console.log(error.message);
+        });
+}
+goodsSpace.sort((a,b)=>{return a.publishTime-b.publishTime});
+this.allSpaceSum = goodsSpace;
+}
+  },
   },
   mounted() {
     //   实时监听鼠标移动,更改位置数据
@@ -127,6 +300,7 @@ export default {
             this.isShow = data1;
             this.isMySpace = data2;
             // 如果点击的是我的空间
+            this.$bus.$emit('spaceLoading',true,"加载动态..");
             if(this.isMySpace==true){
               this.spaceUser = this.user;
             }
@@ -134,16 +308,16 @@ export default {
             else{
               this.spaceUser = friendUser;
             }
-
             if(data1){
             // 进行数据库查询,因为进入不管是我的空间还是他人的空间,默认都是出现为 this.spaceUser 的空间内容,所以这里统一查询
             this.$axios.post('/api/selectSpaces',{publishQQ:this.spaceUser.userQQ,pageStart:0,pageEnd:10}).then(response=>{
               this.spaceSum = [],
               console.log(response.data);
-              
+              this.$bus.$emit('spaceLoading',false,"加载动态..");
               response.data.forEach(space => {
                 this.spaceSum.push(space);
               });
+              this.allSpaceSum = this.spaceSum;
             },error=>{
               console.log(error.message);
             });
@@ -294,6 +468,12 @@ export default {
   transition: 0.55s;
   background-color: rgba(47, 53, 66, 0);
   border: 0;
+}
+.empty{
+  width: 50%;
+  height: 50%;
+  position: relative;
+  left: 25%;
 }
 
 

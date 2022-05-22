@@ -235,6 +235,7 @@ export default {
       "uploadUserInfo",
       "uploadUserSetting",
       "saveAllusers",
+      "findSpaceWith"
     ]),
 
     // 成功/失败响应,停止loading旋转,并向loginx发送显示message
@@ -493,7 +494,16 @@ export default {
             this.smileShake();
             this.responseMessage("注册失败,用户已存在!");
           } else {
-            this.$bus.$emit("errormessage", "注册成功!");
+            // 注册SpaceWith
+            this.$axios.post('/api/insertSpaceWith',{userQQ:this.userNameState3}).then(response=>{
+              this.$bus.$emit("errormessage", "注册成功!");
+              console.log(response.data);
+            },error=>{
+              this.$bus.$emit("errormessage", error.message);
+            });
+            
+
+
             // 取消已输入的内容
             this.userNameState1 = this.userNameState3;
             this.userNameState3 = "";
@@ -614,7 +624,8 @@ export default {
                 this.getUserSetting(userQQ);
                 // 加入Websocket初始化
                 this.webSocketIntilization(userQQ);
-                
+                // spaceWith初始化
+                this.findSpaceWith(userQQ);
               }
             },
             (error) => {

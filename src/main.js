@@ -38,6 +38,21 @@ Vue.prototype.$axios = axios;
 
 Vue.config.productionTip = false
 
+// 数组添加remove方法
+Array.prototype.indexOf = function(val) {
+  for(var i = 0; i < this.length; i++) {
+    if(this[i] == val) return i;
+  }
+  return -1;
+};
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if(index > -1) {
+    this.splice(index, 1);
+  }
+};
+
+
 new Vue({
   beforeCreate(){
     Vue.prototype.$bus =this;

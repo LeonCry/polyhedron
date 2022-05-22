@@ -3,7 +3,7 @@
   <div v-if="space" class="spaceitembox">
     <!-- 头像网名 -->
     <div class="myhead">
-      <img :src="require('../assets/Heads/'+space.user.userHead)" alt="头像"/>
+      <img v-if="space.user.userHead" :src="require('../assets/Heads/'+space.user.userHead)" alt="头像"/>
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span>{{space.user.userName}}</span>
@@ -11,6 +11,9 @@
                 .toLocaleString()
                 .slice(5)}}</span>
       </div>
+<transition name="showpeopleT">
+    <show-people :peopleProps="peopleProps" :whichState="whichState"  v-if="peopleProps" ></show-people>
+</transition>
     </div>
     <!-- 内容 -->
     <div class="content">
@@ -25,34 +28,35 @@
         <img key="4" v-show="isLike" src="../assets/goodactive.svg" alt="点赞active" @click="likes" style="position: absolute;left:61%">
         <img key="5" v-show="!isNoLike" src="../assets/notgood.svg" alt="点踩" @click="noLikes" style="position: absolute;left:72%">
         <img key="6" v-show="isNoLike" src="../assets/notgoodactive.svg" alt="点踩active" @click="noLikes" style="position: absolute;left:72%">
-        <img key="7" src="../assets/share.svg" alt="分享" @click="shares">
+        <img key="7" v-show="isShare" src="../assets/share.svg" alt="分享" @click="shares">
         </transition-group>
     </div>
 
     <!-- 谁谁谁觉得很赞 -->
     <span class="whothinkgood">
-      <span>2人觉得很赞</span>
-      <span>2人分享了动态</span>
-      <span>2人收藏了动态</span>
+      <span @click="showPeople('gooder')">{{likePeople}}人觉得很赞</span>
+      <span @click="showPeople('sharer')">{{sharePeople}}人分享了动态</span>
+      <span @click="showPeople('collector')">{{collectionPeople}}人收藏了动态</span>
       </span>
 
     <!-- 写评论功能 -->
     <div class="writecomment">
-    <input  type="text" placeholder="写评论..">
-    <button>评论</button>
+    <input  type="text" v-model="commentContent" placeholder="写评论..">
+    <button @click="comment">评论</button>
     </div>
     <!-- 评论列表 -->
-    <commentbox></commentbox>
+    <commentbox v-if="commentRflesh" :spaceProps="space"></commentbox>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState,mapMutations } from 'vuex';
 import commentbox from './commentbox.vue';
+import ShowPeople from './showPeople.vue';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "spaceitem",
-  components:{commentbox},
+  components:{commentbox, ShowPeople},
   props:['spaceProp'],
   data(){
       return{
@@ -62,31 +66,97 @@ export default {
           isNoLike:false,
         //   状态:是否收藏
           isCollection:false,
+          // 是否分享
+          isShare:true,
+          // 喜欢该动态的人数
+          likePeople:0,
+          // 不喜欢该动态的人数
+          noLikePeople:0,
+          // 收藏该动态的人数
+          collectionPeople:0,
+          // 分享该动态的人数
+          sharePeople:0,
+          // 已经分享过了吗
+          hasShared:false,
           // 接收到的space信息
           space:this.spaceProp,
-          // 图像的显示
-          imgShow:false,
+          // 传送给showpeople的prop
+          peopleProps:'',
+          // 是点的分享还是觉得赞还是收藏状态
+          whichState:'',
+          // 评论内容
+          commentContent:'',
+          // 评论列表闪现刷新
+          commentRflesh:true,
       }
   },
   computed:{
-    ...mapState('userInfo',['user']),
+    ...mapState('userInfo',['user','spaceWith']),
+
   },
-  // created:{
-  //   create(){
-  //     this.space = this.spaceProp;
-  //   }
-  // },
+  created(){
+    // 初始化点赞\收藏操作,是否active
+    if(this.space.collector!=''){
+      this.collectionPeople = this.space.collector.split(',').length;
+      if(this.space.collector.split(',').includes(this.user.userQQ)){
+        this.isCollection = true;
+      }
+    }
+    if(this.space.gooder!=''){
+      this.likePeople = this.space.gooder.split(',').length;
+      if(this.space.gooder.split(',').includes(this.user.userQQ)){
+        this.isLike = true;
+      }
+    }
+    if(this.space.noGooder!=''){
+      this.noLikePeople = this.space.noGooder.split(',').length;
+      if(this.space.noGooder.split(',').includes(this.user.userQQ)){
+        this.isNoLike = true;
+      }
+    }
+    if(this.space.sharer!=''){
+      this.sharePeople = this.space.sharer.split(',').length;
+    }
+  
+  },
 
   methods:{
+
+    ...mapMutations('userInfo',['UPDATESPACEWITH','DELETESPACEWITH']),
     //   点击收藏
       collection(){
           this.isCollection = !this.isCollection;
+          // 如果是收藏
+          if(this.isCollection){
+            this.activeRequest("collector");
+            this.spaceWithAdd("collections");
+            this.collectionPeople++;
+          }
+          // 如果是取消收藏
+          else{
+            this.negetiveRequest("collector");
+            this.spaceWithRemove("collections");
+            this.collectionPeople--;
+          }
       },
     //   点击喜欢
       likes(){
           this.isLike = !this.isLike;
-          if(this.isLike && this.isNoLike){
+          if(this.isLike){
+            this.activeRequest("gooder");
+            this.spaceWithAdd("goods");
+            this.likePeople++;
+            if(this.isNoLike){
               this.isNoLike = false;
+              this.negetiveRequest("noGooder");
+              this.spaceWithRemove("noGoods");
+              this.noLikePeople--;
+            }
+          }
+          else{
+            this.negetiveRequest("gooder");
+            this.spaceWithRemove("goods");
+            this.likePeople--;
           }
       },
     //   点击不喜欢
@@ -94,20 +164,224 @@ export default {
           this.isNoLike = !this.isNoLike;
           if(this.isLike && this.isNoLike){
               this.isLike = false;
+              this.activeRequest("noGooder");
+              this.spaceWithAdd("noGoods");
+              this.negetiveRequest("gooder");
+              this.spaceWithRemove("goods");
+              this.likePeople--;
+              this.noLikePeople++;
+          }
+          else if(!this.isLike && this.isNoLike){
+            this.activeRequest("noGooder");
+            this.spaceWithAdd("noGoods");
+            this.noLikePeople++;
+          }
+          else{
+            this.negetiveRequest("noGooder");
+            this.spaceWithRemove("noGoods");
+            this.noLikePeople--;
           }
       },
     //   点击分享
       shares(){
-          console.log('分享');
+        this.shareAnimation();
+        // 如果我已经分享过这个动态了,就不添加到数据库和增加分享次数了
+        if(this.hasShared){
+          true;
+        }
+        else{
+           if(this.space.sharer!=''){
+              if(this.space.sharer.split(',').includes(this.user.userQQ)){
+                this.hasShared = true;
+              }
+              else{
+                this.activeRequest("sharer");
+                this.spaceWithAdd("shares");
+                this.sharePeople++;
+                this.hasShared = true;
+              }
+           }
+           else{
+                this.activeRequest("sharer");
+                this.spaceWithAdd("shares");
+                this.sharePeople++;
+                this.hasShared = true;
+           }
+        }
+      },
+
+      // share动画效果 + 弹出分享窗口
+      shareAnimation(){
+        this.isShare = false;
+        this.$bus.$emit('spaceNotice',true,"完成 share");
+           setTimeout(() => {
+            this.isShare = true;
+          }, 250);
+      },
+
+      // 展示觉得赞\分享\收藏的人
+      showPeople(state){
+        if(state=='gooder'){
+          this.peopleProps = this.space.gooder;
+          this.whichState = '觉得赞!';
+          if(!this.peopleProps){
+            this.$bus.$emit('spaceNotice',false,"暂时没有人觉得赞哦~");
+          }
+        }
+        else if(state=='collector'){
+          this.peopleProps = this.space.collector;
+          this.whichState = '收藏家们';
+          if(!this.peopleProps){
+            this.$bus.$emit('spaceNotice',false,"暂时没有人收藏哦~");
+          }
+        }
+        else{
+          this.peopleProps = this.space.sharer;
+          this.whichState = '分享者们';
+          if(!this.peopleProps){
+            this.$bus.$emit('spaceNotice',false,"暂时没有人分享哦~");
+          }
+        }
+      },
+        // 所有操作添加的发送请求
+      activeRequest(operation){
+        // 先获取该动态的ID,以及4个对应的数组
+        let publishId = this.space.publishId;
+        let custom = [];
+        if(this.space[operation]!=''){custom = this.space.collector.split(',');}
+        custom.push(this.user.userQQ);
+        this.space[operation] = custom.toString();     
+        // 构建传送参数json
+        let D = operation.toString();
+        let data = {};
+        data["publishId"] = publishId;
+        // eval() 函数作用: eval()可以接受一个字符串str作为参数,并把这个参数作为脚本代码来 执行。 :好东西
+        data[D] = this.space[operation];
+        // eslint-disable-next-line no-unused-vars
+        this.$axios.post('api/updateSpace',data).then(response=>{
+          this.$bus.$emit('spaceNotice',true,"完成"+operation);
+        },error=>{
+          this.$bus.$emit('spaceNotice',false,error.message);
+          
+        });
+          
+      },
+      // 所有操作取消添加的发送请求
+      negetiveRequest(operation){
+        // 先获取该动态的ID,以及4个对应的数组
+        let publishId = this.space.publishId;
+        let D = operation.toString();
+        let custom = [];     
+        if(this.space[D]!=''){custom = this.space.collector.split(',');}
+        if(custom.includes(this.user.userQQ)){custom.remove(this.user.userQQ);}
+        // 构建传送参数json,
+        // 此D 实际为collector/gooder等字符串,在json中以 json[D],可以将该D的字符串解析为变量 : 好用
+        this.space[D] = custom.toString();
+        let data = {};
+        data["publishId"] = publishId;
+        // eval() 函数作用: eval()可以接受一个字符串str作为参数,并把这个参数作为脚本代码来 执行。 :好用
+        data[D] = this.space[D];
+        console.log(data);
+        
+        // eslint-disable-next-line no-unused-vars
+        this.$axios.post('api/updateSpace',data).then(response=>{
+          this.$bus.$emit('spaceNotice',true,"取消"+operation);
+        },error=>{
+          this.$bus.$emit('spaceNotice',false,error.message);
+          
+        });
+          
+      },
+
+      // 所有与spacewith有关的操作
+      // 向数据库中添加
+      spaceWithAdd(operation){
+        this.UPDATESPACEWITH({operation:operation,publishId:this.space.publishId});
+        // this.spaceWith[operation].push(this.space.publishId);
+        // 再将数组转换成字符串
+        var spaceWithString={};
+        for (var val in this.spaceWith){
+          spaceWithString[val] = this.spaceWith[val].toString(); 
+        }
+        // console.log("spaceWithString:",spaceWithString);
+        // eslint-disable-next-line no-unused-vars
+        this.$axios.post('/api/updateSpaceWith',spaceWithString).then(response=>{
+          console.log("spaceWith添加成功!");
+        },error=>{
+          console.log(error.message);
+        });
+      },
+      // 向数据库中祛除
+      spaceWithRemove(operation){
+        this.DELETESPACEWITH({operation:operation,publishId:this.space.publishId});
+        // this.spaceWith[operation].remove(this.space.publishId);
+        // 再将数组转换成字符串
+        var spaceWithString={};
+        for (var val in  this.spaceWith){
+          spaceWithString[val] =this.spaceWith[val].toString();
+        }
+        // eslint-disable-next-line no-unused-vars
+        this.$axios.post('/api/updateSpaceWith',spaceWithString).then(response=>{
+          console.log("spaceWith祛除成功!");
+        },error=>{
+          console.log(error.message);
+        });
+      },
+
+
+      // 发表评论
+    async  comment(){
+        if(this.commentContent==''){this.$bus.$emit('spaceNotice',false,"评论内容不可为空")}
+        else{
+          // 先发送请求返回该ID下的评论,查看自己是第几楼
+          let floor = 0;
+        await  this.$axios.post('/api/selectCommentBySpaceId',{commentSpaceId:this.space.publishId,pageStart:0,pageEnd:9999}).then(response=>{
+            if(response.data.length!=0){
+              floor = response.data[response.data.length-1]['commentFloor'];
+            }
+          },error=>{
+            console.log(error.message);
+            
+          });
+          
+          // 发送请求,进行评论
+          let data = {commentSpaceId:this.space.publishId,commentQQ:this.user.userQQ,commentContent:this.commentContent,commentTime:Date.now(),commentFloor:floor+1}
+          this.commentContent = '';
+          // eslint-disable-next-line no-unused-vars
+          this.$axios.post('/api/insertComment',data).then(response=>{
+            this.$bus.$emit('spaceNotice',true,"评论成功!");
+            // 闪现刷新,获取最新的comment数据
+            this.commentRflesh = false;
+            setTimeout(() => {
+            this.commentRflesh = true;
+            }, 100);
+            
+          },error=>{
+            console.log(error.message);
+          });
+        }
       }
+
+
+
+
+
   },
   mounted(){
-    // 当全部加载完毕才显示img,防止出现 undefined
-    // this.imgShow = true;
-    // console.log(this.spaceProp);
-    // this.space = this.spaceProp;
-    // this.imgShow = true;
-
+    // 关闭showpeople组件
+    this.$bus.$on('showPeopleDisAppear',(data)=>{
+      this.peopleProps = data;
+    }),
+    
+    // reply 刷新
+    // eslint-disable-next-line no-unused-vars
+    this.$bus.$on('refshReply',(data)=>{
+                  // 闪现刷新,获取最新的comment数据
+            this.commentRflesh = false;
+            setTimeout(() => {
+            this.commentRflesh = true;
+            }, 100);
+    });
   }
 };
 </script>
@@ -257,6 +531,13 @@ export default {
 .operationT-leave-active{
     animation: bounce-top 0.55s both reverse;
 }
+
+.showpeopleT-enter-active{
+    animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.showpeopleT-leave-active{
+    animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
 @keyframes bounce-top {
   0% {
     -webkit-transform: translateY(-45px);
@@ -307,6 +588,22 @@ export default {
             transform: translateY(0px);
     -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
+    opacity: 1;
+  }
+}
+@keyframes swing-in-left-fwd {
+  0% {
+    -webkit-transform: rotateY(100deg);
+            transform: rotateY(100deg);
+    -webkit-transform-origin: left;
+            transform-origin: left;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+    -webkit-transform-origin: left;
+            transform-origin: left;
     opacity: 1;
   }
 }

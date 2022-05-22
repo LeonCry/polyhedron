@@ -1,14 +1,14 @@
 // 个人界面
 <template>
 <transition name="selfboxT">
-  <div v-if="ifShow" class="selfbox">
+  <div class="selfbox">
       <!-- 背景 -->
       <div class="myback">
-          <img :src="require(`../assets/Backs/${this.user.userBack}`)" alt="背景">
+          <img v-if="this.user.userBack" :src="require(`../assets/Backs/${this.user.userBack}`)" alt="背景">
       </div>
       <!-- 头像网名 -->
       <div class="myhead">
-          <img :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
+          <img v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
           <br>
           <!-- 网名 -->
           <span>[ {{user.userName}} ]</span>
@@ -50,9 +50,6 @@ export default {
         this.$bus.$on('functionchange',(data1,data2,data3)=>{
             this.isShow = data3;
         });
-        setTimeout(() => {
-            this.ifShow = true;
-        }, 100);
     }
 }
 </script>

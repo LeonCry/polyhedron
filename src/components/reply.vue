@@ -1,19 +1,21 @@
 // 回复组件
 <template>
-  <div class="commentsbox">
+  <div class="replybox">
     <!-- 头像名字评论时间回复按钮 -->
     <div class="myhead">
-      <img src="../assets/touxiang2.jpg" alt="头像" />
+      <img v-if="replys.user.userHead" :src="require(`../assets/Heads/${replys.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>LeonCry</span>
-        <span>5-8 12:00</span>
+        <span style="color:yellowgreen">{{replys.user.userName}}<span style="color:yellowgreen">#{{replys.myFloor}}层</span></span>
+        <span>{{new Date(parseInt(replys.replyTime))
+                .toLocaleString()
+                .slice(5)}}</span>
         <img src="../assets/reply20.svg" alt="回复" @click="commentAppear" />
       </div>
     </div>
     <!-- 评论内容 -->
     <div class="content">
-      回复内容回复内容回复内容回复内容回复内容回复内容回复内容回复内容回复内容
+      <span style="color:pink">@{{replys.targetUser.userName}}#{{replys.replyTargetFloor}}楼:</span>{{replys.replyContent}}
     </div>
     <transition name="writecommentT">
         <!-- 评论input模块 -->
@@ -29,9 +31,11 @@
 export default {
 // eslint-disable-next-line vue/multi-word-component-names
 name:'reply',
+props:['replyProps'],
 data() {
     return {
         isCommentShow:false,
+        replys:this.replyProps,
     };
   },
   methods: {
@@ -44,14 +48,15 @@ data() {
 </script>
 
 <style scoped>
-.commentsbox {
+.replybox {
   position: relative;
   width: 80%;
+  left: 10%;
   transition: 0.55s;
   margin-top: 10px;
   font-size: 1.6vh;
 }
-.commentsbox:hover div:nth-of-type(1) img{
+.replybox:hover div:nth-of-type(1) img{
     opacity: 1;
 }
 /* 头像名字评论时间回复按钮*/

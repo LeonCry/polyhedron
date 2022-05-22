@@ -4,7 +4,7 @@
         <div>
   <div v-show="isShow" class="frienditem">
       <!-- 头像 -->
-      <img :src="require(`../assets/Heads/${getUser.userHead}`)" alt="">
+      <img v-if="getUser.userHead" :src="require(`../assets/Heads/${getUser.userHead}`)" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -21,7 +21,7 @@
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
+              <img v-show="!getUser.noSpace" src="../assets/space.svg" alt="空间" @click="enterHerSpace">
                <img src="../assets/add.svg" alt="添加" @click="showAddMessage">
           </div>
       </div>
@@ -69,40 +69,47 @@ export default {
         },
         // 发送好友请求
         sendAddRequest(){
+            // 如果是friend组件下添加好友
+            let noticeEmit = 'friendNotice';
+            let loadingEmit = 'searchAddLoading';
+            if(this.getUser.noSpace){
+                noticeEmit = 'spaceNotice';
+                loadingEmit = 'spaceLoading';
+                }
             this.isAddMessageShow = false;
             // 如果是自己给自己发送请求
             if(this.user.userQQ==this.getUser.userQQ){
-                this.$bus.$emit('friendNotice',false,"不可以向自己发送好友请求");
+                this.$bus.$emit(noticeEmit,false,"不可以向自己发送好友请求");
                 this.addMessage = '';
                 return 0;
             }
             // loading 加载
-            this.$bus.$emit('searchAddLoading',true,"发送好友请求中..");
+            this.$bus.$emit(loadingEmit,true,"发送好友请求中..");
             // 向服务器发送添加好友请求
             var data = {"sendUserQQ":this.user.userQQ,"receiveUserQQ":this.getUser.userQQ,"noticeType":1,"remarks":this.addMessage,"noticeTime":Date.now()};
             this.addMessage = '';
             this.$axios.post('api/addOneNotice',data).then(
                 response=>{
                     // 已发送过请求
-                    this.$bus.$emit('searchAddLoading',false,"发送好友请求中..");
+                    this.$bus.$emit(loadingEmit,false,"发送好友请求中..");
                     if(response.data==-1){
-                        this.$bus.$emit('friendNotice',false,"您已向TA发送过好友请求了");
+                        this.$bus.$emit(noticeEmit,false,"您已向TA发送过好友请求了");
                     }
                     else if(response.data==-2){
-                        this.$bus.$emit('friendNotice',false,"对方已向你发送好友请求了");
+                        this.$bus.$emit(noticeEmit,false,"对方已向你发送好友请求了");
                     }
                     else if(response.data==-3){
-                        this.$bus.$emit('friendNotice',false,"你们已经成为好友啦");
+                        this.$bus.$emit(noticeEmit,false,"你们已经成为好友啦");
                     }
                     else{
                         console.log("添加好友:",response.data);
-                        this.$bus.$emit('friendNotice',true,"已向TA发送好友请求~");
+                        this.$bus.$emit(noticeEmit,true,"已向TA发送好友请求~");
                     }
                 },
                 error=>{
                     console.log(error.Message);
-                    this.$bus.$emit('searchAddLoading',false,"发送好友请求中..");
-                    this.$bus.$emit('friendNotice',false,error.Message);
+                    this.$bus.$emit(loadingEmit,false,"发送好友请求中..");
+                    this.$bus.$emit(noticeEmit,false,error.Message);
                     
                 });
             

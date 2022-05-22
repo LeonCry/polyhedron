@@ -358,6 +358,7 @@ export default {
     flex-flow: column nowrap;
     width: 280px;
     height: 600px;
+    border: 10px solid black;
     border-radius: 15px 0 0 15px;
     background-color: #1A191B;
     transition: 0.55s;
@@ -370,7 +371,7 @@ export default {
         border-radius: 30px;
         right: 20px;
         bottom: 100px;
-        box-shadow: -10px -10px 25px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
 }
 /* friend整个界面hover时带动search搜索框 */
 /* friend整个界面hover时带动好友添加框 */
