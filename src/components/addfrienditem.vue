@@ -65,7 +65,7 @@ export default {
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false);
+            this.$bus.$emit('spaceappear',true,false,this.getUser);
         },
         // 发送好友请求
         sendAddRequest(){
@@ -142,9 +142,9 @@ export default {
     color: rgba(255, 255, 255, 0.7)
 }
 .frienditem:hover{
-    background-color: rgba(61, 61, 61,1.0);
+    background-color: rgba(0, 0, 0, 1);
     border-radius: 50px 0 0 50px;
-    box-shadow: -8px 0 25px rgba(61, 61, 61, 1);
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 1);
     color:white;
 }
 /* 头像 */

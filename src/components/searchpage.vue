@@ -8,9 +8,7 @@
           <br>
           <span>查找到以下用户:</span>
           <hr class="hr">
-          <searchfrienditem></searchfrienditem>
-          <searchfrienditem></searchfrienditem>
-          <searchfrienditem></searchfrienditem>
+          <searchfrienditem v-for="friend of searchFriends" :key="friend.friendId" :friendProps="friend"></searchfrienditem>
       </div>
 </template>
 
@@ -22,7 +20,7 @@ export default {
     components:{searchfrienditem},
     data(){
         return{
-
+            searchFriends:[],
         }
     },
     methods:{
@@ -30,7 +28,13 @@ export default {
         quitSearchAddPage(){
             this.$bus.$emit('quitSearchPage',false,false);
         }
-    }
+    },
+    mounted(){
+        // 接收搜索界面发送来的搜索结果
+        this.$bus.$on('friendSearchResult',(data)=>{
+            this.searchFriends = data;
+        });
+    },
 }
 </script>
 
@@ -42,7 +46,7 @@ export default {
     overflow-x:hidden;
     overflow-y: auto;
     width: 100%;
-    background-color: rgba(0, 0, 0,0.9);
+    background-color: rgba(61, 61, 61,0.9);
     top: 30px;
     border-radius: 15px;
     height: 565px;
@@ -61,14 +65,14 @@ export default {
   height: 30px;
   cursor: pointer;
   text-align: center;
-  background-color: rgba(99, 110, 114, 0);
+  background-color: darkgray;
   color: pink;
   transition: 0.55s;
   margin-top: 1px;
   border: 0;
 }
 .quitbutton:hover{
-    background-color: rgba(30, 39, 46,1.0);
+    background-color: rgba(61, 61, 61,1);
     color: white;
 }
 .quitbutton img{

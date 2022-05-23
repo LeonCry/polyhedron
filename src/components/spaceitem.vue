@@ -337,7 +337,7 @@ export default {
           let floor = 0;
         await  this.$axios.post('/api/selectCommentBySpaceId',{commentSpaceId:this.space.publishId,pageStart:0,pageEnd:9999}).then(response=>{
             if(response.data.length!=0){
-              floor = response.data[response.data.length-1]['commentFloor'];
+              floor = response.data[0]['commentFloor'];
             }
           },error=>{
             console.log(error.message);

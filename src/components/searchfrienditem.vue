@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img src="../assets/touxiang.jpg" alt="">
+      <img v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -11,13 +11,11 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>用户名</span>
-                  <!-- 互粉信息 -->
-                  <img src="../assets/heart.svg" alt="互粉">
+                  <span>{{friend.user.userName}}</span><span v-show="friend.friendRemarkName">({{friend.friendRemarkName}})</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span>风不住的往北吹...</span>
+                  <span>{{friend.user.userSign}}</span>
               </div>
           </div>
           <!-- 个人空间 -->
@@ -34,13 +32,16 @@
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'searchfrienditem',
+    props:['friendProps'],
     data(){
         return{
             isShow:true,
             // 空间展示
             isSpaceShow:false,
+            friend:this.friendProps,
         }
     },
+        
     methods:{
         // 显示聊天框
         chatboxAppear(){
@@ -50,7 +51,7 @@ export default {
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false);
+            this.$bus.$emit('spaceappear',true,false,this.friend.user);
         }
     },
 
@@ -72,9 +73,9 @@ export default {
     color: rgba(255, 255, 255, 0.7)
 }
 .frienditem:hover{
-    background-color: rgba(61, 61, 61,1.0);
+    background-color: rgba(0, 0, 0, 1);
     border-radius: 50px 0 0 50px;
-    box-shadow: -8px 0 25px rgba(61, 61, 61, 1);
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 1);
     color:white;
 }
 /* 头像 */

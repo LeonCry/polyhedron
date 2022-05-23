@@ -15,34 +15,87 @@
     </div>
     <!-- 评论内容 -->
     <div class="content">
-      <span style="color:pink">@{{replys.targetUser.userName}}#{{replys.replyTargetFloor}}楼:</span>{{replys.replyContent}}
+      <span style="color:pink">回复 @{{replys.targetUser.userName}}#{{replys.replyTargetFloor}}{{floorOrLayer}}: </span>{{replys.replyContent}}
     </div>
     <transition name="writecommentT">
         <!-- 评论input模块 -->
     <div v-show="isCommentShow" class="writecomment">
-      <input type="text" placeholder="写回复.." />
-      <button>回复</button>
+      <input type="text" v-model="replyReplyContent" placeholder="写回复.." />
+      <button @click="replyReply">回复</button>
     </div>
     </transition>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 // eslint-disable-next-line vue/multi-word-component-names
 name:'reply',
-props:['replyProps'],
+props:['replyProps','commentProps'],
 data() {
     return {
         isCommentShow:false,
         replys:this.replyProps,
-    };
+        // 回复的是层还是楼
+        floorOrLayer:'层',
+        // 回复的回复的内容
+        replyReplyContent:'',
+        // 评论对象
+        comment:this.commentProps,
+    }
+  },
+  computed:{
+    ...mapState('userInfo',['user']),
+  },
+  created(){
+    if (this.replys.isReplyComment) {
+      this.floorOrLayer = '楼';
+    }
   },
   methods: {
     //   评论input的出现
     commentAppear() {
         this.isCommentShow = !this.isCommentShow;
     },
+
+    // 回复的回复
+  async replyReply(){
+   // 先发送请求返回该评论下的回复,查看自己是第几层
+   let layer = 0;
+        this.$bus.$emit('spaceLoading',true,"发表回复中..");
+        await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
+        if(response.data.length!=0){
+            layer = response.data[0]['myFloor'];
+            console.log(response.data);
+            console.log("layer:",layer);
+        }
+          this.$bus.$emit('spaceLoading',false,"发表回复中..");
+        },error=>{
+console.log(error.message);
+          });
+      if(this.replyReplyContent==''){this.$bus.$emit('spaceNotice',false,"回复内容不可为空!")}
+      else{
+        let data = {replySpaceId:this.comment.commentSpaceId,replyQQ:this.user.userQQ,replyContent:this.replyReplyContent,
+                    replyTargetQQ:this.replys.replyQQ,replyCommentFloor:this.comment.commentFloor,replyTargetFloor:this.replys.myFloor,isReplyComment:0,myFloor:layer+1,replyTime:Date.now()}
+        this.replyReplyContent='';            
+      // eslint-disable-next-line no-unused-vars
+      await  this.$axios.post('/api/insertReply',data).then(response=>{
+          this.$bus.$emit('spaceNotice',true,"回复成功!");
+          // 刷新
+          this.$bus.$emit('refshReply',true);
+        },error=>{
+          console.log(error.message);
+        });
+      }
+    },
+
+
+
+
+
+
+
   },
 }
 </script>

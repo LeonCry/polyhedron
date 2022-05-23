@@ -1,7 +1,7 @@
 <template>
     <transition appear name="logoT">
   <div :class="logopullup">
-      <img src="../assets/logo.svg" alt="logo"/>
+      <img v-if="src" :src="require(`../assets/${src}`)" alt="logo"/>
   </div>
   </transition>
 </template>
@@ -12,8 +12,18 @@ export default {
     name:'mains',
     data(){
       return{
-        logopullup:''
+        logopullup:'',
+        src:'LOGOX.svg',
+        srcArray:['LOGOX.svg','LOGOY.svg'],
+        srcCount:0,
       }
+    },
+    created(){
+      setInterval(() => {
+        let x = 0;
+        if(this.srcCount++%2==0){x=0}else{x=1}
+        this.src = this.srcArray[x];
+      }, 12000);
     },
     mounted(){
       // 收到来自兄弟组件的islogin信息,并改变logo位置
@@ -50,14 +60,17 @@ div{
 .logoT-enter-to,.logoT-leave{
     opacity: 1;
 }
+
+
+
 /* logo闪烁样式 */
 img{
 -webkit-animation: flicker-4 4s linear infinite both;
  animation: flicker-4 4s linear infinite both;
 }
 img:hover{
-	-webkit-animation: rotate-in-hor 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-	animation: rotate-in-hor 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+-webkit-animation: flicker-4 1s linear infinite both;
+ animation: flicker-4 1s linear infinite both;
 }
 /* logohover动画 */
 @keyframes rotate-in-hor {
@@ -77,6 +90,12 @@ img:hover{
   0%,
   100% {
     opacity: 1;
+  }
+  0%,1%{
+    opacity: 0;
+  }
+     98% ,100% {
+    opacity: 0;
   }
   31.98% {
     opacity: 1;
@@ -139,7 +158,7 @@ img:hover{
     opacity: 1;
   }
   98.98% {
-    opacity: 1;
+    opacity: 0;
   }
   99% {
     opacity: 0;
@@ -148,8 +167,9 @@ img:hover{
     opacity: 0;
   }
   99.62% {
-    opacity: 1;
+    opacity: 0;
   }
+
 }
 
 /* logo上升的动画 */

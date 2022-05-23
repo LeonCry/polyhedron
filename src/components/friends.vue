@@ -76,7 +76,7 @@
     <transition name="searchT" appear>
       <!-- 好友搜索框 -->
       <div v-show="isSearch" class="searchbox">
-          <input type="text"  placeholder="好友搜索..." @focus="searchFriend" v-model="searchContent">
+          <input type="text"  placeholder="好友搜索..."  @focus="searchFriend" @input="searchFriendRequest" v-model="searchContent">
       </div>
       </transition>
 
@@ -199,11 +199,6 @@ export default {
                 
             });
         },
-
-
-
-
-
         // 个人-功能
         selectSelf(){
             // 控制flex长度以及背景颜色
@@ -264,12 +259,33 @@ export default {
             }
 
         },
-        // 搜索好友搜索框中@change状态
+        // 搜索好友搜索框中@foccus
         searchFriend(){
             setTimeout(() => {
                this.isSearchPageShow = true; 
             }, 500);
+        },
+        // 搜索好友发送请求
+        searchFriendRequest(){
+            if(this.searchContent == ''){
+                 this.$bus.$emit('friendSearchResult',[]);
+            }
+            else{
+            this.$axios.post('/api/searchFriendList',{userQQ:this.user.userQQ,friendQQ:this.searchContent}).then(response=>{
+                this.$bus.$emit('friendSearchResult',response.data);
+                console.log(response.data);
+            },error=>{
+                console.log(error.message);
+                
+            });
+            }
+
+            
         }
+
+
+
+
     },
     mounted(){
         // 接收来自user组件进行开关展示
@@ -312,7 +328,7 @@ export default {
     transition: 0.55s;
     border-radius: 20px;
     background-color: #1A191B;
-    top: 140px;
+    top: 120px;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
 }   
 /* 输入框 */
@@ -378,7 +394,7 @@ export default {
 .friend:hover~div{
         transition-delay:0.2s;
         right: 20px;
-        top: 130px;
+        top: 100px;
         box-shadow: -10px -10px 25px rgba(0, 0, 0, 0.8);
 }
 

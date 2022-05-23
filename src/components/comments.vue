@@ -25,7 +25,7 @@
     </div>
     </transition>
       <!-- 回复者 -->
-      <reply v-for="replys of allReply" :key="replys.replyId" :replyProps="replys"></reply>
+      <reply v-for="replys of allReply" :key="replys.replyId" :replyProps="replys" :commentProps="comment"></reply>
   </div>
 </template>
 
@@ -58,7 +58,7 @@ export default {
   },
   created(){
   this.$bus.$emit('spaceLoading',true,"评论加载中..");
-  this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
+  this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
   this.allReply = response.data;
   console.log(response.data);
   this.$bus.$emit('spaceLoading',false,"评论加载中..");
@@ -75,9 +75,11 @@ console.log(error.message);
    // 先发送请求返回该评论下的回复,查看自己是第几层
    let layer = 0;
         this.$bus.$emit('spaceLoading',true,"发表回复中..");
-        await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
+        await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
         if(response.data.length!=0){
-            layer = response.data[response.data.length-1]['replyFloor'];
+            layer = response.data[0]['myFloor'];
+            console.log("layer:",layer);
+            
         }
           this.$bus.$emit('spaceLoading',false,"发表回复中..");
         },error=>{
@@ -86,8 +88,9 @@ console.log(error.message);
       if(this.replyCommentContent==''){this.$bus.$emit('spaceNotice',false,"回复内容不可为空!")}
       else{
         let data = {replySpaceId:this.comment.commentSpaceId,replyQQ:this.user.userQQ,replyContent:this.replyCommentContent,
-                    replyTargetQQ:this.comment.commentQQ,replyTargetFloor:this.comment.commentFloor,isReplyComment:1,myFloor:layer+1,replyTime:Date.now()}
+                    replyTargetQQ:this.comment.commentQQ,replyCommentFloor:this.comment.commentFloor,replyTargetFloor:this.comment.commentFloor,isReplyComment:1,myFloor:layer+1,replyTime:Date.now()}
         this.replyCommentContent='';            
+      // eslint-disable-next-line no-unused-vars
       await  this.$axios.post('/api/insertReply',data).then(response=>{
           this.$bus.$emit('spaceNotice',true,"回复成功!");
           // 刷新
@@ -95,9 +98,7 @@ console.log(error.message);
           
         },error=>{
           console.log(error.message);
-          
         });
-        
       }
     }
   },

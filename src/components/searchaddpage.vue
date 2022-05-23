@@ -110,7 +110,7 @@ export default {
     overflow-x:hidden;
     overflow-y: auto;
     width: 100%;
-    background-color: rgba(0, 0, 0,0.9);
+    background-color: rgba(61, 61, 61,0.9);
     top: 30px;
     border-radius: 15px;
     height: 565px;
@@ -129,14 +129,14 @@ export default {
   height: 30px;
   cursor: pointer;
   text-align: center;
-  background-color: rgba(99, 110, 114, 0);
+  background-color: darkgray;
   color: pink;
   transition: 0.55s;
   margin-top: 1px;
   border: 0;
 }
 .quitbutton:hover{
-    background-color: rgba(30, 39, 46,1.0);
+    background-color: rgba(61, 61, 61,0.9);
     color: white;
 }
 .quitbutton img{

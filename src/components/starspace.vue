@@ -312,12 +312,14 @@ this.allSpaceSum = goodsSpace;
             // 进行数据库查询,因为进入不管是我的空间还是他人的空间,默认都是出现为 this.spaceUser 的空间内容,所以这里统一查询
             this.$axios.post('/api/selectSpaces',{publishQQ:this.spaceUser.userQQ,pageStart:0,pageEnd:10}).then(response=>{
               this.spaceSum = [],
-              console.log(response.data);
               this.$bus.$emit('spaceLoading',false,"加载动态..");
               response.data.forEach(space => {
                 this.spaceSum.push(space);
               });
               this.allSpaceSum = this.spaceSum;
+              if(this.allSpaceSum.length==0){
+                this.isEmpty = true;
+              }
             },error=>{
               console.log(error.message);
             });
