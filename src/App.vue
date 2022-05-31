@@ -63,7 +63,7 @@ export default {
     /*滚动条里面小方块*/
     border-radius: 100px;
     background-color: rgba(99, 110, 114, 0.1);
-    border: 0.12px solid rgba(0,0,0,0.5);
+    border: 0.12px solid rgba(255, 255, 255, 0.2);
     background-image: -webkit-linear-gradient(90deg,
             transparent 0%, rgba(99, 110, 114, 0.1),
             transparent 50%,rgba(99, 110, 114, 0.1),

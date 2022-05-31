@@ -6,7 +6,7 @@
     <!-- 表情图片 -->
     <div>
       <img src="../assets/exsmile.svg" alt="表情" @click="emojiShow" />
-      <img src="../assets/picture.svg" alt="图片" />
+        <img src="../assets/picture.svg" alt="图片" @click="pictureShow"/>
     </div>
     <transition name="emojiT">
       <emojispace v-show="isEmojiShow"></emojispace>
@@ -39,6 +39,7 @@ export default {
       // 收到的emoji
       receiveEmoji: "",
       publishContent:'',
+      pictureFile : '',
     };
   },
   computed:{
@@ -61,9 +62,8 @@ export default {
     },
     // 发表,进行存数据库
     publish(){
-      // loading加载
       this.$bus.$emit('spaceLoading',true,"发表中..!");
-      this.publishContent = this.$refs.typetext.innerHTML;
+      this.publishContent = this.$refs.typetext.innerHTML.replaceAll("<img","<img style='max-width:350px;max-height:600px'");
       this.$refs.typetext.innerHTML = '';
       let data = {publishQQ:this.user.userQQ,spaceContent:this.publishContent,publishTime:Date.now()};
       this.$axios.post('/api/addOneSpace',data).then(response=>{
@@ -72,6 +72,7 @@ export default {
         this.$bus.$emit('spaceLoading',false,"发表中..!");
         this.publishContent = '';
         // 发表成功之后应该再请求一次服务器,或者直接将发表的内容传回给starspace,以用来新增一个space
+        this.$bus.$emit('spaceappear',true,true);
       },error=>{
         this.$bus.$emit('spaceNotice',false,error.message);
         this.$bus.$emit('spaceLoading',false,"发表中..!");
@@ -79,12 +80,38 @@ export default {
       });
       
     },
+            // 去除粘贴样式
+        removePasteStyle(event){
+        var e = event || window.event
+        // 阻止默认粘贴
+        if(e.clipboardData.getData('text/plain')==''){
+            return 0; 
+        }    
+        e.preventDefault();
+        // 粘贴事件有一个clipboardData的属性，提供了对剪贴板的访问
+        // clipboardData的getData(fomat) 从剪贴板获取指定格式的数据
+        var text =  (e.originalEvent || e).clipboardData.getData('text/plain');
+        //清除回车
+        text = text.replace(/\[\d+\]|\n|\r/ig,"")
+        // 插入
+        console.log("阻止默认粘贴");
+        this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
+        },
+   // 图片提示
+    pictureShow(){
+      this.$bus.$emit('spaceNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.");
+    },
+
   },
   mounted() {
     // 接收emoji组件的emoji信息,进行添加到输入框
     this.$bus.$on("spaceemoji", (emojitext) => {
       this.receiveEmoji = emojitext;
     });
+        //  监听 输入框的粘贴动作,去除粘贴样式
+        this.$refs.typetext.addEventListener('paste',(e)=>{
+            this.removePasteStyle(e);
+        })
   },
   beforeDestroy() {
     this.$bus.$off("spaceemoji");
@@ -131,6 +158,21 @@ export default {
   margin-right: 20px;
   cursor: pointer;
 }
+
+.upload{
+  cursor: pointer;
+  position: absolute;
+  width: 20px;
+  height: 50px;
+  z-index: 1;
+  opacity: 0;
+}
+.upload~img{
+  position: absolute;
+  cursor: pointer;
+  
+}
+
 /* 发表按钮 */
 button {
   position: relative;

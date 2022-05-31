@@ -12,7 +12,7 @@
       <img src="../assets/exit2.svg" alt="退出" @click="exitChat" />
     </div>
     <!-- 内容 -->
-    <div class="content">
+    <div class="content" ref="contents">
       <!-- 背景和头像 -->
       <div class="backandhead">
         <!-- 背景 -->
@@ -101,6 +101,8 @@ export default {
       this.isMove = true;
       console.log(this.isMove);
     },
+
+ // 判断滚动条是否滑动到了底部------(搁置,以后再说)
     // 退出按钮
     exitChat() {
       this.isShow = false;
@@ -331,6 +333,8 @@ this.allSpaceSum = goodsSpace;
         this.$bus.$on('changeZindex',(spaceZ)=>{
           this.zIndex = spaceZ;
         });
+        // 滚动条滚动到底部的触发函数------(搁置,以后再说,需要考虑到5个场景的下滑触发)
+
 
   },
   beforeDestroy(){

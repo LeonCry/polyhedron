@@ -37,9 +37,9 @@
               <!-- 表情图标 -->
               <div>
                   <img src="../assets/exsmile.svg" alt="表情" @click="emojiShow">
-                  <img src="../assets/picture.svg" alt="图片">
-                  <img src="../assets/video.svg" alt="字体">
-                  <img src="../assets/wind.svg" alt="吹一吹">
+                  <img src="../assets/picture.svg" alt="图片" @click="pictureShow">
+                  <img ref="video" src="../assets/video.svg" alt="视频" @click="videoShow">
+                  <img ref="wind" src="../assets/wind.svg" alt="吹一吹" @click="windShow">
               </div>
               <!-- 收起侧边栏 -->
               <div>
@@ -47,12 +47,12 @@
               </div>
           </div>
           <!-- 键入文字栏 -->
-          <div  contenteditable ref="typetext" :class="{typetextactive:SendActice,typetext:!SendActice}"  @focus="emojiDisappear" @keydown.enter.prevent="sendMessage" @keydown.shift.enter="iskeyEnter = true"> 
+          <div  contenteditable ref="typetext" :class="{typetextactive:SendActice,typetext:!SendActice}"  @focus="emojiDisappear" @keydown.enter="sendMessage" @keydown.shift.enter="iskeyEnter = true"> 
               
           </div>
         <button @click="sendMessage" :class="{sendMessageActive:SendActice,sendMessage:!SendActice}">发送/Enter</button>
       </div>
-
+    <video-chat-fake></video-chat-fake>
   </div>
 </transition>
 </template>
@@ -63,11 +63,12 @@ import emoji from './emoji.vue';
 import { mapState } from 'vuex';
 import rightchater from './rightchater.vue';
 import ChatLoading from './chatLoading.vue';
+import VideoChatFake from './videoChatFake.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,emoji,rightchater, ChatLoading},
+  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake},
   data(){
       return{
         //   是否展示该组件--聊天窗口
@@ -164,7 +165,19 @@ export default {
         // 退出按钮
         exitChat(){
             this.isShow = false;
+            this.receiveChatsSum = [];
         },
+           // 图片提示
+    pictureShow(){
+      this.$bus.$emit('chatNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.");
+    },
+    // 视频通话
+    videoShow(){
+      this.$bus.$emit('videoChatFake',{friendQQ:this.friend.friendQQ,userQQ:this.user.userQQ});
+    },
+    windShow(){
+
+    },
         // 当前窗口鼠标点击改变index
         changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
@@ -181,9 +194,16 @@ export default {
         },
         // 发送消息
         sendMessage(){
+           setTimeout(() => {    
             // 如果为空
             if(this.$refs.typetext.innerHTML == ''){
                 console.log("空");
+            }
+            else if (this.iskeyEnter){
+                console.log("是换行"); 
+                setTimeout(() => {
+                    this.iskeyEnter = false;
+                }, 20);
             }
             else{
                 // this.sendWSPush("socket测试...");
@@ -200,10 +220,7 @@ export default {
             setTimeout(() => {
                this.$refs.typetext.innerHTML = ''; 
                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
-            }, 10);
-            }
-            else{
-                this.iskeyEnter = false; 
+            }, 20);
             }
             }, 100);
 
@@ -212,11 +229,8 @@ export default {
             }, 350);
 
             }
-           
+           }, 5); 
         },
-
-
-
 
         // 特殊字符替换
         strRplace(){
@@ -224,7 +238,11 @@ export default {
             // split . join另一种方法,但是只能在中间
             // this.message.split("&nbsp;").join(" ");
             // this.message.replaceAll("&nbsp;"," ");    
-            this.message = this.message.replace("<img","<img style='max-width:400px;max-height:400px'");
+            this.message = this.message.replaceAll("<img","<img style='max-width:400px;max-height:400px'");
+            // 去掉enter造成的换行出现
+            let pre = this.message.substring(0,this.message.lastIndexOf("<br>"));
+            let last = this.message.substring(this.message.lastIndexOf("<br>")+4);
+            this.message = pre + last;
             // this.message = this.message.replace("<img","<div><img");
         },
         // 判断滚动条是否滑动到了顶部
@@ -281,10 +299,6 @@ export default {
             
         },
 
-        // 接收通过socket返回的消息
-        receiveBySocket(data){
-            console.log("接收到的socket信息:",data);
-        },
         // 去除粘贴样式
         removePasteStyle(event){
         var e = event || window.event
@@ -301,7 +315,31 @@ export default {
         // 插入
         console.log("阻止默认粘贴");
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
-        }
+        },
+        // 接收来自videoFake的消息,存储到数据库中
+        videoMessage(message){
+            // 如果是正在拨打中...此条消息不参与发送
+            if(message=="A9wadv正在拨打..."){
+                this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:message}));
+            }
+            else{
+            let msg = '  📞  ' + message;
+            // 先socket发送消息
+            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:msg}));
+            this.receiveChatsSum.push({chatContent:msg,chatTime:Date.now()});
+            // 再向数据库中添加消息
+            this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:msg,chatTime:Date.now()}).then(response=>{
+                console.log("添加成功",response.data);
+            },error=>{
+                console.log(error.message);
+            });
+            setTimeout(() => {
+               this.$refs.typetext.innerHTML = ''; 
+               this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+            }, 20);
+            }
+
+        },
 
 
         
@@ -323,7 +361,10 @@ export default {
         this.$refs.typetext.addEventListener('paste',(e)=>{
             this.removePasteStyle(e);
         })
-            
+            // 接收来自videoFake的消息,存储到数据库中
+            this.$bus.$on('videoMessage',(message)=>{
+                this.videoMessage(message);
+            })
             
             
             
@@ -331,6 +372,7 @@ export default {
             // 进行展示与否
         this.$bus.$on('chatboxappear',(data1)=>{
                 this.isShow = data1;
+                this.receiveChatsSum = [];
                 setTimeout(() => {
                     this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
                 }, 50);
@@ -362,15 +404,25 @@ export default {
 
         // 接收来自socket的消息
         this.$bus.$on('getSocketMessage',(data)=>{
-            console.log(data);
             // 如果当前聊天对象发送给我的消息,则直接展示,否则存入数据库(存入数据库已做)
             if(data.from==this.friend.friendQQ && data.to==this.user.userQQ){
+                // 如果是我接收到的正在拨打的语音消息
+                if(data.text=="A9wadv正在拨打..."){
+                    // 则唤醒拨打电话的div
+                    this.$bus.$emit('receiveVideo',{friendQQ:this.friend.friendQQ,userQQ:this.user.userQQ});
+                }
+                else if(data.text.substring(0,6)=="A9wadv"){
+                    console.log("我选择不做任何事"); 
+                }
+                else{
                 // 构建合法的Json
                 var receive = {sendUserQQ:this.friend.friendQQ,receiveUserQQ:this.user.userQQ,chatContent:data.text,chatTime:Date.now()};
                 this.receiveChatsSum.push(receive);
                 setTimeout(() => {
                 this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;     
                 }, 10);
+                }
+
             }
             
         })
@@ -457,6 +509,7 @@ export default {
     display: flex;
     flex-flow: column nowrap;
     justify-content: left;
+    overflow-x: hidden;
     overflow-y: auto;
     height: 100%;
     flex: 10;

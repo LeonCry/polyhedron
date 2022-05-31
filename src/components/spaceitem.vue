@@ -16,8 +16,8 @@
 </transition>
     </div>
     <!-- 内容 -->
-    <div class="content">
-        {{space.spaceContent}}
+    <div class="content" ref="content">
+        
     </div>
 <!-- 点赞收藏等操作 -->
     <div class="operation">
@@ -138,6 +138,10 @@ export default {
             this.spaceWithRemove("collections");
             this.collectionPeople--;
           }
+      },
+      // 将发表的内容插入到item内,就有样式了
+      contentInsert(){
+        this.$refs.content.innerHTML = this.space.spaceContent;
       },
     //   点击喜欢
       likes(){
@@ -382,6 +386,8 @@ export default {
             this.commentRflesh = true;
             }, 100);
     });
+    // 将发表的内容插入到item内,就有样式了
+    this.$refs.content.innerHTML = this.space.spaceContent;
   }
 };
 </script>

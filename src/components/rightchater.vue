@@ -19,7 +19,7 @@
   <!-- 左侧聊天 -->
     <div v-if="chat.sendUserQQ==friend.friendQQ" class="leftchaterbox">
       <!-- 头像 -->
-      <img v-if="this.friend.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
+      <img v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
       <!-- 消息box -->
     <div>
     <div ref="chatcontent" class="chatcontent">

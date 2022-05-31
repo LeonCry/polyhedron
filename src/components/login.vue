@@ -103,13 +103,14 @@
         <div class="options">
           <transition-group name="optionsT" appear>
             <button key="1" @click="isoption = !isoption">·+·</button>
-            <button key="2" v-show="isoption" @click="QQquickLogin">
-              QQ快速登录
+            <div v-show="isPrompt" key="2" class="promt">更多登录选项</div>
+            <button key="3" v-show="isoption" @click="QQquickLogin" disabled>
+              QQ快速登录(暂停使用)
             </button>
-            <button key="3" v-show="isoption" @click="fogetPassword">
+            <button key="4" v-show="isoption" @click="fogetPassword">
               忘记密码
             </button>
-            <button key="4" v-show="isoption" @click="register">
+            <button key="5" v-show="isoption" @click="register">
               用户注册
             </button>
           </transition-group>
@@ -181,6 +182,8 @@ export default {
       verfirytime: "",
       // 前端接收到的验证码
       receiveCode: "",
+      // 更多登录选项的说明
+      isPrompt: false,
       // 登录界面:判断是哪个登录界面,从而控制button的请求信息
       // 1:正常登录 2:QQ快速登录 3:忘记密码 4:用户注册
       loginWhere: 1,
@@ -235,7 +238,7 @@ export default {
       "uploadUserInfo",
       "uploadUserSetting",
       "saveAllusers",
-      "findSpaceWith"
+      "findSpaceWith",
     ]),
 
     // 成功/失败响应,停止loading旋转,并向loginx发送显示message
@@ -405,7 +408,40 @@ export default {
           }
           // 成功登录
           else {
-            this.loginSuccess();
+            this.loginSuccess(this.userNameState1);
+          }
+        },
+        (error) => {
+          this.smileShake();
+          this.responseMessage(error.message);
+        }
+      );
+    },
+    // QQ登陆
+    QQLogin() {
+      var data1 = {
+        userQQ: "A9wadv"+this.userNameState2,
+        userPassword: ".........",
+      };
+      this.$axios.post("/api/userLogin", data1).then(
+        (response) => {
+          console.log("请求成功了!", response.data);
+          // 读取返回的响应码
+          var responseCode = response.data;
+          // loading取消旋转
+          this.loginingStatae = false;
+          // 未找到该用户
+          if (responseCode == 0) {
+            this.smileShake();
+            this.responseMessage("未查找到该用户,请先注册哦~");
+          }
+          // 密码错误
+          else if (responseCode == -1) {
+            this.passwordError();
+          }
+          // 成功登录
+          else {
+            this.loginSuccess("A9wadv"+this.userNameState2);
           }
         },
         (error) => {
@@ -436,13 +472,13 @@ export default {
       }
     },
     // 正常登陆--登录成功
-    loginSuccess() {
+    loginSuccess(userQQ) {
       this.responseMessage("登录成功!");
       setTimeout(() => {
         // 取得该用户的所有信息
-        this.getUserInfo(this.userNameState1);
+        this.getUserInfo(userQQ);
         // 取得该用户的设置信息
-        this.getUserSetting(this.userNameState1);
+        this.getUserSetting(userQQ);
         // 登录成功,进入主界面
       }, 2500);
       setTimeout(() => {
@@ -495,14 +531,17 @@ export default {
             this.responseMessage("注册失败,用户已存在!");
           } else {
             // 注册SpaceWith
-            this.$axios.post('/api/insertSpaceWith',{userQQ:this.userNameState3}).then(response=>{
-              this.$bus.$emit("errormessage", "注册成功!");
-              console.log(response.data);
-            },error=>{
-              this.$bus.$emit("errormessage", error.message);
-            });
-            
-
+            this.$axios
+              .post("/api/insertSpaceWith", { userQQ: this.userNameState3 })
+              .then(
+                (response) => {
+                  this.$bus.$emit("errormessage", "注册成功!");
+                  console.log(response.data);
+                },
+                (error) => {
+                  this.$bus.$emit("errormessage", error.message);
+                }
+              );
 
             // 取消已输入的内容
             this.userNameState1 = this.userNameState3;
@@ -593,6 +632,95 @@ export default {
           this.forgetPassword();
         }
       }
+      // 如果是快速登录界面
+      if (this.loginWhere == 2) {
+        let response1 = false;
+        // 空态校验
+        if (this.userNameState2 == "") {
+          this.smileShake();
+          this.$bus.$emit("errormessage", "请输入QQ号");
+        } else {
+          // 向QQ发送请求
+          this.$axios
+            .get("https://api.usuuu.com/qq/" + this.userNameState2)
+            .then(
+              (response) => {
+                console.log(response.data);
+                // 登录不成功
+                if (response.data.code != "200") {
+                  this.smileShake();
+                  this.$bus.$emit("errormessage", response.msg);
+                }
+                // 登录成功
+                else {
+                  this.responseMessage("登录成功!");
+                  // 查询数据库中有没有这个以QQ号登录的用户
+                  this.$axios
+                    .post("/api/userLogin", {
+                      userQQ: "A9wadv" + this.userNameState2,
+                      userPassowrd: ".........",
+                    })
+                    .then(
+                      (response) => {
+                        // 用户第一次以QQ号登录,则为他注册
+                        if (response.data == 0) {
+                          var data4 = {
+                            userQQ: "A9wadv" + this.userNameState2,
+                            userPassword: ".........",
+                            userEmail: this.userNameState2 + "@qq.com",
+                          };
+                          this.$axios.post("/api/userRegister", data4).then(
+                            (response) => {
+                              response1 = true;
+                              console.log("注册:", response.data);
+                              // 注册成功后,为其更改用户名和头像----------搁浅(放最后面做)
+                              // this.$axios.post('/api/',).then(response=>{},error=>{});
+                              
+
+
+                                // 注册SpaceWith
+                                this.$axios
+                                  .post("/api/insertSpaceWith", {
+                                    userQQ: "A9wadv" + this.userNameState2,
+                                  })
+                                  .then(
+                                    (response) => {
+                                      console.log(response.data);
+                                    },
+                                    (error) => {
+                                      this.$bus.$emit(
+                                        "errormessage",
+                                        error.message
+                                      );
+                                    }
+                                  );
+                            },
+                            (error) => {
+                              console.log(error.message);
+                            }
+                          );
+                        }
+                      var interId = setInterval(() => {
+                          if(response1 || response.data){
+                        // 说明用户已经注册过了,直接登录
+                        console.log("数据库已存在该用户");
+                        this.QQLogin();
+                        clearInterval(interId);
+                          }
+                        }, 1000);
+                      },
+                      (error) => {
+                        console.log(error.message);
+                      }
+                    );
+                }
+              },
+              (error) => {
+                this.$bus.$emit("errormessage", error.message);
+              }
+            );
+        }
+      }
       //
 
       // 点击后给该按钮一个点击反馈
@@ -653,32 +781,27 @@ export default {
           console.log("websocket已打开..");
         };
 
-
         // 接收消息  // 浏览器接收服务端发送过来的消息:所有在线用户,和发送的消息
         socket.onmessage = function (msg) {
-          console.log("接收到的socket数据为:", msg.data);
           let data = JSON.parse(msg.data);
           // 如果获取的是在线人员
           if (data.users) {
-                // 向Vuex全局中加入在线用户信息
-            _this.$store.commit("userInfo/SAVEALLUSERSS",data.users);
+            // 向Vuex全局中加入在线用户信息
+            _this.$store.commit("userInfo/SAVEALLUSERSS", data.users);
           }
           // 否则就是聊天信息{后续应该会有升级},将该信息传到聊天组件
-          else { 
+          else {
             _this.$bus.$emit("getSocketMessage", data);
           }
-
         };
         // 全局存入socket
-        this.$store.commit('userInfo/SAVESOCKET',socket);
+        this.$store.commit("userInfo/SAVESOCKET", socket);
         //发生了错误
         socket.onerror = function () {
           console.log("websocket发生了错误");
         };
       }
     },
-
-
 
     // 进入主页的按钮响应
     enterIndex() {
@@ -694,6 +817,14 @@ export default {
     this.$bus.$on("loginxState", (islogin) => {
       this.islogin = islogin;
       this.loginBoxPullup = "loginBoxPullup";
+      if (this.islogin) {
+        setTimeout(() => {
+          this.isPrompt = true;
+          setTimeout(() => {
+            this.isPrompt = false;
+          }, 5000);
+        }, 2500);
+      }
     });
 
     // 检查是否有cookie
@@ -876,6 +1007,27 @@ button:hover {
 /* smile摇头动画 */
 .smileshake {
   animation: shake-horizontal 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+}
+/* 更多登录选项 */
+.promt {
+  position: absolute;
+  border-radius: 15px;
+  padding: 10px;
+  width: 120px;
+  font-size: 1.6vh;
+  text-align: center;
+  left: -20px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.45);
+  top: 35px;
+}
+.promt::before {
+  content: "▲";
+  position: absolute;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 2vh;
+  left: 60px;
+  top: -17.5px;
 }
 
 /* 登录选项进入退出动画 */
