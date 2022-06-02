@@ -11,13 +11,13 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>{{friend.user.userName}} <span v-show="friend.friendRemarkName!=''"> ({{friend.friendRemarkName}})</span></span>
+                  <span style="overflow:hidden">{{friend.user.userName}} <span v-show="friend.friendRemarkName!=''"> ({{friend.friendRemarkName}})</span></span>
                   <!-- 消息数目 -->
-                 <span class="messagenum">9</span>
+                 <span v-show="messageNums!=0" class="messagenum">{{messageNums}}</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span>{{friend.user.userSign}}</span>
+                  <span style="overflow:hidden">[{{friend.user.userSign}}]</span>
               </div>
           </div>
           <!-- 个人空间 -->
@@ -25,6 +25,7 @@
               <img src="../assets/space.svg" alt="空间" @click="enterHerSpace">
           </div>
       </div>
+      <audio ref="audios" src="../assets/audio/gudu.mp3" style="display:none"></audio>
   </div>
   </transition>
 </template>
@@ -43,19 +44,26 @@ export default {
             isSpaceShow:false,
             // 好友item
             friend:this.friendProp,
+            // 未读消息数
+            messageNums:0,
         }
     },
     computed:{
         ...mapState('userInfo',['user']),
     },
-
     methods:{
         // 显示聊天框
         chatboxAppear(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
             this.$bus.$emit('toChatBox',this.friend);
+            console.log("this.friendlist",this.friend);
             this.returnChats();
+            this.messageNums = 0;
+            // 本地存储,设置为0
+            localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,0);
+            // 当此处的聊天数改变了的时候,最近聊天处也会改变
+            this.$bus.$emit('chatMessageChange2',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ});
         },
         // 发送请求,返回聊天记录
         returnChats(){
@@ -66,14 +74,32 @@ export default {
                 console.log(error.message);
                 
             });
-            
 
         },
-
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
             this.$bus.$emit('spaceappear',true,false,this.friend.user);
+        },
+        // 展示未读消息
+        showMessageNum(data){
+            // 如果发送方是目前组件对应的用户,接收方是我本人,则添加一条未读消息
+            if(data.sendUserQQ==this.friend.user.userQQ && data.receiveUserQQ == this.user.userQQ){
+                this.messageNums++;
+                // 本地存储,就不存到数据库上了
+                localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,this.messageNums);
+                // 响铃
+                this.$refs.audios.play();
+            }
+        },
+        // 初始化判断聊天未读消息数
+         NotReadMessageNumCreated(){
+            if(localStorage.getItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ)==null){
+        this.messageNums=0;
+      }
+      else{
+        this.messageNums = localStorage.getItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ);
+      }
         },
 
     },
@@ -82,6 +108,23 @@ export default {
         this.$bus.$on('functionchange',(data1,data2)=>{
             this.isShow = data2;
         })
+        // 接收APP组件消息,以展示未读消息
+        this.$bus.$on('MessageNums',(data)=>{
+            if(data.sendUserQQ==this.friend.user.userQQ){
+            this.showMessageNum(data);
+            }
+        })
+        // 最近聊天和好友列表互相通信
+        this.$bus.$on('chatMessageChange1',(data)=>{
+            if(data.friendQQ==this.friend.user.userQQ && data.userQQ==this.user.userQQ)
+            this.messageNums = 0;
+            // 本地存储,设置为0
+            localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,0);
+        })
+    },
+    created(){
+    // 初始化判断
+     this.NotReadMessageNumCreated();
     }
     
 }

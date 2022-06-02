@@ -62,10 +62,12 @@ methods:{
         this.errorMessage = "已取消语音通话.";
         // socket发送消息
         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.receiveQQ,message:"A9wadv:发送方取消语音通话"}));
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.receiveQQ,message:"我取消了语音通话"}));
+        // 永久化存储该状态
+        this.$bus.$emit('saveVideoMessage',{from:this.user.userQQ,to:this.receiveQQ,message:"我取消了语音通话"});
         this.$refs.audioerror.play();
         setTimeout(() => {
         this.isShow = false;  
-        this.$bus.$emit('videoMessage',"我取消了语音通话");
         clearTimeout(this.videoSetTimeOut);        
         }, 2000);
     },
@@ -76,8 +78,10 @@ methods:{
         this.greenbox = false;
         this.errorMessage = "已拒绝语音通话.";
         // socket发送消息
-
         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"A9wadv:接听方拒绝语音通话"}));
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"我拒绝了对方发起的语音通话"}));
+        // 永久化存储该状态
+        this.$bus.$emit('saveVideoMessage',{from:this.senderQQ,to:this.user.userQQ,message:"我拒绝了对方发起的语音通话"});
         this.$refs.audioerror.play();
         setTimeout(() => {
         this.isShow = false;  
@@ -92,6 +96,9 @@ methods:{
         this.greenbox = true;
         this.errorMessage = "已接听..";
         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"A9wadv:接听方已接听"}));
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"我接听了对方语音通话: 00:00"}));
+        // 永久化存储该状态
+        this.$bus.$emit('saveVideoMessage',{from:this.senderQQ,to:this.user.userQQ,message:"我接听了对方语音通话: 00:00"});
         this.$refs.audioerror.pause();
         clearTimeout(this.videoSetTimeOut);
         setTimeout(() => {
@@ -111,7 +118,9 @@ methods:{
         setTimeout(() => {
         this.isShow = false;  
         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"A9wadv:接听方已挂断"}));
-        // this.$bus.$emit('videoMessage',"我取消了语音通话");
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.senderQQ,message:"我挂断了对方的语音通话"}));
+        // 永久化存储该状态
+        this.$bus.$emit('saveVideoMessage',{from:this.senderQQ,to:this.user.userQQ,message:"我挂断了对方的语音通话"});
         clearTimeout(this.videoSetTimeOut);        
         }, 2000);
     }

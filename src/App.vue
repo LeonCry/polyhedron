@@ -24,6 +24,7 @@ import chats from './components/chats.vue'
 import setting from './components/setting.vue'
 import starspace from './components/starspace.vue'
 import SystemPage from './components/systemPage.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: "App",
@@ -34,12 +35,27 @@ export default {
       isAdmain : false,
     }
   },
+  computed:{
+    ...mapState('userInfo',['user']),
+  },
   mounted(){
     // 接收来自top组件或者adminlogin的数据,使adminlogin组件显示
     this.$bus.$on('tologin',(data)=>{
       console.log(data);
       this.isAdmain = data;
     })
+    // 接收socket消息
+    this.$bus.$on('getSocketMessage',(data)=>{
+      //  如果是给我的消息
+      if(data.to==this.user.userQQ){
+        var receive = {sendUserQQ:data.from,receiveUserQQ:this.user.userQQ,chatContent:data.text,chatTime:Date.now()};
+          // 收到了消息,要通知给friendlist组件,显示未读条数
+          this.$bus.$emit('MessageNums',receive);
+          // 收到了消息,要通知给recentfriend组件,显示最近聊天
+          this.$bus.$emit('RecentChats',receive);
+          // 接收chats组件消息,以展示未读消息
+         }
+         })
   },
   beforeDestroy(){
     this.$bus.$off('tologin');

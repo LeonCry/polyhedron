@@ -3,7 +3,7 @@
 <template>
 <!-- 聊天盒子 -->
 <transition name="chatboxT">
-  <div v-show="isShow" class="chatbox" :style="ChatLocation" @mousedown="changeIndex">
+  <div v-show="isShow" class="chatbox" :class="{windowFlyClass:windowFlys}" :style="ChatLocation" @mousedown="changeIndex">
       <!-- 抬头 -->
       <div class="toper" @mousedown="moveBegin">
           <!-- 名字 -->
@@ -53,6 +53,8 @@
         <button @click="sendMessage" :class="{sendMessageActive:SendActice,sendMessage:!SendActice}">发送/Enter</button>
       </div>
     <video-chat-fake></video-chat-fake>
+    <chat-notice></chat-notice>
+     <audio ref="audios" src="../assets/audio/water.mp3" style="display:none"></audio>
   </div>
 </transition>
 </template>
@@ -64,17 +66,22 @@ import { mapState } from 'vuex';
 import rightchater from './rightchater.vue';
 import ChatLoading from './chatLoading.vue';
 import VideoChatFake from './videoChatFake.vue';
+import ChatNotice from './chatNotice.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake},
+  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice},
   data(){
       return{
         //   是否展示该组件--聊天窗口
           isShow:false,
         //   控制侧边栏长度大小 0为关闭 以及透明度 和 模糊
           moreFlex:0,
+        //   是否正在吹一吹
+        isWinding:false,
+        // 是否触发了吹飞窗口
+        windowFlys:false,
           moreOpaticty:0,
           moreBlur:40,
         //   控制更多按钮的转向
@@ -169,13 +176,34 @@ export default {
         },
            // 图片提示
     pictureShow(){
-      this.$bus.$emit('chatNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.");
+      this.$bus.$emit('chatNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.请等待后续更新..");
     },
     // 视频通话
     videoShow(){
       this.$bus.$emit('videoChatFake',{friendQQ:this.friend.friendQQ,userQQ:this.user.userQQ});
     },
+    // 如果是点击到了吹一吹
     windShow(){
+        // 已经正在吹一吹了
+        if(this.isWinding){
+         this.$bus.$emit('chatNotice',false,"您正在向对方发送 🌪  中...");    
+        }
+        else{
+        this.isWinding = true;
+        // 首先socket发送信息
+        let msg = "A9wadv=吹一吹";
+        this.$bus.$emit('chatNotice',true,"您向对方发送了一道龙卷风 🌪 ");
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:msg}));
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:"[吹了一口 🌪 🌪 ]"}));
+        this.receiveChatsSum.push({chatContent:"[吹了一口 🌪 🌪 ]",chatTime:Date.now()});
+        this.sendMessageRequest("[吹了一口 🌪 🌪 ]");
+        setTimeout(() => {
+            this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+        }, 20);
+        setTimeout(() => {
+            this.isWinding = false;
+        }, 5500);
+        }
 
     },
         // 当前窗口鼠标点击改变index
@@ -196,8 +224,9 @@ export default {
         sendMessage(){
            setTimeout(() => {    
             // 如果为空
-            if(this.$refs.typetext.innerHTML == ''){
+            if(this.$refs.typetext.innerHTML == '' || this.$refs.typetext.innerHTML=='<div><br></div><div><br></div>'){
                 console.log("空");
+                this.$refs.typetext.innerHTML = '';
             }
             else if (this.iskeyEnter){
                 console.log("是换行"); 
@@ -215,8 +244,9 @@ export default {
             // socket发送消息
             this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:this.message}));
             this.strRplace();
+            this.$refs.audios.play();
             this.receiveChatsSum.push({chatContent:this.message,chatTime:Date.now()});
-            this.sendMessageRequest();
+            this.sendMessageRequest(this.message);
             setTimeout(() => {
                this.$refs.typetext.innerHTML = ''; 
                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
@@ -288,8 +318,8 @@ export default {
         },
 
         // 发送消息向数据库发送请求
-        sendMessageRequest(){
-            this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:this.message,chatTime:Date.now()}).then(response=>{
+        sendMessageRequest(message){
+            this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:message,chatTime:Date.now()}).then(response=>{
                 console.log("添加成功",response.data);
                 
             },error=>{
@@ -316,7 +346,7 @@ export default {
         console.log("阻止默认粘贴");
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
         },
-        // 接收来自videoFake的消息,存储到数据库中
+        // 接收来自videoFake的消息,存储到数据库中1
         videoMessage(message){
             // 如果是正在拨打中...此条消息不参与发送
             if(message=="A9wadv正在拨打..."){
@@ -334,13 +364,30 @@ export default {
                 console.log(error.message);
             });
             setTimeout(() => {
-               this.$refs.typetext.innerHTML = ''; 
                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
             }, 20);
             }
 
         },
-
+        // 接收来自videoFake的消息,存储到数据库中2
+        saveVideoMessage(data){
+            console.log("触发:---saveVideoMessage");
+            console.log("data.to:",data.to,"data.from",data.from);
+            let msg = '  📞  ' + data.message;
+            this.receiveChatsSum.push({chatContent:msg,chatTime:Date.now()});
+            // 再向数据库中添加消息
+            this.sendMessageRequest(data);
+            setTimeout(() => {
+               this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+            }, 20);
+        },
+        // 吹一吹触发的窗口飞了的函数
+        windowFly(){
+            this.windowFlys = true;
+            setTimeout(() => {
+            this.windowFlys = false;
+            }, 5500);
+        },
 
         
   },
@@ -365,7 +412,9 @@ export default {
             this.$bus.$on('videoMessage',(message)=>{
                 this.videoMessage(message);
             })
-            
+            this.$bus.$on('saveVideoMessage',(data)=>{
+                this.saveVideoMessage(data);
+            })
             
             
             // 接收来自friendrecentitem和friendlistitem组件的数据
@@ -411,12 +460,19 @@ export default {
                     // 则唤醒拨打电话的div
                     this.$bus.$emit('receiveVideo',{friendQQ:this.friend.friendQQ,userQQ:this.user.userQQ});
                 }
+                // 如果接收到的是吹一吹,则触发吹一吹函数
+                else if(data.text=="A9wadv=吹一吹"){
+                    console.log("触发了:吹一吹");
+                    this.windowFly();
+                }
                 else if(data.text.substring(0,6)=="A9wadv"){
                     console.log("我选择不做任何事"); 
                 }
                 else{
                 // 构建合法的Json
                 var receive = {sendUserQQ:this.friend.friendQQ,receiveUserQQ:this.user.userQQ,chatContent:data.text,chatTime:Date.now()};
+
+                // 向目前聊天界面中添加数据,以保证实时
                 this.receiveChatsSum.push(receive);
                 setTimeout(() => {
                 this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;     
@@ -446,17 +502,18 @@ export default {
     left: 25%;
     z-index: 6;
     background-color: #1A191B;
-    border-radius: 15px;
     box-shadow: 0 0 25px 5px black;
     display: flex;
     flex-flow: column nowrap;
     font-size: 2vh;
     color: white;
+    border-radius: 25px;
 }
-.chatbox:hover{
+/* .chatbox:hover{
     border-radius: 25px;
     box-shadow: 0 0 30px 10px black;
-}
+} */
+
 /* 抬头 */
 .toper{
     position: relative;
@@ -641,8 +698,10 @@ padding: 5px;
     box-shadow: 0 0 8px white;
     outline: 0.1px solid white;
 }
-
-
+/* 吹飞的样式 */
+.windowFlyClass{
+    animation: roll-out-blurred-right 2s cubic-bezier(0.755, 0.050, 0.855, 0.060) 1s 2 alternate both;
+}
 
 
 /* 该组件--聊天框进入退出动画 */
@@ -699,6 +758,29 @@ padding: 5px;
     -webkit-transform-origin: bottom;
             transform-origin: bottom;
     opacity: 1;
+  }
+}
+@keyframes roll-out-blurred-right {
+  0% {
+    -webkit-transform: translateX(0) rotate(0deg);
+            transform: translateX(0) rotate(0deg);
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+  50% {
+    -webkit-transform: translateX(1000px) rotate(720deg);
+            transform: translateX(1000px) rotate(720deg);
+    -webkit-filter: blur(50px);
+            filter: blur(50px);
+    opacity: 0;
+  }
+  100%{
+    -webkit-transform: translateX(1000px) rotate(720deg);
+            transform: translateX(1000px) rotate(720deg);
+    -webkit-filter: blur(50px);
+            filter: blur(50px);
+    opacity: 0;
   }
 }
 
