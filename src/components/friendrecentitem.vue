@@ -1,9 +1,9 @@
 // 在最近聊天中的每个好友
 <template>
 <transition name="frienditemT" appear>
-  <div v-show="isShow" class="frienditem"  @dblclick="chatboxAppear">
+  <div v-if="isShow" class="frienditem"  @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="userInfos.userHead" :src="require(`../assets/Heads/${userInfos.userHead}`)" alt="头像">
+      <img v-if="userInfos.userHead" :src="require(`../assets/Heads/${userInfos.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span style="overflow:hidden">{{userInfos.userName}}</span>
+                  <span style="overflow:hidden">{{userInfos.userName}}<span v-show="remakeName"> ({{remakeName}})</span></span>
                   <!-- 最后消息时间 -->
                   <span style="overflow:hidden">{{new Date(parseInt(chatTimes))
                 .toLocaleString()
@@ -21,13 +21,13 @@
               </div>
               <!-- 聊天内容 -->
               <div class="chats">
-                  <span style="overflow:hidden" ref="chatContents"></span>
+                  <span style="overflow:hidden" ref="chatContents">{{chatMessage}}</span>
               </div>
 
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <img src="../assets/delete.svg" alt="删除" @click="deleteThis">
+              <img src="../assets/delete.svg" alt="删除" @click="deleteThis" ref="del">
           </div>
       </div>
   </div>
@@ -47,17 +47,21 @@ export default {
             // 用户信息
             userInfos:'',
             // 聊天内容
-            chatMessage:this.recentProps.chatContent,
+            chatMessage:'',
             // 聊天时间
             chatTimes:Date.now(),
             // 聊天未读
             messageNums:0,
             // friend
             friend:'',
+            datas:{},
+            // 备注名
+            remakeName:'',
+            isOnline:false,
         }
     },
     computed:{
-        ...mapState('userInfo',['user']),
+        ...mapState('userInfo',['user','allusers']),
     },
     methods:{
         // 显示聊天框
@@ -67,7 +71,6 @@ export default {
             this.$bus.$emit('toChatBox',this.friend);
             console.log("this.friendrecent",this.friend);
             this.returnChats();
- 
             this.messageNums = 0;
             // 本地存储,设置为0
             localStorage.setItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ,0);
@@ -77,6 +80,31 @@ export default {
         // 删除最近聊天
         deleteThis(){
             // 删除最近聊天
+            console.log("has deleted");
+            this.isShow = false;     
+            // 本地化存储
+            let localSave =  JSON.parse(localStorage.getItem(':allRecent:'+this.user.userQQ));
+            for (let index = 0; index < localSave.length; index++) {
+                const save = localSave[index];
+                if(save.sendUserQQ==this.userInfos.userQQ){
+                    localSave.splice(index,1);
+                    break;
+                }
+            }
+            localStorage.setItem(':allRecent:'+this.user.userQQ,JSON.stringify(localSave));
+            // 改变本地化存储该通知信息条数
+            let localMessageNum = Number(localStorage.getItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ));
+            let totalMessageNum = Number(localStorage.getItem(':totalMessage:'+this.user.userQQ));
+            // 局部消息改变
+            localStorage.setItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ,0);
+            // 局部消息数变为0
+            this.$bus.$emit('messagetozero',{friendQQ:this.userInfos.userQQ,userQQ:this.user.userQQ});
+            // 全局消息数改变
+            localStorage.setItem(':totalMessage:'+this.user.userQQ,totalMessageNum-localMessageNum);
+            // 显示全局消息数
+            this.$bus.$emit('messageNotice');
+            // 删除最近聊天
+            this.$bus.$emit('deleteRencent',{friendQQ:this.userInfos.userQQ});
         },
         // 诞生-查询其用户信息
         requestForUserInfo(friendUserQQ){
@@ -84,7 +112,6 @@ export default {
                 this.userInfos = response.data;
                 this.$axios.post('/api/getOneFriends',{userQQ:this.user.userQQ,friendQQ:this.userInfos.userQQ}).then(response=>{
                 this.friend = response.data;
-                console.log(response.data);
             },error=>{
                 console.log(error.message);
             });
@@ -97,7 +124,7 @@ export default {
          // 发送请求,返回聊天记录
         returnChats(){
             this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.userInfos.userQQ,pageStart:0,pageEnd:20}).then(response=>{
-                console.log(response.data);
+                console.log("发送请求,返回聊天记录:",response.data);
                 this.$bus.$emit('receiveChat',response.data);
             },error=>{
                 console.log(error.message);
@@ -105,70 +132,128 @@ export default {
             });
 
         },
-        // 初始化判断聊天未读消息数
-        NotReadMessageNumCreated(){
-            setTimeout(() => {
-            if(localStorage.getItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ)==null){
-            this.messageNums=0;
-                 }
-            else{
-            this.messageNums = localStorage.getItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ);
-                }                
-            }, 10);
-        },
+        
+        //获取备注名
+        getRemakeName(userQQ,friendQQ){
+            this.$axios.post('/api/getOneFriends',{userQQ:userQQ,friendQQ:friendQQ}).then(response=>{
+                if(response.data!=null){
+                    this.remakeName = response.data.friendRemarkName;
+                }
+                else{
+                    this.remakeName = '';
+                }
+            },error=>{
+                console.log(error.message);
+            });
+            
+        } ,
 
-// 展示未读消息
-        showMessageNum(data){
-            // 如果发送方是目前组件对应的用户,接收方是我本人,则添加一条未读消息
-            if(data.sendUserQQ==this.userInfos.userQQ && data.receiveUserQQ == this.user.userQQ){
-                this.messageNums++;
-                // 本地存储,就不存到数据库上了
-                localStorage.setItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ,this.messageNums);
-            }
+        // 组件初始化
+        CommentCreated(){
+        // 在诞生的时候就进行一个数据库请求,查询其用户信息
+        this.requestForUserInfo(this.recentInfo.sendUserQQ); 
+        this.getRemakeName(this.user.userQQ,this.recentProps.sendUserQQ);
+        // 初始化显示聊天文字   
+        setTimeout(() => {
+            let message = JSON.parse(localStorage.getItem(":allRecent:"+this.user.userQQ));
+            message.forEach(msg => {
+                if(msg.sendUserQQ==this.recentInfo.sendUserQQ){
+                    this.chatMessage = msg.chatContent;
+                    this.$refs.chatContents.innerHTML = msg.chatContent;   
+                }
+            });
+        }, 1000); 
         },
+        // 在线确认
+        onlineCheck(data){
+            data.forEach(userf => {
+                if(userf.username==this.recentProps.sendUserQQ){
+                    console.log("userf",userf);
+                    this.isOnline = true;
+                }
+                else{
+                    this.isOnline = false;
+                }
+            });
+        }
 
     },
     mounted(){
         // 初始化
-        this.$refs.chatContents.innerHTML = this.recentProps.chatContent;
+        // this.$refs.chatContents.innerHTML = this.recentProps.chatContent;
         // 接收friends组件数据,进行页面切换效果
         this.$bus.$on('functionchange',(data1)=>{
             this.isShow = data1;
         })
         // 接收socket消息
         this.$bus.$on('getSocketMessage',(data)=>{
-            // 文本截取,防止溢出
-            this.$refs.chatContents.innerHTML = data.text;
-            // if(this.$refs.chatContents.innerHTML.length>=11){
-            //     this.$refs.chatContents.innerHTML = this.$refs.chatContents.innerHTML.substring(0,10)+'...';
-            // }
       //  如果是给我的消息
+      console.log("发送的消息:",data);
+      
       if(data.to==this.user.userQQ && data.from==this.userInfos.userQQ){
-          this.chatMessage = data.text;
+          this.isShow = true;
+            // 文本截取,防止溢出
+            setTimeout(() => {
+          this.$refs.chatContents.innerHTML = data.text;
+          this.chatMessage =  data.text;
           this.chatTimes = Date.now();
+            }, 100);
          }})
-
-
-        // 接收APP组件消息,以展示未读消息
-        this.$bus.$on('MessageNums',(data)=>{
-            if(data.sendUserQQ==this.userInfos.userQQ){
-            this.showMessageNum(data);
+        // 接收我发送的消息进行recent显示
+        this.$bus.$on('mySendMessageOnRecent',(data)=>{     
+            if(data.receiveUserQQ==this.recentInfo.sendUserQQ && data.userQQ==this.user.userQQ){
+            setTimeout(() => {
+               this.$refs.chatContents.innerHTML = data.message; 
+            }, 100);
+             this.chatMessage = data.message;
             }
         })
         // 最近聊天和好友列表互相通信
         this.$bus.$on('chatMessageChange2',(data)=>{
-            if(data.friendQQ==this.userInfos.userQQ && data.userQQ==this.user.userQQ)
+            if(data.friendQQ==this.userInfos.userQQ && data.userQQ==this.user.userQQ){
             this.messageNums = 0;
             // 本地存储,设置为0
             localStorage.setItem(':friend:'+this.userInfos.userQQ+':user:'+this.user.userQQ,0);
+            }
         })
-    },
+        //接收来自隔壁的未读消息数据的传递
+        this.$bus.$on("friendToRecent",(data)=>{
+            // {friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,messageNums:this.messageNums}
+            if(data.friendQQ==this.userInfos.userQQ && data.userQQ==this.user.userQQ){
+                this.messageNums = data.messageNums;
+                console.log("recentmessageNums:",this.messageNums);
+                
+            }
+        });    
+        // 转换时将新消息重新显示
+        this.$bus.$on("messageOnload",()=>{
+            setTimeout(() => {
+           this.$refs.chatContents.innerHTML = this.chatMessage;     
+            }, 100);
+        })
+        // 刷新备注名
+        this.$bus.$on('remakeNameChange',(data)=>{
+            if(data.friendQQ==this.recentInfo.sendUserQQ && data.userQQ==this.user.userQQ){
+                this.getRemakeName(this.user.userQQ,this.recentInfo.sendUserQQ);
+            }
+        })
+        // 初始化在线状态
+        setTimeout(() => {
+            this.onlineCheck(this.allusers);
+        }, 1000);
+        // 在线确认
+        this.$bus.$on('refreshUsers',(data)=>{
+            this.onlineCheck(data);
+        })
+        // 删除最近聊天
+        this.$bus.$on('deleteChats',(data)=>{
+            if(data.userQQ==this.recentProps.receiveUserQQ && data.friendQQ==this.recentProps.sendUserQQ){
+                this.deleteThis(); 
+            }
+        })
+   },
     created(){
-        // 在诞生的时候就进行一个数据库请求,查询其用户信息
-        this.requestForUserInfo(this.recentInfo.sendUserQQ);
-        
-    // 初始化判断
-     this.NotReadMessageNumCreated();
+    this.CommentCreated(); 
     }
 }
 </script>
@@ -194,13 +279,21 @@ export default {
     color:white;
 }
 /* 头像 */
-.frienditem > img{
+.offline{
     position: relative;
     width: 45px;
     height: 45px;
     border-radius: 50px;
     margin-left:2.5px;
-    border: 5px solid rgba(61, 61, 61, 1);
+    border: 4px solid rgba(61, 61, 61, 1);
+}
+.online{
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    margin-left:2.5px;
+    border: 4px solid lightgreen;
 }
 /* 网名,个签内容物 */
 .content{

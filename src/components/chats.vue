@@ -54,6 +54,8 @@
       </div>
     <video-chat-fake></video-chat-fake>
     <chat-notice></chat-notice>
+    <tips></tips>
+    <del-tips></del-tips>
      <audio ref="audios" src="../assets/audio/water.mp3" style="display:none"></audio>
   </div>
 </transition>
@@ -67,11 +69,13 @@ import rightchater from './rightchater.vue';
 import ChatLoading from './chatLoading.vue';
 import VideoChatFake from './videoChatFake.vue';
 import ChatNotice from './chatNotice.vue';
+import Tips from './tips.vue';
+import DelTips from './delTips.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice},
+  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice, Tips, DelTips},
   data(){
       return{
         //   是否展示该组件--聊天窗口
@@ -173,6 +177,18 @@ export default {
         exitChat(){
             this.isShow = false;
             this.receiveChatsSum = [];
+            this.$bus.$emit('returnIsChatting',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,isChatting:false});
+        },
+        // 显示窗口
+        showBox(data1){
+             this.exitChat();
+                this.isShow = data1;
+                // 初次出现,置顶
+                this.zIndex = 8;
+                this.receiveChatsSum = [];
+                setTimeout(() => {
+                    this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+                }, 50);
         },
            // 图片提示
     pictureShow(){
@@ -235,17 +251,20 @@ export default {
                 }, 20);
             }
             else{
-                // this.sendWSPush("socket测试...");
              // 清除键入的内容
             setTimeout(() => {
             if(!this.iskeyEnter){
             this.SendActice = true;
             this.message = this.$refs.typetext.innerHTML;
-            // socket发送消息
-            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:this.message}));
             this.strRplace();
+            // 将我发送的消息传给recent组件,也进行显示
+            this.$bus.$emit('mySendMessageOnRecent',{receiveUserQQ:this.friend.friendQQ,userQQ:this.user.userQQ,message:this.message});
+            // 当我从friendlist列表中发送消息的时候,也在recentlist显示
+            this.$bus.$emit('RecentChats',{sendUserQQ:this.friend.friendQQ,receiveUserQQ:this.user.userQQ,chatContent:this.message,chatTime:Date.now()})
             this.$refs.audios.play();
             this.receiveChatsSum.push({chatContent:this.message,chatTime:Date.now()});
+            // socket发送消息
+            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:this.message}));
             this.sendMessageRequest(this.message);
             setTimeout(() => {
                this.$refs.typetext.innerHTML = ''; 
@@ -257,6 +276,9 @@ export default {
             setTimeout(() => {
                this.SendActice = false; 
             }, 350);
+
+
+
 
             }
            }, 5); 
@@ -420,11 +442,7 @@ export default {
             // 接收来自friendrecentitem和friendlistitem组件的数据
             // 进行展示与否
         this.$bus.$on('chatboxappear',(data1)=>{
-                this.isShow = data1;
-                this.receiveChatsSum = [];
-                setTimeout(() => {
-                    this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
-                }, 50);
+               this.showBox(data1);
             });
                     // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ,chatsZ)=>{
@@ -437,6 +455,8 @@ export default {
         // 接收点击事件触发对象的数据传送
         this.$bus.$on('toChatBox',(data)=>{
             this.friend = data;
+            // 向morer组件传送该friend数据
+            this.$bus.$emit('friendToMorer',this.friend);              
             
         })
         this.$bus.$on('receiveChat',(data)=>{
@@ -447,10 +467,8 @@ export default {
             });
             
         })
-
         // 滚动条滚动到顶部的触发函数
         this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
-
         // 接收来自socket的消息
         this.$bus.$on('getSocketMessage',(data)=>{
             // 如果当前聊天对象发送给我的消息,则直接展示,否则存入数据库(存入数据库已做)
@@ -481,6 +499,15 @@ export default {
 
             }
             
+        })
+        // 检查是否正在聊天
+        this.$bus.$on('isChatting',(data)=>{
+            if(data.friendQQ==this.friend.friendQQ && data.userQQ==this.user.userQQ){         
+                // 返回数据-表示是否正在聊天
+                if(this.isShow){
+                    this.$bus.$emit('returnIsChatting',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,isChatting:true});
+                }
+            }
         })
 
       },

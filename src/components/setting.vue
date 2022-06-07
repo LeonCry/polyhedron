@@ -413,6 +413,23 @@ export default {
             this.loginSwitchDeg = 0;
         }
     },
+    // friend数据库中对应的name修改
+    friendNameChange(friendName){
+            // 更新名称信息
+            this.$axios.post("/api/changeFriendNames",{friendQQ:this.user.userQQ,friendName:friendName}).then(
+              (response)=>{
+                console.log("更改完成?",response.data);
+                
+              },
+              (error)=>{
+                console.log(error.message);
+                
+              }
+            )
+    },
+
+
+
     // 保存按钮提交前验证 -1:表示有错误
     saveVerfiry(){
       var regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
@@ -458,6 +475,7 @@ export default {
         // 上传个人信息和设置信息
         this.updateUserInfo(userInfoObj);
         this.updateUserSettingInfo(userSettingInfoObj);
+        this.friendNameChange(this.userName);
         // 若用户上传了头像图片   
         if(this.userHeadfile!=''){
           this.SETHEADSTATE(true);
@@ -523,6 +541,8 @@ export default {
       // 进行展示与否
       this.$bus.$on("settingappear", () => {
         this.isShow = !this.isShow;
+        // 初次出现,置顶
+        if(this.isShow){this.zIndex = 8}
       // 用户信息/设置初始化--每次点击设置的时候都会初始化
       this.userInfoInitialization();
       this.userSettingInitialization();

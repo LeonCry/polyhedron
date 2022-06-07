@@ -115,6 +115,13 @@ export default {
     height: 125px;
     font-size: 1.5vh;
 }
+.mysign span{
+    text-align: center;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: hidden;
+    font-style: italic;
+}
 /* button */
 button{
     position: relative;

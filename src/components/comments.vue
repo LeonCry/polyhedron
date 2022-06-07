@@ -6,7 +6,7 @@
       <img v-if="comment" :src="require(`../assets/Heads/${comment.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>{{comment.user.userName}}<span>#{{comment.commentFloor}}楼</span></span>
+        <span>{{comment.user.userName}}<span v-show="remakeName">{{remakeName}}</span><span>#{{comment.commentFloor}}楼</span></span>
         <span>{{new Date(parseInt(comment.commentTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -54,6 +54,7 @@ export default {
         replyReflsh:true,
         // 所有评论
         allReply:[],
+        remakeName:'',
     };
   },
   created(){
@@ -71,6 +72,20 @@ console.log(error.message);
     commentAppear() {
         this.isCommentShow = !this.isCommentShow;
     },
+        //获取备注名
+        getRemakeName(userQQ,friendQQ){
+            this.$axios.post('/api/getOneFriends',{userQQ:userQQ,friendQQ:friendQQ}).then(response=>{
+              if(response.data==null){
+                this.remakeName = '';
+              }
+              else{
+                this.remakeName = response.data.friendRemarkName;
+              }
+            },error=>{
+                console.log(error.message);
+            });
+            
+        },
   async reply(){
    // 先发送请求返回该评论下的回复,查看自己是第几层
    let layer = 0;
@@ -101,6 +116,10 @@ console.log(error.message);
         });
       }
     }
+  },
+  mounted(){
+    // 每次开始获取备注名
+    this.getRemakeName(this.userQQ,this.comment.commentQQ);
   },
 };
 </script>

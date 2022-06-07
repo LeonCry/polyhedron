@@ -301,6 +301,8 @@ this.allSpaceSum = goodsSpace;
         this.$bus.$on('spaceappear',(data1,data2,friendUser)=>{
             this.isShow = data1;
             this.isMySpace = data2;
+            // 初次出现置顶
+            this.zIndex = 8;
             // 如果点击的是我的空间
             this.$bus.$emit('spaceLoading',true,"加载动态..");
             if(this.isMySpace==true){
@@ -310,6 +312,7 @@ this.allSpaceSum = goodsSpace;
             else{
               this.spaceUser = friendUser;
             }
+            // 如果是从聊天界面点入的,则
             if(data1){
             // 进行数据库查询,因为进入不管是我的空间还是他人的空间,默认都是出现为 this.spaceUser 的空间内容,所以这里统一查询
             this.$axios.post('/api/selectSpaces',{publishQQ:this.spaceUser.userQQ,pageStart:0,pageEnd:10}).then(response=>{
@@ -326,7 +329,6 @@ this.allSpaceSum = goodsSpace;
               console.log(error.message);
             });
             }
-            
 
         });
         // 接收来自其他窗口的数据,进行高度改变

@@ -177,9 +177,6 @@ mounted(){
 
 this.$bus.$on('getSocketMessage',(data)=>{
     setTimeout(() => {
-       console.log("videoChat接收到的数据:",data);
-            console.log("sendQQ:",this.senderQQ);
-            console.log("receiveQQ:",this.receiveQQ);
             // 如果是发起者的操作 data.from==this.senderQQ
             if(data.from==this.senderQQ && data.to==this.user.userQQ){     
                 console.log("data.text====",data.text);

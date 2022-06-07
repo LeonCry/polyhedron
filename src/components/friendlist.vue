@@ -42,10 +42,13 @@ export default {
     mounted(){
         // 初始化获得好友列表
         this.friendListInitialization();
-
+        // 重新刷新好友列表
+        this.$bus.$on('refreshLists',()=>{
+            this.friendListInitialization();
+        })
         // 获取所有好友信息
         this.$bus.$on('getAllFriends',data=>{
-            this.friendLists=[];
+            // this.friendLists=[];
             this.friendLists = data;
         })
     }

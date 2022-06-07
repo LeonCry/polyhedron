@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
+      <img v-if="this.friendProp.user.userHead" :src="require(`../assets/Heads/${this.friendProp.user.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -11,13 +11,13 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span style="overflow:hidden">{{friend.user.userName}} <span v-show="friend.friendRemarkName!=''"> ({{friend.friendRemarkName}})</span></span>
+                  <span style="overflow:hidden">{{this.friendProp.user.userName}} <span v-show="this.friendProp.friendRemarkName!=''"> ({{this.friendProp.friendRemarkName}})</span></span>
                   <!-- 消息数目 -->
                  <span v-show="messageNums!=0" class="messagenum">{{messageNums}}</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span style="overflow:hidden">[{{friend.user.userSign}}]</span>
+                  <span style="overflow:hidden">[{{this.friendProp.user.userSign}}]</span>
               </div>
           </div>
           <!-- 个人空间 -->
@@ -42,32 +42,37 @@ export default {
             isShow:false,
             // 空间展示
             isSpaceShow:false,
-            // 好友item
-            friend:this.friendProp,
             // 未读消息数
             messageNums:0,
+            // 是否正在聊天
+            isChatting:false,
+            // 是否在线
+            isOnline:false,
         }
     },
     computed:{
-        ...mapState('userInfo',['user']),
+        ...mapState('userInfo',['user','allusers']),
     },
     methods:{
         // 显示聊天框
         chatboxAppear(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
-            this.$bus.$emit('toChatBox',this.friend);
-            console.log("this.friendlist",this.friend);
+            this.$bus.$emit('toChatBox',this.friendProp);
             this.returnChats();
+            // 总未读信息数改变数据
+            this.localSaveTotalMessage(this.messageNums*(-1));
+            // 通知组件进行显示
+            this.$bus.$emit('messageNotice');
             this.messageNums = 0;
             // 本地存储,设置为0
-            localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,0);
+            localStorage.setItem(':friend:'+this.friendProp.user.userQQ+':user:'+this.user.userQQ,0);
             // 当此处的聊天数改变了的时候,最近聊天处也会改变
-            this.$bus.$emit('chatMessageChange2',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ});
+            this.$bus.$emit('chatMessageChange2',{friendQQ:this.friendProp.user.userQQ,userQQ:this.user.userQQ});
         },
         // 发送请求,返回聊天记录
         returnChats(){
-            this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:0,pageEnd:20}).then(response=>{
+            this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friendProp.friendQQ,pageStart:0,pageEnd:20}).then(response=>{
                 console.log(response.data);
                 this.$bus.$emit('receiveChat',response.data);
             },error=>{
@@ -79,28 +84,61 @@ export default {
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false,this.friend.user);
+            this.$bus.$emit('spaceappear',true,false,this.friendProp.user);
         },
         // 展示未读消息
         showMessageNum(data){
             // 如果发送方是目前组件对应的用户,接收方是我本人,则添加一条未读消息
-            if(data.sendUserQQ==this.friend.user.userQQ && data.receiveUserQQ == this.user.userQQ){
+            if(data.sendUserQQ==this.friendProp.user.userQQ && data.receiveUserQQ == this.user.userQQ){
                 this.messageNums++;
                 // 本地存储,就不存到数据库上了
-                localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,this.messageNums);
+                localStorage.setItem(':friend:'+this.friendProp.user.userQQ+':user:'+this.user.userQQ,this.messageNums);    
+                // 总未读消息数
+                this.localSaveTotalMessage(1);
+                //   将未读消息数传给隔壁recent
+                this.$bus.$emit("friendToRecent",{friendQQ:this.friendProp.user.userQQ,userQQ:this.user.userQQ,messageNums:this.messageNums});
                 // 响铃
                 this.$refs.audios.play();
             }
         },
+        // 本地存储-总未读消息数
+        localSaveTotalMessage(message){
+                let totalMessage = 0;
+                // 先读取总未读消息数
+                if(localStorage.getItem(':totalMessage:'+this.user.userQQ)==null){
+                    totalMessage = 0;
+                }
+                else{
+                    totalMessage = localStorage.getItem(':totalMessage:'+this.user.userQQ);
+                }
+                totalMessage = Number(totalMessage);
+                totalMessage = totalMessage + Number(message);
+                if(totalMessage<0){totalMessage=0}
+                localStorage.setItem(':totalMessage:'+this.user.userQQ,totalMessage);
+        },
         // 初始化判断聊天未读消息数
          NotReadMessageNumCreated(){
-            if(localStorage.getItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ)==null){
+            if(localStorage.getItem(':friend:'+this.friendProp.user.userQQ+':user:'+this.user.userQQ)==null){
         this.messageNums=0;
       }
       else{
-        this.messageNums = localStorage.getItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ);
+        this.messageNums = localStorage.getItem(':friend:'+this.friendProp.user.userQQ+':user:'+this.user.userQQ);
       }
+    //   将未读消息数传给隔壁recent
+        this.$bus.$emit("friendToRecent",{friendQQ:this.friendProp.user.userQQ,userQQ:this.user.userQQ,messageNums:this.messageNums});
         },
+        // 在线确认
+        onlineCheck(data){
+            data.forEach(userf => {
+                if(userf.username==this.friendProp.friendQQ){
+                    console.log("userf",userf);
+                    this.isOnline = true;
+                }
+                else{
+                    this.isOnline = false;
+                }
+            });
+        }
 
     },
     mounted(){
@@ -110,16 +148,72 @@ export default {
         })
         // 接收APP组件消息,以展示未读消息
         this.$bus.$on('MessageNums',(data)=>{
-            if(data.sendUserQQ==this.friend.user.userQQ){
-            this.showMessageNum(data);
+            if(data.sendUserQQ==this.friendProp.user.userQQ){
+            // 向messageShowCube组件发送数据,以显示新消息通知
+            this.$bus.$emit("messageShowCube",{friend:this.friendProp,messageData:data});
+            // 先向chats组件发送请求,是否正在聊天中,若正在聊天中,则不显示未读消息数
+            this.$bus.$emit("isChatting",{friendQQ:this.friendProp.user.userQQ,userQQ:this.user.userQQ});
+            setTimeout(() => {
+                if(!this.isChatting){
+                    this.showMessageNum(data);
+                    }   
+                    else{
+                        this.$refs.audios.play();
+                    }
+            }, 100);
             }
         })
-        // 最近聊天和好友列表互相通信
+        // 最近聊天和好友列表互相通信以取消未读消息数
         this.$bus.$on('chatMessageChange1',(data)=>{
-            if(data.friendQQ==this.friend.user.userQQ && data.userQQ==this.user.userQQ)
+            if(data.friendQQ==this.friendProp.user.userQQ && data.userQQ==this.user.userQQ){            
+            // 总未读信息数改变数据
+            this.localSaveTotalMessage(this.messageNums*(-1));
+            // 通知组件进行显示
+            this.$bus.$emit('messageNotice');
             this.messageNums = 0;
             // 本地存储,设置为0
-            localStorage.setItem(':friend:'+this.friend.user.userQQ+':user:'+this.user.userQQ,0);
+            // localStorage.setItem(':friend:'+this.friendProp.user.userQQ+':user:'+this.user.userQQ,0);
+            }
+        })
+        // 接收ischatting返回的数据
+        this.$bus.$on('returnIsChatting',(data)=>{
+        if(data.friendQQ==this.friendProp.friendQQ && data.userQQ==this.user.userQQ){
+            this.isChatting = data.isChatting;
+        }
+        })
+        // 局部消息变为0
+        this.$bus.$on('messagetozero',(data)=>{
+        if(data.friendQQ==this.friendProp.friendQQ && data.userQQ==this.user.userQQ){
+            this.messageNums = 0;
+        }
+        })
+        // 从新消息提示上显示窗口里
+        this.$bus.$on('showChatBoxFromCube',(data)=>{
+            if(data.friendQQ==this.friendProp.user.userQQ && data.userQQ==this.user.userQQ){
+                this.chatboxAppear();
+            }
+        })
+        // 从chat-morer组件中进入空间
+        this.$bus.$on('enterSpaceFromMorer',(data)=>{      
+            if(data.friendQQ==this.friendProp.friendQQ){
+                this.enterHerSpace();
+            }
+        })
+        // 刷新正在聊天界面 to chat
+        this.$bus.$on('freshChat',(data)=>{
+            if(data.friendQQ==this.friendProp.friendQQ && data.userQQ==this.user.userQQ){
+                setTimeout(() => {
+                    this.chatboxAppear();
+                }, 10);
+            }
+        });
+        // 初始化在线状态
+        setTimeout(() => {
+            this.onlineCheck(this.allusers);
+        }, 1000);
+        // 在线确认
+        this.$bus.$on('refreshUsers',(data)=>{
+            this.onlineCheck(data);
         })
     },
     created(){
@@ -151,13 +245,21 @@ export default {
     color:white;
 }
 /* 头像 */
-.frienditem > img{
+.offline{
     position: relative;
     width: 45px;
     height: 45px;
     border-radius: 50px;
     margin-left:2.5px;
-    border: 5px solid rgba(61, 61, 61, 1);
+    border: 4px solid rgba(61, 61, 61, 1);
+}
+.online{
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50px;
+    margin-left:2.5px;
+    border: 4px solid lightgreen;
 }
 /* 网名,个签内容物 */
 .content{

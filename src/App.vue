@@ -10,6 +10,7 @@
     <setting></setting>
     <starspace></starspace>
     <system-page></system-page>
+    <message-show-cube></message-show-cube>
   </div>
 </template>
 
@@ -24,11 +25,12 @@ import chats from './components/chats.vue'
 import setting from './components/setting.vue'
 import starspace from './components/starspace.vue'
 import SystemPage from './components/systemPage.vue'
+import MessageShowCube from './components/MessageShowCube.vue'
 import { mapState } from 'vuex'
 
 export default {
   name: "App",
-  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace, SystemPage},
+  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace, SystemPage,MessageShowCube},
   data(){
     return{
       // 判断是否管理员登录
@@ -49,13 +51,22 @@ export default {
       //  如果是给我的消息
       if(data.to==this.user.userQQ){
         var receive = {sendUserQQ:data.from,receiveUserQQ:this.user.userQQ,chatContent:data.text,chatTime:Date.now()};
-          // 收到了消息,要通知给friendlist组件,显示未读条数
+          // 收到了消息,要通知给friendlist和recent组件,显示未读条数
           this.$bus.$emit('MessageNums',receive);
           // 收到了消息,要通知给recentfriend组件,显示最近聊天
           this.$bus.$emit('RecentChats',receive);
+          // 收到了消息,要通知给messageNotice组件,显示总未聊天数
+          this.$bus.$emit('messageNotice');
           // 接收chats组件消息,以展示未读消息
          }
          })
+  },
+    
+  created(){
+    // 总消息初始化
+    setTimeout(() => {
+       this.$bus.$emit('messageNoticeDefalut');
+    }, 2000);
   },
   beforeDestroy(){
     this.$bus.$off('tologin');

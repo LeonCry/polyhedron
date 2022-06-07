@@ -788,6 +788,8 @@ export default {
           if (data.users) {
             // 向Vuex全局中加入在线用户信息
             _this.$store.commit("userInfo/SAVEALLUSERSS", data.users);
+            // 更新在线状态
+            _this.$bus.$emit('refreshUsers',data.users);
           }
           // 否则就是聊天信息{后续应该会有升级},将该信息传到聊天组件
           else {

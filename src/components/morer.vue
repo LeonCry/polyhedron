@@ -7,49 +7,80 @@
       </div>
       <transition name="tranT1">
       <!-- 他的空间 -->
-      <div v-show="itemIsShow">
+      <div v-show="itemIsShow" @click="enterSpace">
           <img src="../assets/space.svg" alt="空间">
           <span>TA的空间</span>
       </div>
       </transition>
       <transition name="tranT2">
       <!-- 送她礼物 -->
-      <div v-show="itemIsShow">
+      <div v-show="itemIsShow" @click="changeRename">
           <img src="../assets/rewrite.svg" alt="备注">
           <span>更改备注</span>
       </div>
        </transition>
       <transition name="tranT3">
       <!-- 他的角色 -->
-      <div v-show="itemIsShow">
+      <div v-show="itemIsShow" @click="gameShow">
           <img src="../assets/home.svg" alt="home">
-          <span>TA的避居所</span>
+          <span>TA的避难所</span>
       </div>
        </transition>
       <transition name="tranT4">
       <!-- 删除好友 -->
-      <div v-show="itemIsShow" class="deletefriend">
+      <div v-show="itemIsShow" class="deletefriend" @click="deletefriend">
           <img src="../assets/delete.svg" alt="删除">
           <span>删除好友</span>
       </div>
       </transition>
+      <!-- 占位 -->
+            <div class="empty">
+
+            </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'morer',
     data(){
         return{
-            itemIsShow:false
+            itemIsShow:false,
+            friend:'',
         }
+    },
+    computed:{
+        ...mapState('userInfo',['user']),
+    },
+    methods:{
+        // 进入空间
+        enterSpace(){
+            this.$bus.$emit('enterSpaceFromMorer',this.friend);
+        },
+        // 更改备注
+        changeRename(){
+            this.$bus.$emit('WhereTips',{friend:this.friend});
+        },
+        // 进入游戏
+        gameShow(){
+            this.$bus.$emit('chatNotice',false,"[避难所]正在开发中...");
+        },
+        deletefriend(){
+            this.$bus.$emit('delTips',{friend:this.friend});
+        }
+
     },
     mounted(){
         //接收chats组件数据,控制每个item的显示
         this.$bus.$on('itemisshow',(data1)=>{
             this.itemIsShow = data1;
         })
+        // 接收chat组件的数据,接收friend数据
+        this.$bus.$on('friendToMorer',(data)=>{
+            this.friend = data;
+        });
     },
     beforeDestroy(){
         this.$bus.$off('itemisshow');
@@ -77,8 +108,16 @@ export default {
     cursor: pointer;
     align-items: center;
 }
-.morerbox div:hover{
-    background-color: rgba(99, 110, 114,0.25);
+.morerbox div:nth-of-type(2):hover{
+    background-color: pink;
+    border-radius: 25px;
+}
+.morerbox div:nth-of-type(3):hover{
+    background-color: yellowgreen;
+    border-radius: 25px;
+}
+.morerbox div:nth-of-type(4):hover{
+    background-color: rgba(24, 181, 238, 0.66);
     border-radius: 25px;
 }
 
@@ -105,9 +144,17 @@ img{
 span{
     transform: translateX(35px);
 }
+.empty{
+    position: absolute;
+    width: 100px;
+    height: 100px;
+}
 /* 删除好友 */
 .deletefriend:hover{
 background-color: brown !important;
+border-radius: 25px;
+animation: vibrate-3 0.5s linear infinite both;
+
 }
 /* 每个item出现动画 */
 .tranT1-enter-active{
@@ -141,6 +188,52 @@ background-color: brown !important;
     -webkit-filter: blur(0);
             filter: blur(0);
     opacity: 1;
+  }
+}
+@keyframes vibrate-3 {
+  0% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
+  }
+  10% {
+    -webkit-transform: translate(-2px, -2px);
+            transform: translate(-2px, -2px);
+  }
+  20% {
+    -webkit-transform: translate(2px, -2px);
+            transform: translate(2px, -2px);
+  }
+  30% {
+    -webkit-transform: translate(-2px, 2px);
+            transform: translate(-2px, 2px);
+  }
+  40% {
+    -webkit-transform: translate(2px, 2px);
+            transform: translate(2px, 2px);
+  }
+  50% {
+    -webkit-transform: translate(-2px, -2px);
+            transform: translate(-2px, -2px);
+  }
+  60% {
+    -webkit-transform: translate(2px, -2px);
+            transform: translate(2px, -2px);
+  }
+  70% {
+    -webkit-transform: translate(-2px, 2px);
+            transform: translate(-2px, 2px);
+  }
+  80% {
+    -webkit-transform: translate(-2px, -2px);
+            transform: translate(-2px, -2px);
+  }
+  90% {
+    -webkit-transform: translate(2px, -2px);
+            transform: translate(2px, -2px);
+  }
+  100% {
+    -webkit-transform: translate(0);
+            transform: translate(0);
   }
 }
 

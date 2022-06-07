@@ -17,6 +17,7 @@ export default {
         return{
             // 最近聊天人员数组
             recentChatUsers:[],
+            isShow:true,
         }
     },
     computed:{
@@ -24,26 +25,27 @@ export default {
     },
     methods:{
         // 显示最近聊天
-        showRecentChats(data){
+        showRecentChats(datas){
             // 检查是否存在该最近聊天用户
             let isHave = false;
+            let mid = this.recentChatUsers;
             // 先检查是否已经在这个数组里面了
-            for (let index = 0; index < this.recentChatUsers.length; index++) {
-                const chatUser =  this.recentChatUsers[index];
+            for (let index = 0; index < mid.length; index++) {
+                const chatUser =  mid[index];
                  // 如果已经有了,则更新内容
-                if(chatUser.sendUserQQ==data.sendUserQQ){
-                    this.recentChatUsers[index] = data;
+                if(chatUser.sendUserQQ==datas.sendUserQQ){
+                    mid[index] = datas;
                     isHave = true;
                 }
             }
             // 如果没有该用户,则新添加该用户
             if(!isHave){
-               this.recentChatUsers.push(data);
+               mid.push(datas);
             }
             // 最后进行一个排序按聊天时间降序
-                this.recentChatUsers.sort(this.compare('chatTime'));
+                // this.recentChatUsers = mid.sort(); 
                 localStorage.removeItem(':allRecent:'+this.user.userQQ);
-                localStorage.setItem(':allRecent:'+this.user.userQQ,JSON.stringify(this.recentChatUsers));
+                localStorage.setItem(':allRecent:'+this.user.userQQ,JSON.stringify(mid));       
         },
         recentCreated(){
         //最近联系人 创照初始化
@@ -53,9 +55,6 @@ export default {
         else{
             this.recentChatUsers = JSON.parse(localStorage.getItem(':allRecent:'+this.user.userQQ));
         }
-        console.log(this.user.userQQ);
-        
-        console.log(':allRecent:'+this.user.userQQ+" 的初始化数组最近联系人:"+this.recentChatUsers);
         },
 
 
@@ -70,18 +69,30 @@ export default {
     
     },
     mounted(){
-        // 接收APP的数据,以显示最近聊天
-        this.$bus.$on('RecentChats',(data)=>{
-            this.showRecentChats(data);
-            
+        // 删除最近聊天
+        this.$bus.$on('deleteRencent',(data)=>{
+            for (let index = 0; index < this.recentChatUsers.length; index++) {
+                const recentChat = this.recentChatUsers[index];
+                if(recentChat.sendUserQQ==data.friendQQ){
+                    console.log("已出发");
+                    this.recentChatUsers.splice(index,1);
+                    console.log(this.recentChatUsers);
+                }
+            }
         })
-       // 创照初始化
+        // 接收APP的数据,以显示最近聊天
+        this.$bus.$on('RecentChats',(datas)=>{
+            this.isShow = false;
+            this.showRecentChats(datas);  
+        })
+    },
+
+    created(){
+        // 创照初始化
         setTimeout(() => {
         this.recentCreated();
         }, 1000);
-    },
-
-
+    }
 
 
 }

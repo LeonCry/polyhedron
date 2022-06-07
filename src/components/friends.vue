@@ -169,6 +169,8 @@ export default {
             this.isSelf = false;
             // 传送数据组件界面切换
             this.$bus.$emit('functionchange',this.isRecent,this.isList,this.isSelf);
+            // 最新消息重新显示
+            this.$bus.$emit('messageOnload');
         },
         // 好友列表-功能
         selectFriendList(){
@@ -265,22 +267,42 @@ export default {
                this.isSearchPageShow = true; 
             }, 500);
         },
-        // 搜索好友发送请求
+        // 搜索好友发送请求,
         searchFriendRequest(){
+            let searchResult1 = [];
+            let searchResult2 = [];
             if(this.searchContent == ''){
                  this.$bus.$emit('friendSearchResult',[]);
             }
             else{
-            this.$axios.post('/api/searchFriendList',{userQQ:this.user.userQQ,friendQQ:this.searchContent}).then(response=>{
-                this.$bus.$emit('friendSearchResult',response.data);
-                console.log(response.data);
+            this.$axios.post('/api/selectFriendsByRemakeName',{userQQ:this.user.userQQ,friendRemarkName:this.searchContent}).then(response=>{
+                searchResult1 = response.data;
+            this.$axios.post('/api/selectFriendsByName',{userQQ:this.user.userQQ,friendName:this.searchContent}).then(response=>{
+                searchResult2 = response.data;
+                // 将搜索出来的两类,进行合并
+                for (let index = 0; index < searchResult1.length; index++) {
+                    const element1 = searchResult1[index];
+                    for (let index2 = 0; index2 < searchResult2.length; index++) {
+                        const element2 = searchResult2[index2];
+                        if(element1==element2){
+                            searchResult2.splice(index2,1);
+                        }
+                        
+                    }
+                }
+                searchResult2.forEach(element => {
+                    searchResult1.push(element)
+                });
+                this.$bus.$emit('friendSearchResult',searchResult1);
             },error=>{
                 console.log(error.message);
-                
             });
+            },error=>{
+                console.log(error.message);
+            });            
             }
 
-            
+           
         }
 
 

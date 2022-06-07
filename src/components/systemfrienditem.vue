@@ -141,12 +141,23 @@ export default {
         .post("/api/addOneFriend", {
           userQQ: this.user.userQQ,
           friendQQ: this.noticeprops.sendUserQQ,
+          friendName:this.notice.userName,
           beFriendTime: Date.now(),
         })
         .then(
+          // eslint-disable-next-line no-unused-vars
           (response) => {
-            console.log("已成为好友.", response.data);
-            this.$bus.$emit("systemNotice", true, "已接受该好友请求~");
+            // 更新名称信息
+            this.$axios.post("/api/updateFriend",{userQQ: this.noticeprops.sendUserQQ,friendQQ:this.user.userQQ,friendName:this.user.userName}).then(
+              // eslint-disable-next-line no-unused-vars
+              (response)=>{
+                this.$bus.$emit("systemNotice", true, "已接受该好友请求~");
+              },
+              (error)=>{
+                console.log(error.message);
+                
+              }
+            )
           },
           (error) => {
             console.log(error.message);

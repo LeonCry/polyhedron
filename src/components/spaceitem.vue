@@ -6,7 +6,7 @@
       <img v-if="space.user.userHead" :src="require('../assets/Heads/'+space.user.userHead)" alt="头像"/>
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>{{space.user.userName}}</span>
+        <span>{{space.user.userName}}<span v-show="remakeName">({{remakeName}})</span></span>
         <span>{{new Date(parseInt(space.publishTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -88,6 +88,7 @@ export default {
           commentContent:'',
           // 评论列表闪现刷新
           commentRflesh:true,
+          remakeName:'',
       }
   },
   computed:{
@@ -331,8 +332,20 @@ export default {
           console.log(error.message);
         });
       },
-
-
+        //获取备注名
+        getRemakeName(userQQ,friendQQ){
+            this.$axios.post('/api/getOneFriends',{userQQ:userQQ,friendQQ:friendQQ}).then(response=>{
+              if(response.data==null){
+                this.remakeName = '';
+              }
+              else{
+                this.remakeName = response.data.friendRemarkName;
+              }
+            },error=>{
+                console.log(error.message);
+            });
+            
+        },
       // 发表评论
     async  comment(){
         if(this.commentContent==''){this.$bus.$emit('spaceNotice',false,"评论内容不可为空")}
@@ -371,16 +384,15 @@ export default {
 
 
   },
-  mounted(){
+  mounted(){ 
     // 关闭showpeople组件
     this.$bus.$on('showPeopleDisAppear',(data)=>{
       this.peopleProps = data;
     }),
-    
     // reply 刷新
     // eslint-disable-next-line no-unused-vars
     this.$bus.$on('refshReply',(data)=>{
-                  // 闪现刷新,获取最新的comment数据
+            // 闪现刷新,获取最新的comment数据
             this.commentRflesh = false;
             setTimeout(() => {
             this.commentRflesh = true;
@@ -388,7 +400,12 @@ export default {
     });
     // 将发表的内容插入到item内,就有样式了
     this.$refs.content.innerHTML = this.space.spaceContent;
+    // 获取最新的备注名
+    this.getRemakeName(this.user.userQQ,this.space.publishQQ);
   }
+
+
+
 };
 </script>
 

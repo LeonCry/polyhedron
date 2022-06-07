@@ -6,7 +6,7 @@
       <img v-if="replys.user.userHead" :src="require(`../assets/Heads/${replys.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span style="color:yellowgreen">{{replys.user.userName}}<span style="color:yellowgreen">#{{replys.myFloor}}层</span></span>
+        <span style="color:yellowgreen">{{replys.user.userName}}<span v-show="remakeName">{{remakeName}}</span><span style="color:yellowgreen">#{{replys.myFloor}}层</span></span>
         <span>{{new Date(parseInt(replys.replyTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -43,6 +43,7 @@ data() {
         replyReplyContent:'',
         // 评论对象
         comment:this.commentProps,
+        remakeName:'',
     }
   },
   computed:{
@@ -58,7 +59,20 @@ data() {
     commentAppear() {
         this.isCommentShow = !this.isCommentShow;
     },
-
+        //获取备注名
+        getRemakeName(userQQ,friendQQ){
+            this.$axios.post('/api/getOneFriends',{userQQ:userQQ,friendQQ:friendQQ}).then(response=>{
+              if(response.data==null){
+                this.remakeName = '';
+              }
+              else{
+                this.remakeName = response.data.friendRemarkName;
+              }
+            },error=>{
+                console.log(error.message);
+            });
+            
+        },
     // 回复的回复
   async replyReply(){
    // 先发送请求返回该评论下的回复,查看自己是第几层
@@ -97,6 +111,9 @@ console.log(error.message);
 
 
   },
+  mounted(){
+    this.getRemakeName(this.user.userQQ,this.replys.replyQQ);
+  }
 }
 </script>
 
