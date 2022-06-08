@@ -16,8 +16,9 @@
       <!-- 背景和头像 -->
       <div class="backandhead">
         <!-- 背景 -->
-        <div class="myback">
-          <img :src="require(`../assets/Backs/${spaceUser.userBack}`)" alt="背景" />
+        <div class="myback" :style="backgroundImg">
+          <!-- <img :src="require(`../assets/Backs/${spaceUser.userBack}`)" alt="背景" /> -->
+          <p v-if="spaceUser.userSign" class="sign" :class="{sign2:backReady}">"{{spaceUser.userSign}}"</p>
         </div>
         <!-- 头像网名 -->
         <div class="myhead">
@@ -81,6 +82,9 @@ export default {
       selects:"mySpace",
       // spaceitem是否为空
       isEmpty:false,
+      // 背景图片
+      backgroundImg:'',
+      backReady:false,
     };
   },
   computed: {
@@ -113,7 +117,14 @@ export default {
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',7,6,6);
     },
-
+    backReadyFun(){
+      setTimeout(() => {
+        this.backReady = true;
+      }, 2500);
+            setTimeout(() => {
+        this.backReady = false;
+      }, 5000);
+    },
     // 改变可见的空间范围--我的/我点赞的/...
     changeSpace(){
       // 我的动态
@@ -329,14 +340,14 @@ this.allSpaceSum = goodsSpace;
               console.log(error.message);
             });
             }
-
+            this.backgroundImg = {'background':"url(" + require(`../assets/Backs/${this.spaceUser.userBack}`) + ") no-repeat center / cover"};
+            this.backReadyFun();
         });
         // 接收来自其他窗口的数据,进行高度改变
         this.$bus.$on('changeZindex',(spaceZ)=>{
           this.zIndex = spaceZ;
         });
         // 滚动条滚动到底部的触发函数------(搁置,以后再说,需要考虑到5个场景的下滑触发)
-
 
   },
   beforeDestroy(){
@@ -424,6 +435,9 @@ this.allSpaceSum = goodsSpace;
   position: relative;
   width: 100%;
   height: 180px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
 }
 /* 背景图片 */
 .myback > img {
@@ -465,6 +479,35 @@ this.allSpaceSum = goodsSpace;
   justify-content: space-between;
   align-items: center;
   flex-flow: row nowrap;
+}
+/* 个签 */
+.sign{
+position: absolute;
+width: 90%;
+padding: 5%;
+text-align: center;
+font-size: 1.6vh;
+transition: 0.55s;
+line-height: 200%;
+color: rgba(255, 255, 255, 0.8);
+font-style: italic;
+background-color: rgba(0, 0, 0, 0.5);
+}
+.sign:hover{
+  background-color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.8);
+}
+.sign2{
+position: absolute;
+width: 90%;
+padding: 5%;
+text-align: center;
+font-size: 1.6vh;
+transition: 1.55s;
+line-height: 200%;
+font-style: italic;
+background-color: rgba(255, 255, 255, 0.8);
+color: rgba(0, 0, 0, 0.8);
 }
 .seecategory select{
   width: 40%;

@@ -3,7 +3,7 @@
 <template>
 <!-- 聊天盒子 -->
 <transition name="chatboxT">
-  <div v-show="isShow" class="chatbox" :class="{windowFlyClass:windowFlys}" :style="ChatLocation" @mousedown="changeIndex">
+  <div v-show="isShow" class="chatbox" :class="{windowFlyClass:windowFlys,addWidth:isAddWidth}" :style="ChatLocation" @mousedown="changeIndex">
       <!-- 抬头 -->
       <div class="toper" @mousedown="moveBegin">
           <!-- 名字 -->
@@ -22,9 +22,17 @@
               <rightchater :friendProp="friend" :chatProp="chat" v-for="chat of receiveChatsSum" :key="chat.chatId"></rightchater>
           </div>
           <!-- 右侧更多栏 -->
-          <div class="morer" :style="morerStyle">
+          <transition name="rightT">
+          <div v-show="moreappears" class="morer">
             <morer></morer>
           </div>
+          </transition>
+          <transition name="rightT">
+          <!-- 搜索聊天记录栏 -->
+          <div v-show="searchAppears" class="chatsSearch">
+            <search-chats :friendProps="friend"></search-chats>
+          </div>
+          </transition>
       </div>
 <transition name=emojiT>
       <!-- 表情栏 -->
@@ -71,11 +79,12 @@ import VideoChatFake from './videoChatFake.vue';
 import ChatNotice from './chatNotice.vue';
 import Tips from './tips.vue';
 import DelTips from './delTips.vue';
+import SearchChats from './searchChats.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice, Tips, DelTips},
+  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice, Tips, DelTips, SearchChats},
   data(){
       return{
         //   是否展示该组件--聊天窗口
@@ -86,8 +95,6 @@ export default {
         isWinding:false,
         // 是否触发了吹飞窗口
         windowFlys:false,
-          moreOpaticty:0,
-          moreBlur:40,
         //   控制更多按钮的转向
           nrrorRotateZ:180 + 'deg',
         //   控制morer组件每个item的显示
@@ -98,12 +105,15 @@ export default {
           poy:500+'px',
         //   判断是否鼠标按下的判定flag
           isMove:false,
+          moreappears:false,
       // 此组件Z轴高度 6 - 7
       zIndex:6,
     //   表情栏是否展示
     isEmojiShow:false,
     // 收到的emoji
     receiveEmoji:'',
+    // 搜索框是否出现
+    searchAppears:false,
     // 收到的friend数据
     friend:{user:{userName:''},friendRemarkName:''},
 
@@ -111,10 +121,11 @@ export default {
     message:'',
     // 是否为换行
     iskeyEnter:false,
-
+    searchFlex:0,
     // 发送程序已激活
     SendActice:false,
-
+    // 是否变宽
+    isAddWidth:false,
     // 数据请求到的聊天json list sum
     receiveChatsSum:[],
     // 仅一次请求获得的聊天json list sum
@@ -124,9 +135,6 @@ export default {
   computed:{
       ...mapState('userInfo',['user','socket']),
       //   控制侧边栏的样式
-      morerStyle(){
-          return{'flex':this.moreFlex,'opacity': this.moreOpaticty,'filter:':' blur('+this.moreBlur+'px)'};
-      },
       //   控制控制侧边栏按钮的样式
       morerButtonStyle(){
           return{'transform':'rotateZ('+this.nrrorRotateZ+')'};
@@ -150,18 +158,20 @@ export default {
           if (!this.moreFlex){
             this.moreFlex = 2;
             this.nrrorRotateZ = 720 + 'deg';
-            this.moreOpaticty = 1;
             this.moreBlur = 0;
           }
           else{
               this.moreFlex = 0;
               this.nrrorRotateZ = 180 + 'deg';
-              this.moreOpaticty = 0;
               this.moreBlur = 40;
+              this.isAddWidth = false;
+              this.searchAppears = false;
           }
+
         //   向morer发送数据,控制每个item的显示
         this.itemIsShow = !this.itemIsShow;
         this.$bus.$emit('itemisshow',this.itemIsShow);
+        this.moreappears = !this.moreappears;
 
       },
     //   鼠标按下,开始移动
@@ -178,6 +188,9 @@ export default {
             this.isShow = false;
             this.receiveChatsSum = [];
             this.$bus.$emit('returnIsChatting',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,isChatting:false});
+            if(this.moreappears){
+                this.morerAppear();
+            }
         },
         // 显示窗口
         showBox(data1){
@@ -509,7 +522,11 @@ export default {
                 }
             }
         })
-
+        // 接收来自searchChats的信息,显示搜索组件
+        this.$bus.$on('searchShowToChat',()=>{
+            this.isAddWidth = !this.isAddWidth;
+            this.searchAppears = !this.searchAppears;
+        });
       },
       beforeDestroy(){
            this.$bus.$off('chatboxappear');
@@ -536,15 +553,14 @@ export default {
     color: white;
     border-radius: 25px;
 }
-/* .chatbox:hover{
-    border-radius: 25px;
-    box-shadow: 0 0 30px 10px black;
-} */
+.addWidth{
+    width: 1350px;
+}
 
 /* 抬头 */
 .toper{
     position: relative;
-        width: 1000px;
+        width: 100%;
         height: 55px;
         border-radius: 25px 25px 0 0;
         display: flex;
@@ -598,15 +614,22 @@ export default {
     height: 100%;
     flex: 10;
 }
-
 /* 右边选项框 */
 .morer{
     position: relative;
     height: 100%;
-    flex: 0;
-    transition: 0.55s;
+    flex: 2;
+    transition: 0.1s;
     background-color: rgba(45, 52, 54,0.1);
-    opacity: 0;
+    border-left:2.5px solid rgba(255, 255, 255, 0.1);
+}
+/* 聊天搜索框 */
+.chatsSearch{
+    position: relative;
+    height: 465px;
+    flex: 4;
+    transition: 0.55s;
+    border-left:2.5px solid rgba(255, 255, 255, 0.1);
 }
 /* 表情栏 */
 .expression{
@@ -745,7 +768,12 @@ padding: 5px;
 .emojiT-leave-active{
     animation: swing-in-top-fwd 0.35s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
 }
-
+.rightT-enter-active{
+    animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.rightT-leave-active{
+    animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
     /* 进入的动画 */
     .chaterboxT-enter-active{
          animation: slide-in-blurred-right 0.55s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
@@ -810,5 +838,22 @@ padding: 5px;
     opacity: 0;
   }
 }
+@keyframes swing-in-left-fwd {
+  0% {
+    -webkit-transform: rotateY(100deg);
+            transform: rotateY(100deg);
+    -webkit-transform-origin: left;
+            transform-origin: left;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+    -webkit-transform-origin: left;
+            transform-origin: left;
+    opacity: 1;
+  }
+}
+
 
 </style>

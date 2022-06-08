@@ -2,9 +2,13 @@
 <template>
   <div class="morerbox">
       <!-- 搜索框 -->
-      <div>
-          <input type="text" name="" id="" placeholder="搜索聊天记录">
+      <transition name="tranT0">
+      <!-- 他的空间 -->
+      <div v-show="itemIsShow" @click="searchChats">
+          <img src="../assets/search.svg" alt="搜索">
+          <span >搜索聊天记录</span>
       </div>
+      </transition>
       <transition name="tranT1">
       <!-- 他的空间 -->
       <div v-show="itemIsShow" @click="enterSpace">
@@ -69,6 +73,10 @@ export default {
         },
         deletefriend(){
             this.$bus.$emit('delTips',{friend:this.friend});
+        },
+        searchChats(){
+            this.$bus.$emit('searchShowToChat');
+            this.$bus.$emit('showSearchChats',this.friend);
         }
 
     },
@@ -94,6 +102,7 @@ export default {
     width: 100%;
     height: 100%;
     display: flex;
+    font-size: 1.65vh;
     flex-flow: column nowrap;
     justify-content: space-evenly;
     align-items: center;
@@ -108,12 +117,16 @@ export default {
     cursor: pointer;
     align-items: center;
 }
+.morerbox div:nth-of-type(1):hover{
+    background-color: seagreen;
+    border-radius: 25px;
+}
 .morerbox div:nth-of-type(2):hover{
     background-color: pink;
     border-radius: 25px;
 }
 .morerbox div:nth-of-type(3):hover{
-    background-color: yellowgreen;
+    background-color: rebeccapurple;
     border-radius: 25px;
 }
 .morerbox div:nth-of-type(4):hover{
@@ -147,7 +160,7 @@ span{
 .empty{
     position: absolute;
     width: 100px;
-    height: 100px;
+    height: 50px;
 }
 /* 删除好友 */
 .deletefriend:hover{
@@ -157,17 +170,20 @@ animation: vibrate-3 0.5s linear infinite both;
 
 }
 /* 每个item出现动画 */
+.tranT0-enter-active{
+    animation: slide-in-blurred-bottom 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+}
 .tranT1-enter-active{
-    animation: slide-in-blurred-bottom 0.8s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+    animation: slide-in-blurred-bottom 0.9s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
 }
 .tranT2-enter-active{
-    animation: slide-in-blurred-bottom 1.4s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+    animation: slide-in-blurred-bottom 1.3s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
 }
 .tranT3-enter-active{
-    animation: slide-in-blurred-bottom 2.0s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+    animation: slide-in-blurred-bottom 1.6s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
 }
 .tranT4-enter-active{
-    animation: slide-in-blurred-bottom 2.6s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+    animation: slide-in-blurred-bottom 1.8s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
 }
 
 @keyframes slide-in-blurred-bottom {
