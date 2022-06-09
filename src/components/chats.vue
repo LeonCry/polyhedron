@@ -19,7 +19,7 @@
           <!-- 左侧聊天栏  包含了所有的人的聊天内容 -->
           <div ref="chatters" class="chatter" >
               <chat-loading></chat-loading>
-              <rightchater :friendProp="friend" :chatProp="chat" v-for="chat of receiveChatsSum" :key="chat.chatId"></rightchater>
+              <rightchater :friendProp="friend" :chatProp="chat" v-for="chat of receiveChatsSum" :key="chat.chatId" :id="chat.chatId"></rightchater>
           </div>
           <!-- 右侧更多栏 -->
           <transition name="rightT">
@@ -351,7 +351,19 @@ export default {
             }
             
         },
-
+        // 加载聊天记录
+       async loadingChats(){
+            var start = this.receiveChatsSum.length;
+            var end =  20;
+              await  this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
+                    console.log(response.data);
+                    this.$bus.$emit('receiveChat',response.data);
+                    console.log("loading chats.....",this.receiveChatsSum.length);
+                }),
+                error=>{
+                    console.log(error.message);
+                }
+        },
         // 发送消息向数据库发送请求
         sendMessageRequest(message){
             this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:message,chatTime:Date.now()}).then(response=>{
@@ -423,8 +435,37 @@ export default {
             this.windowFlys = false;
             }, 5500);
         },
+        // 查询聊天记录并定位
+       async findOneChatst(id){
+           console.log("id:",id);
+           let length = this.receiveChatsSum.length;
+           let dda = 0;
+            for (let index = 0; index < length; index++) {
+                const chat = this.receiveChatsSum[index+dda];
+                console.log("正在搜索: 第",index,"个,chatId为",chat.chatId,"长度为:",length);              
+                if(chat.chatId==id){
+                    console.log("finded!");
+                    if(dda<0){
+                        this.$bus.$emit('clickAgain');
+                    }
+                    // 让该条信息高亮显示
+                    this.$bus.$emit('highLightShow',id);
+                    break;
+                }
+                else if(index==this.receiveChatsSum.length-1){
+                    var start = this.receiveChatsSum.length;
+                    var end =  length;
+                    length = length + length;
+                    dda = dda - length;
+                    await this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(
+                        response=>{
+                        this.$bus.$emit('receiveChat',response.data);
+                        console.log("loading chats.....",length);
+                })
+                }
+            }
+        },
 
-        
   },
   mounted(){
     //   实时监听鼠标移动,更改位置数据
@@ -527,6 +568,10 @@ export default {
             this.isAddWidth = !this.isAddWidth;
             this.searchAppears = !this.searchAppears;
         });
+        // 查询聊天记录并定位
+        this.$bus.$on('findOneChats',(id)=>{
+            this.findOneChatst(id);
+        })
       },
       beforeDestroy(){
            this.$bus.$off('chatboxappear');

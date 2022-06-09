@@ -2,7 +2,7 @@
 <template>
 <transition name="chaterboxT">
   <!-- 右侧聊天 -->
-  <div  v-if="chat.sendUserQQ!=friend.friendQQ" class="rightchaterbox">
+  <div  v-if="chat.sendUserQQ!=friend.friendQQ" class="rightchaterbox" :class="{highLightShow:isHighLightShow}">
     <!-- 发送时间 -->
     <span> {{new Date(parseInt(chat.chatTime))
                 .toLocaleString()
@@ -13,13 +13,13 @@
         
     </div></div>
     <!-- 头像 -->
-    <img v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
+    <img  v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
   </div>
   
   <!-- 左侧聊天 -->
-    <div v-if="chat.sendUserQQ==friend.friendQQ" class="leftchaterbox">
+    <div v-if="chat.sendUserQQ==friend.friendQQ" class="leftchaterbox" :class="{highLightShow:isHighLightShow}">
       <!-- 头像 -->
-      <img v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
+      <img class="leftimg"  v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
       <!-- 消息box -->
     <div>
     <div ref="chatcontent" class="chatcontent">
@@ -48,10 +48,21 @@ export default {
          return{
              friend:this.friendProp,
              chat:this.chatProp,
+             isHighLightShow:false,
          }
      },
      mounted(){
        this.$refs.chatcontent.innerHTML = this.chat.chatContent;
+
+      //  信息高亮
+      this.$bus.$on('highLightShow',(id)=>{
+        if(this.chat.chatId==id){
+          this.isHighLightShow = true;
+          setTimeout(() => {
+            this.isHighLightShow = false;
+          }, 2500);
+        }
+      })
      }
 };
 </script>
@@ -72,7 +83,7 @@ export default {
   position: relative;
   height: 50px;
   border-radius: 50px;
-  border: 2px solid #1a191b;
+  border: 2px solid black;
 }
 /* 消息box */
 .rightchaterbox > div {
@@ -102,11 +113,41 @@ export default {
   color: darkgrey;
   text-align: center;
 }
+ .highLightShow{
+   animation:hight-light 2.5s both;
+   border-radius: 50px;
+ }
+
 
     /* 进入的动画 */
     .chaterboxT-enter-active{
          animation: slide-in-blurred-right 0.55s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
     }
+
+
+    @keyframes hight-light {
+      0%{
+        background-color: white;
+        box-shadow: 0 0 15px white;
+      }
+      25%{
+        background-color: rgba(0, 0, 0, 0);
+        box-shadow: none;
+      }
+      50%{
+        background-color: white;
+        box-shadow: 0 0 15px white;
+      }
+      75%{
+        background-color: rgba(0, 0, 0, 0);
+        box-shadow: none;
+      }
+      100%{
+        background-color: white;
+        box-shadow: 0 0 15px white;
+      }
+    }
+
   @keyframes slide-in-blurred-right {
   0% {
     -webkit-transform: translateX(300px) scaleX(2.5) scaleY(0.2);
@@ -144,7 +185,7 @@ export default {
         position: relative;
         height: 50px;
         border-radius: 50px;
-        border: 2px solid #1A191B;
+        border: 2px solid black;
     }
     /* 消息box */
     .leftchaterbox > div{
