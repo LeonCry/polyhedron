@@ -31,17 +31,24 @@ export default {
     };
   },
   computed: {
-    ...mapState("userInfo", ["user"]),
+    ...mapState("userInfo", ["user","socket"]),
   },
   methods: {
     cancel() {
       this.isShow = false;
+    },
+      // 发送好友请求通知
+    sendNoticeByWST(msg){
+            let message = "A9wadv::NEW" + this.user.userQQ + msg; 
+            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:message}));
     },
     async confirm() {
         // 第一步:文本变化,对话框变化,消息列表变化
        this.message = "正在删除...";
        this.message2 = "Maybe that's our.."
        this.hidden = "display:none";
+      //  发送消息
+       this.sendNoticeByWST("已与你解除好友关系.");
        setTimeout(() => {
     //    删除好友关系
     this.$axios.post("/api/deleteFriend",{userQQ:this.user.userQQ,friendQQ:this.friend.friendQQ}).then(response=>{

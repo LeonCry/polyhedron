@@ -189,24 +189,47 @@ export default {
         this.$bus.$on('getSocketMessage',(data)=>{
       //  如果是给我的消息
       console.log("发送的消息:",data);
+      console.log("data.from==this.friend.friendQQ:",this.recentInfo.sendUserQQ);
       
-      if(data.to==this.user.userQQ && data.from==this.userInfos.userQQ){
-          this.isShow = true;
+      if(data.to==this.user.userQQ && data.from==this.recentInfo.sendUserQQ){
+          console.log("data.text.substring(0,11):",data.text.substring(0,11));
+          
+          if(data.text.substring(0,11)!="A9wadv::NEW"){
+              console.log("ooooooooooooooo");
+              
+           this.isShow = true;
             // 文本截取,防止溢出
             setTimeout(() => {
           this.$refs.chatContents.innerHTML = data.text;
           this.chatMessage =  data.text;
           this.chatTimes = Date.now();
             }, 100);
-         }})
+         }
+         else{
+             console.log("这是 A9wadv::NEW 信息;");
+             this.$bus.$emit("deleteChats",{userQQ:this.user.userQQ,friendQQ:this.recentInfo.sendUserQQ});
+            //  如果是删除消息
+             if(data.text=="A9wadv::NEW" + data.from + "已与你解除好友关系."){
+                //  好友列表消失
+                 this.$bus.$emit("refreshLists",false);
+                //  // 最近聊天-消失
+                this.$bus.$emit("deleteChats",{userQQ:this.user.userQQ,friendQQ:this.friend.friendQQ});
+                // 对话框消失
+                this.$bus.$emit("chatboxappear",false);
+             }
+         }
+          }
+})
         // 接收我发送的消息进行recent显示
         this.$bus.$on('mySendMessageOnRecent',(data)=>{     
             if(data.receiveUserQQ==this.recentInfo.sendUserQQ && data.userQQ==this.user.userQQ){
+                if(data.message.substring(0,11)!="A9wadv::NEW"){
             setTimeout(() => {
                this.$refs.chatContents.innerHTML = data.message; 
             }, 100);
              this.chatMessage = data.message;
-            }
+            }            
+                }
         })
         // 最近聊天和好友列表互相通信
         this.$bus.$on('chatMessageChange2',(data)=>{

@@ -26,12 +26,13 @@
       </transition>
           <!-- 好友列表 组件 -->
           <friends></friends>
-
+        <audio src="../assets/audio/gudu.mp3" ref="gudu" style="display:none"></audio>
 
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import friends from './friends.vue'
 import MessageNotice from './messageNotice.vue'
 export default {
@@ -49,6 +50,9 @@ data(){
         // 设置界面是否展示
         isSetting:false,
     }
+},
+computed:{
+...mapState('userInfo',['user']),
 },
 methods:{
     // 选项功能出现/消失
@@ -92,6 +96,23 @@ mounted(){
       this.$bus.$on("settingappear", (data1) => {
         this.isSetting = data1;
       });
+    // 接收全局消息--好友验证\好友删除\动态通知
+    this.$bus.$on('getSocketMessage',(data)=>{
+        console.log("SYS:getSocketMessage",data);
+        
+        // 如果是发送给我的
+        if(data.to == this.user.userQQ){
+            // 新的好友请求
+            if(data.text.substring(0,11)=="A9wadv::NEW"){
+                // 响铃
+                this.$refs.gudu.play();
+                // 系统通知消息数+1
+                this.$bus.$emit('sysNoticeMessage',1,data.text.substring(11,50));
+                // 总消息通知数+1
+                this.$bus.$emit('totalNoticeMessage',1);
+            }
+        }
+    })
 },
 beforeDestroy(){
      this.$bus.$off('loginSuccess');

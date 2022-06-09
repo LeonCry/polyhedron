@@ -17,12 +17,12 @@
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span>新的好友请求..</span>
+                  <span>{{noticeMessage}}</span>
               </div>
           </div>
           <!-- 个人空间 -->
           <div class="starspace">
-              <span>9</span>
+              <span v-show="NoticeNumber!=0">{{NoticeNumber}}</span>
           </div>
       </div>
   </div>
@@ -31,6 +31,7 @@
 
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'systemMessage',
@@ -39,20 +40,60 @@ export default {
             isShow:false,
             // 空间展示
             isSpaceShow:false,
+            NoticeNumber:0,
+            noticeMessage:'暂无新消息.',
         }
+    },
+    computed:{
+        ...mapState('userInfo',['user']),
     },
     methods:{
         // 显示聊天框
         systemPageShow(){
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('systemPageShow',true);
-            
+             // 总消息数-
+
+            // SYS消息数清零
+            this.NoticeNumber = 0;
+            localStorage.removeItem("sysNotices::" + this.user.userQQ);
+            localStorage.removeItem("sysNoticesContent::" + this.user.userQQ);
+            this.noticeMessage = "暂无新消息.";
+
+        },
+        // 初始化系统消息通知数
+        NoticeMessageInit(){
+            setTimeout(() => {
+            if(localStorage.getItem("sysNoticesContent::" + this.user.userQQ)!=null){
+                this.noticeMessage = localStorage.getItem("sysNoticesContent::" + this.user.userQQ);
+            }  
+            let oriNumber = 0;
+            if(localStorage.getItem("sysNotices::" + this.user.userQQ)!=null){
+                oriNumber = Number(localStorage.getItem("sysNotices::" + this.user.userQQ));
+            }
+            this.NoticeNumber = oriNumber;
+            }, 100);
+
         },
     },
     mounted(){
+        this.NoticeMessageInit();
         // 接收friends组件数据,进行页面切换效果
         this.$bus.$on('functionchange',(data1,data2)=>{
             this.isShow = data2;
+        })
+        // 接收消息,添加系统通知消息数
+        this.$bus.$on('sysNoticeMessage',(num,text)=>{
+            this.noticeMessage = text;
+            localStorage.setItem("sysNoticesContent::" + this.user.userQQ,this.noticeMessage);
+            if(localStorage.getItem("sysNotices::" + this.user.userQQ)==null){
+                localStorage.setItem("sysNotices::" + this.user.userQQ,1);
+                this.NoticeNumber = 1;
+            }
+            else{
+                localStorage.setItem("sysNotices::" + this.user.userQQ,this.NoticeNumber + num);
+                this.NoticeNumber = Number(localStorage.getItem("sysNotices::" + this.user.userQQ));
+            }
         })
     }
     

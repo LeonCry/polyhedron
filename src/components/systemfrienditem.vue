@@ -95,7 +95,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("userInfo", ["user"]),
+    ...mapState("userInfo", ["user","socket"]),
   },
   methods: {
     // 进入她的空间
@@ -117,9 +117,15 @@ export default {
       this.isNormal = false;
       this.consider = false;
     },
-
+    // 发送好友请求通知
+    sendNoticeByWST(msg){
+            let message = "A9wadv::NEW" + this.user.userName + msg; 
+            this.socket.send(JSON.stringify({from:this.noticeprops.receiveUserQQ,to:this.noticeprops.sendUserQQ,message:message}));
+    },
     // 接受为好友,更新数据
     accpetAsFriend() {
+      // 发送消息--已接受
+      this.sendNoticeByWST("已接受好友请求.");
       // 更新数据
       this.$axios
         .post("/api/updateNoticeData", {
@@ -167,6 +173,8 @@ export default {
     },
     // 拒绝为好友,更新数据
     refuseAsFriend() {
+      // 拒绝通知
+      this.sendNoticeByWST("已拒绝好友请求.");
       // 更新数据
       this.$axios
         .post("/api/updateNoticeData", {
@@ -233,8 +241,6 @@ export default {
           .post("api/getUser", { userQQ: this.noticeprops.receiveUserQQ })
           .then(
             (response) => {
-              console.log("接收到的数据:", response.data);
-
               this.notice = response.data;
             },
             (error) => {

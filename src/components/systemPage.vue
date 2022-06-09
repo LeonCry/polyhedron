@@ -127,9 +127,9 @@ export default {
             // 进行空间动态和收到的好友请求区分
             response.data.forEach((element) => {
               if (element.noticeType == 0) {
-                this.asSpaceData.push(element);
+                this.asSpaceData.unshift(element);
               } else {
-                this.asReceiverData.push(element);
+                this.asReceiverData.unshift(element);
               }
             });
             // 查询我是发送方时的数据
@@ -138,7 +138,9 @@ export default {
               .then(
                 (response) => {
                   console.log("发送方数据...");
-                  this.asSenderData = response.data;
+                  response.data.forEach(data => {
+                     this.asSenderData.unshift(data);
+                  });
                   // 判断场景是否为空
                   this.isEmpty();
                   this.$bus.$emit("systemPageLoading", false, "加载中..");

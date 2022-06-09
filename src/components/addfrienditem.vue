@@ -58,7 +58,7 @@ export default {
         }
     },
     computed:{
-        ...mapState('userInfo',['user']),
+        ...mapState('userInfo',['user','socket']),
 
     },
     methods:{
@@ -104,13 +104,14 @@ export default {
                     else{
                         console.log("添加好友:",response.data);
                         this.$bus.$emit(noticeEmit,true,"已向TA发送好友请求~");
+                        // 发送好友请求通知
+                        this.sendNoticeByWST();
                     }
                 },
                 error=>{
                     console.log(error.Message);
                     this.$bus.$emit(loadingEmit,false,"发送好友请求中..");
                     this.$bus.$emit(noticeEmit,false,error.Message);
-                    
                 });
             
 
@@ -118,6 +119,11 @@ export default {
 
 
 
+        },
+        // 发送好友请求通知
+        sendNoticeByWST(){
+            let message = "A9wadv::NEW" + this.user.userQQ + "发来好友请求"; 
+            this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.getUser.userQQ,message:message}));
         },
         // 展示addmessage框
         showAddMessage(){
