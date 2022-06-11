@@ -14,6 +14,11 @@
 <transition name="showpeopleT">
     <show-people :peopleProps="peopleProps" :whichState="whichState"  v-if="peopleProps" ></show-people>
 </transition>
+
+<transition name="sharepeopleT">
+    <share-people v-if="isSharePeopleShow" :spaceProps="spaceProp"></share-people>
+</transition>
+
     </div>
     <!-- 内容 -->
     <div class="content" ref="content">
@@ -52,11 +57,12 @@
 <script>
 import { mapState,mapMutations } from 'vuex';
 import commentbox from './commentbox.vue';
+import SharePeople from './sharePeople.vue';
 import ShowPeople from './showPeople.vue';
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "spaceitem",
-  components:{commentbox, ShowPeople},
+  components:{commentbox, ShowPeople, SharePeople},
   props:['spaceProp'],
   data(){
       return{
@@ -89,10 +95,11 @@ export default {
           // 评论列表闪现刷新
           commentRflesh:true,
           remakeName:'',
+          isSharePeopleShow:false,
       }
   },
   computed:{
-    ...mapState('userInfo',['user','spaceWith']),
+    ...mapState('userInfo',['user','spaceWith','socket']),
 
   },
   created(){
@@ -131,6 +138,7 @@ export default {
           if(this.isCollection){
             this.activeRequest("collector");
             this.spaceWithAdd("collections");
+            this.thinkNotice("收藏了一篇动态!");
             this.collectionPeople++;
           }
           // 如果是取消收藏
@@ -148,6 +156,7 @@ export default {
       likes(){
           this.isLike = !this.isLike;
           if(this.isLike){
+            this.thinkNotice("赞了一篇动态!");
             this.activeRequest("gooder");
             this.spaceWithAdd("goods");
             this.likePeople++;
@@ -190,6 +199,9 @@ export default {
     //   点击分享
       shares(){
         this.shareAnimation();
+        this.isSharePeopleShow = true;
+        this.$bus.$emit("shareSpaceItem",this.spaceProp);
+
         // 如果我已经分享过这个动态了,就不添加到数据库和增加分享次数了
         if(this.hasShared){
           true;
@@ -214,11 +226,9 @@ export default {
            }
         }
       },
-
       // share动画效果 + 弹出分享窗口
       shareAnimation(){
         this.isShare = false;
-        this.$bus.$emit('spaceNotice',true,"完成 share");
            setTimeout(() => {
             this.isShare = true;
           }, 250);
@@ -264,10 +274,11 @@ export default {
         data[D] = this.space[operation];
         // eslint-disable-next-line no-unused-vars
         this.$axios.post('api/updateSpace',data).then(response=>{
-          this.$bus.$emit('spaceNotice',true,"完成"+operation);
+          if(operation!="sharer"){
+            this.$bus.$emit('spaceNotice',true,"完成"+operation);
+          }
         },error=>{
           this.$bus.$emit('spaceNotice',false,error.message);
-          
         });
           
       },
@@ -367,6 +378,7 @@ export default {
           // eslint-disable-next-line no-unused-vars
           this.$axios.post('/api/insertComment',data).then(response=>{
             this.$bus.$emit('spaceNotice',true,"评论成功!");
+            this.commentNotice();
             // 闪现刷新,获取最新的comment数据
             this.commentRflesh = false;
             setTimeout(() => {
@@ -377,7 +389,17 @@ export default {
             console.log(error.message);
           });
         }
-      }
+      },
+              // 回复时,发送通知到sysnotice
+    async commentNotice(){
+      let message = "A9wadv::NEW动态:"+this.user.userName+"评论了你的动态.";
+         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.spaceProp.publishQQ,message:message}));
+          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProp.publishQQ,noticeType:0,remarks:this.user.userName+"评论了你的动态.",noticeTime:Date.now()}).then(response=>{
+        console.log("已添加动态:",response.data);
+        },error=>{
+             console.log(error.message);
+        }); 
+    },
 
 
 
@@ -402,6 +424,10 @@ export default {
     this.$refs.content.innerHTML = this.space.spaceContent;
     // 获取最新的备注名
     this.getRemakeName(this.user.userQQ,this.space.publishQQ);
+    // sharePeople控制退出
+    this.$bus.$on('sharePeopleDisAppear',()=>{
+      this.isSharePeopleShow = false;
+    })
   }
 
 
@@ -561,6 +587,13 @@ export default {
 .showpeopleT-leave-active{
     animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
 }
+.sharepeopleT-enter-active{
+    animation: swing-in-right-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.sharepeopleT-leave-active{
+    animation: swing-in-right-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
+
 @keyframes bounce-top {
   0% {
     -webkit-transform: translateY(-45px);
@@ -627,6 +660,22 @@ export default {
             transform: rotateY(0);
     -webkit-transform-origin: left;
             transform-origin: left;
+    opacity: 1;
+  }
+}
+@keyframes swing-in-right-fwd {
+  0% {
+    -webkit-transform: rotateY(-100deg);
+            transform: rotateY(-100deg);
+    -webkit-transform-origin: right;
+            transform-origin: right;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+    -webkit-transform-origin: right;
+            transform-origin: right;
     opacity: 1;
   }
 }

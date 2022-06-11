@@ -38,7 +38,7 @@ export default {
   components:{ reply },
   props:['commentProps'],
   computed:{
-    ...mapState('userInfo',['user']),
+    ...mapState('userInfo',['user','socket']),
   },
   data() {
     return {
@@ -108,14 +108,28 @@ console.log(error.message);
       // eslint-disable-next-line no-unused-vars
       await  this.$axios.post('/api/insertReply',data).then(response=>{
           this.$bus.$emit('spaceNotice',true,"回复成功!");
+          // 发送消息
+          this.replyNotice();
           // 刷新
           this.$bus.$emit('refshReply',true);
-          
         },error=>{
           console.log(error.message);
         });
       }
-    }
+    },
+    
+        // 回复时,发送通知到sysnotice
+    async replyNotice(){
+      let message = "A9wadv::NEW动态:"+this.user.userName+"回复了你的评论.";
+         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.commentProps.commentQQ,message:message}));
+        await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.commentProps.commentQQ,noticeType:0,remarks:this.user.userName+"回复了你的评论.",noticeTime:Date.now()}).then(response=>{
+        console.log("已添加动态:",response.data);
+        },error=>{
+             console.log(error.message);
+        });
+        
+    },
+
   },
   mounted(){
     // 每次开始获取备注名

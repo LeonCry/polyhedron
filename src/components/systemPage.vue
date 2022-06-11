@@ -220,6 +220,7 @@ export default {
         this.isShow = data1;
         this.receiveSysNotices();
       });
+      // 取得spaceitem并进行添加
   },
   beforeDestroy() {
     this.$bus.$off("chatboxappear");

@@ -74,7 +74,6 @@ export default {
             for (let index = 0; index < this.recentChatUsers.length; index++) {
                 const recentChat = this.recentChatUsers[index];
                 if(recentChat.sendUserQQ==data.friendQQ){
-                    console.log("已出发");
                     this.recentChatUsers.splice(index,1);
                     console.log(this.recentChatUsers);
                 }
@@ -82,8 +81,12 @@ export default {
         })
         // 接收APP的数据,以显示最近聊天
         this.$bus.$on('RecentChats',(datas)=>{
-            this.isShow = false;
-            this.showRecentChats(datas);  
+            if(datas.chatContent.substring(0,11)!="A9wadv::NEW"){
+                
+               this.isShow = false;
+               this.showRecentChats(datas); 
+            }
+
         })
     },
 

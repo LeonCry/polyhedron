@@ -101,7 +101,7 @@ export default {
     // 进入她的空间
     enterHerSpace() {
       // 向starspace组件发送数据,显示聊天框
-      this.$bus.$emit("spaceappear", true, false);
+      this.$bus.$emit("spaceappear", true, false,this.noticeprops.user);
     },
     // 接受作为好友的状态class
     greenAccept() {

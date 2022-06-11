@@ -11,9 +11,11 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>用户名 <span style="color:pink">发表了一条动态</span></span>
+                  <span>{{notice.friendName}}<span v-show="remakeName"> ({{remakeName}})</span> <span style="color:pink">{{noticeprops.remarks}}</span></span>
                   <!-- 最后消息时间 -->
-                  <span>5-16 22:00</span>
+                  <span>{{new Date(parseInt(noticeprops.noticeTime))
+                .toLocaleString()
+                .slice(5)}}</span>
               </div>
           </div>
           <!-- 个人空间 -->
@@ -27,9 +29,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'systemSpaceItem',
+    props:['noticeprops'],
     data(){
         return{
             isShow:true,
@@ -41,20 +45,60 @@ export default {
             isNormal:true,
             // 删除按钮出现
             consider:true,
+            notice:'',
+            remakeName:'',
+            spaceUser:'',
         }
+    },
+    computed:{
+        ...mapState('userInfo',['user']),
     },
     methods:{
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false);
+            this.$bus.$emit('spaceappear',true,false,this.spaceUser);
         },
         // 删除该条通知
         deleteNotice(){
-            this.isShow = false;
-        }
+          this.$axios
+          .post("/api/delOneNotice", {
+            sysNoticeId: this.noticeprops.sysNoticeId,
+          })
+          .then(
+            (response) => {
+              console.log(response.data);
+              this.isShow = false;
+            },
+            (error) => {
+              this.$bus.$emit("systemNotice", false, error.message);
+            }
+          );
+        },
+        // 判断+ 头像请求和用户名
+    headRequest() {
+      // 接收信息
+      if (this.user.userQQ == this.noticeprops.receiveUserQQ) {
+           this.$axios
+          .post("api/getOneFriends", { userQQ:this.user.userQQ,friendQQ: this.noticeprops.sendUserQQ})
+          .then(
+            (response) => {
+              this.notice = response.data;
+              this.spaceUser = response.data.user;
+              this.remakeName = this.notice.friendRemarkName;
+            },
+            (error) => {
+              console.log(error.message);
+            }
+          ); 
+          if(this.noticeprops.remarks.substring(this.noticeprops.remarks.length-3,this.noticeprops.remarks.length)=="评论."){
+               this.spaceUser = this.user;
+            }
+      } 
+    },
     },
     mounted(){
+        this.headRequest();
     }
 }
 </script>

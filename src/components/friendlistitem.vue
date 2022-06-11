@@ -147,7 +147,9 @@ export default {
             this.isShow = data2;
         })
         // 接收APP组件消息,以展示未读消息
-        this.$bus.$on('MessageNums',(data)=>{
+        this.$bus.$on('MessageNums',(data)=>{                 
+            if(data.chatContent.substring(0,11)!="A9wadv::NEW"){
+            console.log("data.chatContent.substring(0,11):",data.chatContent.substring(0,11));
             if(data.sendUserQQ==this.friendProp.user.userQQ){
             // 向messageShowCube组件发送数据,以显示新消息通知
             this.$bus.$emit("messageShowCube",{friend:this.friendProp,messageData:data});
@@ -161,7 +163,7 @@ export default {
                         this.$refs.audios.play();
                     }
             }, 100);
-            }
+            }}
         })
         // 最近聊天和好友列表互相通信以取消未读消息数
         this.$bus.$on('chatMessageChange1',(data)=>{

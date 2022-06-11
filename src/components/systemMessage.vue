@@ -53,7 +53,9 @@ export default {
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('systemPageShow',true);
              // 总消息数-
-
+            let totalMessageNum = Number(localStorage.getItem(":totalMessage:" + this.user.userQQ));
+             localStorage.setItem(":totalMessage:" + this.user.userQQ,totalMessageNum - this.NoticeNumber);
+             this.$bus.$emit('messageNotice');
             // SYS消息数清零
             this.NoticeNumber = 0;
             localStorage.removeItem("sysNotices::" + this.user.userQQ);
@@ -63,6 +65,7 @@ export default {
         },
         // 初始化系统消息通知数
         NoticeMessageInit(){
+            console.log("created");
             setTimeout(() => {
             if(localStorage.getItem("sysNoticesContent::" + this.user.userQQ)!=null){
                 this.noticeMessage = localStorage.getItem("sysNoticesContent::" + this.user.userQQ);
@@ -77,7 +80,7 @@ export default {
         },
     },
     mounted(){
-        this.NoticeMessageInit();
+        // this.NoticeMessageInit();
         // 接收friends组件数据,进行页面切换效果
         this.$bus.$on('functionchange',(data1,data2)=>{
             this.isShow = data2;
@@ -86,16 +89,29 @@ export default {
         this.$bus.$on('sysNoticeMessage',(num,text)=>{
             this.noticeMessage = text;
             localStorage.setItem("sysNoticesContent::" + this.user.userQQ,this.noticeMessage);
+            // 总信息数
+            if(localStorage.getItem(":totalMessage:" + this.user.userQQ)==null){
+                localStorage.setItem(":totalMessage:" + this.user.userQQ,1);
+            }
+            else if(localStorage.getItem(":totalMessage:" + this.user.userQQ)!=null){
+                let totalMessageNum = Number(localStorage.getItem(":totalMessage:" + this.user.userQQ));
+                 localStorage.setItem(":totalMessage:" + this.user.userQQ,totalMessageNum + 1);
+            }
+            // 局部信息数
             if(localStorage.getItem("sysNotices::" + this.user.userQQ)==null){
                 localStorage.setItem("sysNotices::" + this.user.userQQ,1);
                 this.NoticeNumber = 1;
             }
-            else{
+            else if((localStorage.getItem("sysNotices::" + this.user.userQQ)!=null)){
                 localStorage.setItem("sysNotices::" + this.user.userQQ,this.NoticeNumber + num);
                 this.NoticeNumber = Number(localStorage.getItem("sysNotices::" + this.user.userQQ));
             }
+            this.$bus.$emit('messageNotice');
         })
-    }
+    },
+    created(){
+        this.NoticeMessageInit();
+    },
     
 }
 </script>

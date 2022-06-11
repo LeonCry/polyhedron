@@ -43,7 +43,7 @@ export default {
     };
   },
   computed:{
-    ...mapState('userInfo',['user']),
+    ...mapState('userInfo',['user','socket']),
   },
   watch: {
     //   监视接收到的emoji,并添加到输入框中
@@ -73,6 +73,8 @@ export default {
         this.publishContent = '';
         // 发表成功之后应该再请求一次服务器,或者直接将发表的内容传回给starspace,以用来新增一个space
         this.$bus.$emit('spaceappear',true,true);
+        // 发表时,发送通知到sysnotice
+        this.publishNotice();
       },error=>{
         this.$bus.$emit('spaceNotice',false,error.message);
         this.$bus.$emit('spaceLoading',false,"发表中..!");
@@ -80,6 +82,32 @@ export default {
       });
       
     },
+
+    // 发表时,发送通知到sysnotice
+    async publishNotice(){
+      let friendList = [];
+      let message = "A9wadv::NEW动态:"+this.user.userName+"发布了一条动态.";
+      // 首先查询该用户的所有好友列表
+     await this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
+        friendList = response.data;
+        console.log("friendList:",friendList);
+     }
+      ,error=>{
+        console.log(error.message);
+      });
+      for (let index = 0; index < friendList.length; index++) {
+        const friend = friendList[index];
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:friend.friendQQ,message:message}));
+        await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:friend.friendQQ,noticeType:0,remarks:this.user.userName+"发布了一条动态.",noticeTime:Date.now()}).then(response=>{
+        console.log("已添加动态:",response.data);
+        },error=>{
+             console.log(error.message);
+        });
+        
+      }
+    },
+
+
             // 去除粘贴样式
         removePasteStyle(event){
         var e = event || window.event

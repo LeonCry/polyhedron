@@ -97,9 +97,7 @@ mounted(){
         this.isSetting = data1;
       });
     // 接收全局消息--好友验证\好友删除\动态通知
-    this.$bus.$on('getSocketMessage',(data)=>{
-        console.log("SYS:getSocketMessage",data);
-        
+    this.$bus.$on('getSocketMessage',(data)=>{     
         // 如果是发送给我的
         if(data.to == this.user.userQQ){
             // 新的好友请求
