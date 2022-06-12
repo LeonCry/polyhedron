@@ -79,8 +79,9 @@ methods:{
     },
         // 发送消息向数据库发送请求
     async sendMessageRequest(message,friendQQ){
+       // eslint-disable-next-line no-unused-vars
        await this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:friendQQ,chatContent:message,chatTime:Date.now()}).then(response=>{
-        this.socket.send(JSON.stringify({from:this.user.userQQ,to:friendQQ,message:"我向你分享了[分享],点击查看详情........."}));
+        this.socket.send(JSON.stringify({from:this.user.userQQ,to:friendQQ,message:"我向你分享了[分享],点击查看详情........." +JSON.stringify(this.spaceProps)}));
         },error=>{
             console.log(error.message);
         });  
@@ -89,7 +90,7 @@ methods:{
      async thinkNotice(msg){
       let message = "A9wadv::NEW动态:"+this.user.userName+msg;
          this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.spaceProps.publishQQ,message:message}));
-          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProps.publishQQ,noticeType:0,remarks:this.user.userName+msg,noticeTime:Date.now()}).then(response=>{
+          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProps.publishQQ,noticeType:0,remarks:msg+"Q-v4jvy-Q"+JSON.stringify(this.spaceProps),noticeTime:Date.now()}).then(response=>{
         console.log("已添加动态:",response.data);
         },error=>{
              console.log(error.message);

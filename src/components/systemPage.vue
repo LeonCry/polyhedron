@@ -5,6 +5,7 @@
     <div v-show="isShow" class="chatbox" :style="ChatLocation">
       <system-notice></system-notice>
       <system-page-loading></system-page-loading>
+      <SpaceNoticeInSYS></SpaceNoticeInSYS>
       <!-- 抬头 -->
       <div class="toper" @mousedown="moveBegin">
         <!-- 名字 -->
@@ -48,6 +49,7 @@
 
 <script>
 import { mapState } from "vuex";
+import SpaceNoticeInSYS from './spaceNoticeInSYS.vue';
 import systemfrienditem from "./systemfrienditem.vue";
 import SystemNotice from "./systemNotice.vue";
 import SystemPageLoading from "./systemPageLoading.vue";
@@ -60,6 +62,7 @@ export default {
     SystemNotice,
     SystemSpaceItem,
     SystemPageLoading,
+    SpaceNoticeInSYS,
   },
   data() {
     return {
@@ -127,7 +130,7 @@ export default {
             // 进行空间动态和收到的好友请求区分
             response.data.forEach((element) => {
               if (element.noticeType == 0) {
-                this.asSpaceData.unshift(element);
+                if(element.sendUserQQ!=this.user.userQQ){this.asSpaceData.unshift(element);}
               } else {
                 this.asReceiverData.unshift(element);
               }

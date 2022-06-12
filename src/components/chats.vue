@@ -64,6 +64,7 @@
     <chat-notice></chat-notice>
     <tips></tips>
     <del-tips></del-tips>
+    <space-share-in-chat></space-share-in-chat>
      <audio ref="audios" src="../assets/audio/water.mp3" style="display:none"></audio>
   </div>
 </transition>
@@ -80,11 +81,12 @@ import ChatNotice from './chatNotice.vue';
 import Tips from './tips.vue';
 import DelTips from './delTips.vue';
 import SearchChats from './searchChats.vue';
+import SpaceShareInChat from './spaceShareInChat.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chats",
-  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice, Tips, DelTips, SearchChats},
+  components:{morer,emoji,rightchater, ChatLoading, VideoChatFake, ChatNotice, Tips, DelTips, SearchChats, SpaceShareInChat},
   data(){
       return{
         //   是否展示该组件--聊天窗口

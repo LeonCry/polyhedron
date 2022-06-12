@@ -13,7 +13,7 @@
                   <!-- 用户名 -->
                   <span>系统通知</span>
                   <!-- 互粉信息 -->
-                  <img src="../assets/systemmessage.svg" alt="铃声">
+                  <img :class="{react:NoticeNumber!=0}" src="../assets/systemmessage.svg" alt="铃声">
               </div>
               <!-- 个性签名 -->
               <div class="signs">
@@ -42,6 +42,8 @@ export default {
             isSpaceShow:false,
             NoticeNumber:0,
             noticeMessage:'暂无新消息.',
+            // 是否摇晃
+            isReact:false,
         }
     },
     computed:{
@@ -159,7 +161,9 @@ export default {
 .content:hover .nameandsign{
     flex: 4;
 }
-
+.react{
+    animation: wobble-hor-top 2s both infinite;
+}
 /* 名字和签名 */
 .nameandsign{
     position: relative;
@@ -245,4 +249,37 @@ span{
     opacity: 1;
   }
 }
+@keyframes wobble-hor-top {
+  0%,100%{
+    -webkit-transform:  rotate(0);
+            transform:  rotate(0);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+  }
+  10% {
+    -webkit-transform:  rotate(20deg);
+            transform: rotate(20deg);
+  }
+  20% {
+    -webkit-transform:  rotate(-20deg);
+            transform: rotate(-20deg);
+  }
+  30% {
+    -webkit-transform:  rotate(12deg);
+            transform: rotate(12deg);
+  }
+  40% {
+    -webkit-transform:  rotate(-12deg);
+            transform: rotate(-12deg);
+  }
+  50% {
+    -webkit-transform:  rotate(5deg);
+            transform:  rotate(5deg);
+  }
+  60%{
+        -webkit-transform:  rotate(-5deg);
+            transform:  rotate(-5deg);
+  }
+}
+
 </style>

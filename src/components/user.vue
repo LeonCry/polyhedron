@@ -104,8 +104,10 @@ mounted(){
             if(data.text.substring(0,11)=="A9wadv::NEW"){
                 // 响铃
                 this.$refs.gudu.play();
+                if(data.from!=this.user.userQQ){
                 // 系统通知消息数+1
-                this.$bus.$emit('sysNoticeMessage',1,data.text.substring(11,50));
+                this.$bus.$emit('sysNoticeMessage',1,data.text.substring(11));
+                }
                 // 总消息通知数+1
                 this.$bus.$emit('totalNoticeMessage',1);
             }

@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>{{notice.friendName}}<span v-show="remakeName"> ({{remakeName}})</span> <span style="color:pink">{{noticeprops.remarks}}</span></span>
+                  <span>{{notice.friendName}}<span v-show="remakeName"> ({{remakeName}})</span> <span style="color:pink">{{remarksReal}}</span></span>
                   <!-- 最后消息时间 -->
                   <span>{{new Date(parseInt(noticeprops.noticeTime))
                 .toLocaleString()
@@ -48,6 +48,8 @@ export default {
             notice:'',
             remakeName:'',
             spaceUser:'',
+            remarksReal:'',
+            spaceItemReal:'',
         }
     },
     computed:{
@@ -57,7 +59,7 @@ export default {
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('spaceappear',true,false,this.spaceUser);
+            this.$bus.$emit('SYSreceive',true,this.spaceItemReal);
         },
         // 删除该条通知
         deleteNotice(){
@@ -76,7 +78,7 @@ export default {
           );
         },
         // 判断+ 头像请求和用户名
-    headRequest() {
+        headRequest() {
       // 接收信息
       if (this.user.userQQ == this.noticeprops.receiveUserQQ) {
            this.$axios
@@ -96,9 +98,18 @@ export default {
             }
       } 
     },
+    // 对收到的消息进行切割
+        receiveSplice(){
+            let splited = this.noticeprops.remarks.split("Q-v4jvy-Q");
+            this.remarksReal = splited[0];
+            this.spaceItemReal = JSON.parse(splited[1]);
+        },
     },
     mounted(){
-        this.headRequest();
+    },
+    created(){
+         this.headRequest();
+        this.receiveSplice();
     }
 }
 </script>

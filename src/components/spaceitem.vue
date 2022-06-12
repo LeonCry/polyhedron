@@ -173,6 +173,15 @@ export default {
             this.likePeople--;
           }
       },
+      async thinkNotice(msg){
+      let message = "A9wadv::NEW动态:"+this.user.userName+msg;
+         this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.spaceProp.publishQQ,message:message}));
+          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProp.publishQQ,noticeType:0,remarks:msg+"Q-v4jvy-Q"+JSON.stringify(this.spaceProp),noticeTime:Date.now()}).then(response=>{
+        console.log("已添加动态:",response.data);
+        },error=>{
+             console.log(error.message);
+        });
+      },   
     //   点击不喜欢
       noLikes(){
           this.isNoLike = !this.isNoLike;
