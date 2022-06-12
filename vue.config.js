@@ -38,6 +38,14 @@ module.exports = {
           '^/QQname':''
         },
       },
+      "/location": {
+        target: 'https://ip.taobao.com',
+        // ws: true,
+        changeOrigin: true,
+        pathRewrite:{
+          '^/location':''
+        },
+      },
     }
   }
 

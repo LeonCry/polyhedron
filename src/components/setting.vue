@@ -27,7 +27,7 @@
           <div v-show="userDetail" class="settingdetail">
             <!-- 用户QQ -->
             <div>
-              <span>用户QQ</span>
+              <span>登录账号</span>
               <input type="text" v-model="userQQ" disabled/>
             </div>
             <!-- 用户名 -->
@@ -52,7 +52,7 @@
             </div>
             <!-- 头像 -->
             <div>
-              <span>头像</span>
+              <span>头 像</span>
               <div class="upload">
               <input ref="uploadHead"  @change="uploadHead" type="file" accept="image/png,image/jpeg" name="file">
                 <img src="../assets/upload.svg" alt="上传" />
@@ -61,7 +61,7 @@
             </div>
             <!-- 个人背景 -->
             <div>
-              <span>背景</span>
+              <span>背 景</span>
               <div class="upload">
               <input ref="uploadBack"  @change="uploadBack" type="file" accept="image/png,image/jpeg" name="file">
                 <img src="../assets/upload.svg" alt="上传" />

@@ -38,6 +38,15 @@ export default {
       // 向adminlogin组件传达数据,展示管理员登录界面
       this.$bus.$emit('tologin',true);
     }
+  },
+  created(){
+    // // 获取位置
+    // console.log("获取位置中...");
+    // this.$axios.get("/location/service/getIpInfo.php?ip="+'124.127.108.133').then(response=>{
+    //   console.log("location:",response.data);
+    // },error=>{
+    //   console.log(error.message);
+    // });
   }
 };
 </script>
