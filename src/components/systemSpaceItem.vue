@@ -50,6 +50,7 @@ export default {
             spaceUser:'',
             remarksReal:'',
             spaceItemReal:'',
+            isPublished:false,
         }
     },
     computed:{
@@ -59,7 +60,12 @@ export default {
         // 进入她的空间
         enterHerSpace(){
             // 向starspace组件发送数据,显示聊天框
-            this.$bus.$emit('SYSreceive',true,this.spaceItemReal);
+            if(this.isPublished){
+                this.$bus.$emit('spaceappear',true,false,this.spaceItemReal.user);
+            }
+            else{
+                this.$bus.$emit('SYSreceive',true,this.spaceItemReal);
+            }
         },
         // 删除该条通知
         deleteNotice(){
@@ -103,6 +109,11 @@ export default {
             let splited = this.noticeprops.remarks.split("Q-v4jvy-Q");
             this.remarksReal = splited[0];
             this.spaceItemReal = JSON.parse(splited[1]);
+            console.log(" this.spaceItemReal", this.spaceItemReal);
+            
+            if(this.spaceItemReal['spaceUserQQ']!=null){
+                this.isPublished = true;
+            }
         },
     },
     mounted(){

@@ -7,7 +7,6 @@
       <!-- 下拉菜单 -->
       <transition name="dropT">
         <span v-show="isShow" class="dropdown">
-          <a href="">引导</a>
           <a href="">关于</a>
           <a href="">联系</a>
           <a href="">博客</a>
@@ -104,7 +103,7 @@ export default {
 }
 .dropT-enter-to,
 .dropT-leave {
-  height: 190px;
+  height: 150px;
   opacity: 1;
 }
 /* sidebar动画 */

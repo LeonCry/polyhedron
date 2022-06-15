@@ -99,7 +99,7 @@ export default {
       }
   },
   computed:{
-    ...mapState('userInfo',['user','spaceWith','socket']),
+    ...mapState('userInfo',['user','spaceWith','socket','allusers']),
 
   },
   created(){
@@ -178,10 +178,68 @@ export default {
          this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.spaceProp.publishQQ,message:message}));
           await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProp.publishQQ,noticeType:0,remarks:msg+"Q-v4jvy-Q"+JSON.stringify(this.spaceProp),noticeTime:Date.now()}).then(response=>{
         console.log("已添加动态:",response.data);
+        this.mailNotice(this.spaceProp.publishQQ,"动态消息",this.user.userName + msg,this.spaceProp.user.userEmail);
+
         },error=>{
              console.log(error.message);
         });
       },   
+              // 邮件通知
+       async mailNotice(toQQ,messageType,msg,sendMail){
+        let isOnline = false;
+        let isNotice = false;
+        let isInFive = false;
+            // 先查看对方是否在线
+            for (let index = 0; index < this.allusers.length; index++) {
+                const uuser = this.allusers[index];
+                if(uuser.username==toQQ){
+                    isOnline = true;
+                    console.log("对方在线,不发送邮件");
+                    
+                }
+            }
+            if(!isOnline){
+            // 查询对方的设置,是否允许通知
+            await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
+                if(response.data.spaceNotice==1){
+                    isNotice=true;
+                    console.log("设置:允许通知!");
+                    }
+            },error=>{
+                console.log(error.message); 
+            });
+            }
+            // 如果设置允许,查看是否在5分钟内
+            if(isNotice){
+             await this.$axios.post('/api/mailInFiveMs',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3}).then(response=>{
+                if(response.data==null){
+                    isInFive = true;
+                    console.log("time:5分钟内!");
+                }
+                else if(response.data.noticeTime-Date.now()>=300000){
+                    isInFive = true;
+                    console.log("5分钟相差:",response.data.noticeTime-Date.now());
+                    console.log("5分钟内!");
+                }
+             },error=>{
+                console.log(error.message); 
+             });
+            }
+            // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
+            if(isInFive){
+             await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:"SYSTEM",gooder:msg,noGooder:sendMail},).then(response=>{
+                console.log("发送返回状态码:",response.data);
+             },error=>{
+                console.log(error.message);
+             });
+             await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
+                console.log("addOneNotice添加成功!:",response.data);
+             },error=>{console.log(error.message);});
+             
+                
+            }
+        },
+
     //   点击不喜欢
       noLikes(){
           this.isNoLike = !this.isNoLike;
@@ -403,8 +461,9 @@ export default {
     async commentNotice(){
       let message = "A9wadv::NEW动态:"+this.user.userName+"评论了你的动态.";
          this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.spaceProp.publishQQ,message:message}));
-          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProp.publishQQ,noticeType:0,remarks:this.user.userName+"评论了你的动态.",noticeTime:Date.now()}).then(response=>{
+          await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.spaceProp.publishQQ,noticeType:0,remarks:"评论了你的动态."+"Q-v4jvy-Q"+JSON.stringify(this.spaceProp),noticeTime:Date.now()}).then(response=>{
         console.log("已添加动态:",response.data);
+        this.mailNotice(this.spaceProp.publishQQ,"动态消息",this.user.userName+"评论了你的动态.",this.spaceProp.user.userEmail);
         },error=>{
              console.log(error.message);
         }); 

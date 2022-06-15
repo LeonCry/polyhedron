@@ -4,9 +4,9 @@ import Vuex from 'vuex'
 // 引入store配置
 import store from './store/index.js'
 
-// // elementui引入
-// import ElementUI from 'element-ui';
-// import 'element-ui/lib/theme-chalk/index.css';
+// elementui引入
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 // emoji引入
 import emoji from 'node-emoji';
@@ -16,19 +16,21 @@ import emoji from 'node-emoji';
 
 // vue-cookies 的引入
 import  VueCookies  from 'vue-cookies';
-
+import PubSub from 'pubsub-js'
+Vue.prototype.$PubSub = PubSub
 
 //axios的引入
 import axios from 'axios';
 
 import App from './App.vue';
-// // elementui使用
-// Vue.use(ElementUI);
+// router的使用
+import router from './router/index'
+// elementui使用
+Vue.use(ElementUI);
 // Vuex的适用
 Vue.use(Vuex);
 // vue-cookies的使用
 Vue.use(VueCookies);
-
 // emoji使用
 Vue.prototype.emoji = emoji;
 // qs的适用(废弃)
@@ -58,5 +60,6 @@ new Vue({
     Vue.prototype.$bus =this;
   },
   store,
+  router,
   render: h => h(App),
 }).$mount('#app')

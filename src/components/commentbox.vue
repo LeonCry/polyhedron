@@ -2,7 +2,7 @@
 <template>
   <div class="commentbox">
       <!-- 评论者 -->
-      <comments v-for="comment of allComments" :key="comment.commentId" :commentProps="comment"></comments>
+      <comments v-for="comment of allComments" :key="comment.commentId" :commentProps="comment" :spaceProps="spaceProps"></comments>
   </div>
 </template>
 

@@ -1,16 +1,14 @@
 <template>
   <div class="adminloginbox">
-      <form action="" target="blankFrame">
           <transition name="logindivT" appear="">
       <div v-show="isshow">
           <span @click="exitAdminLogin">X</span>
-          <input type="password" required placeholder="请输入管理员密码">
+          <input type="password" required placeholder="请输入管理员密码" v-model="password">
+          <b class="tips" :class="{success:isSuccess}">{{errorMessage}}</b>
           <br>
-          <button>管理员登录</button>
+          <button @click="SYSTEMLOGIN">管理员登录</button>
       </div>
       </transition>
-      </form>
-      <iframe src="" frameborder="0" name="blankFrame" style="display:none"></iframe>
   </div>
 
 </template>
@@ -22,6 +20,9 @@ export default {
     data(){
         return{
             isshow:false,
+            password:'',
+            isSuccess:false,
+            errorMessage:'',
         }
     },
     methods:{
@@ -31,7 +32,31 @@ export default {
             setTimeout(() => {
                 // 向App组件传达关闭管理员登录界面
                 this.$bus.$emit('tologin',false);
+
             }, 750);
+        },
+        // 管理员登录
+       async SYSTEMLOGIN(){
+          await this.$axios.post('/api/userLogin',{userQQ:'SYSTEM',userPassword:this.password}).then(response=>{
+            // 密码错误
+            if(response.data==-1){
+              this.errorMessage = "管理员密码错误.."
+            }
+            else{
+               this.errorMessage = '密码正确,正在进入管理后台...';
+               this.isSuccess = true;
+               setTimeout(() => {
+                this.exitAdminLogin();
+                this.errorMessage = '';
+                this.password = '';
+                // 显示后台
+                this.$PubSub.publish('BackEndShow',true);
+               }, 1500);
+            }
+          },error=>{
+            console.log(error.message);
+          });
+          
         }
     },
  mounted(){
@@ -56,7 +81,7 @@ export default {
   top: 0;
   z-index: 10;
   display: flex;
-  font-size: 3vh;
+  font-size: 1.6vh;
   font-weight: bold;
   text-align: center;
   flex-flow: column nowrap;
@@ -76,6 +101,14 @@ export default {
     box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.15);
     width: 600px;
     height: 200px;
+}
+.tips{
+  color: red;
+  font-size: 1.2vh;
+}
+.success{
+    color: lightgreen;
+  font-size: 1.2vh;
 }
 /* 输入框 */
 input {

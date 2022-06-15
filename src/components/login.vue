@@ -476,21 +476,49 @@ export default {
       this.responseMessage("登录成功!");
       setTimeout(() => {
         // 取得该用户的所有信息
-        this.getUserInfo(userQQ);
+        this.getUserInfo(userQQ,"login");
         // 取得该用户的设置信息
         this.getUserSetting(userQQ);
         // 登录成功,进入主界面
-      }, 2500);
+      }, 1000);
       setTimeout(() => {
         window.location.reload();
       }, 3000);
     },
+      // 邮件通知
+       async mailNotice(toQQ,sendMail){
+        await this.$axios.post('/api/loginNoticesAdmain',{userQQ:toQQ,userSign:new Date(parseInt(Date.now())).toLocaleString().slice(5),userEmail:sendMail},).then(response=>{
+                console.log("admain发送返回状态码:",response.data);
+             },error=>{
+                console.log(error.message);
+             });
+        let isNotice = false;
+            // 查询对方的设置,是否允许通知
+            await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
+                if(response.data.loginNotice==1){
+                    isNotice=true;
+                    console.log("设置:允许通知!");
+                    }
+            },error=>{
+                console.log(error.message); 
+            });
+            if(isNotice){
+              await this.$axios.post('/api/loginNotices',{userQQ:toQQ,userSign:new Date(parseInt(Date.now())).toLocaleString().slice(5),userEmail:sendMail},).then(response=>{
+                console.log("发送返回状态码:",response.data);
+                this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"登录通知",noticeTime:Date.now()}).then(response=>{
+                console.log("addOneNotice添加成功!:",response.data);})
+             },error=>{
+                console.log(error.message);
+             });
+            }
+        },
     // 取得用户的个人信息, -1表示error.message
-    getUserInfo(userQQ) {
+    getUserInfo(userQQ,state) {
       this.$axios.post("/api/getUser", { userQQ: userQQ }).then(
         (response) => {
           // console.log("得到用户信息:", response.data);
           // 向store中加入用户的个人信息
+          if(state=="login"){this.mailNotice(userQQ,response.data.userEmail);}
           this.uploadUserInfo(response.data);
         },
         (error) => {
@@ -747,7 +775,7 @@ export default {
               if (response.data != -1) {
                 this.enterMainInterface();
                 // 请求并向store中加入userInfo用户的信息
-                this.getUserInfo(userQQ);
+                this.getUserInfo(userQQ,"cookie");
                 // 请求向store中加入usersetting的信息
                 this.getUserSetting(userQQ);
                 // 加入Websocket初始化

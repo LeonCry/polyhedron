@@ -131,7 +131,7 @@ export default {
             response.data.forEach((element) => {
               if (element.noticeType == 0) {
                 if(element.sendUserQQ!=this.user.userQQ){this.asSpaceData.unshift(element);}
-              } else {
+              } else if(element.noticeType != 3){
                 this.asReceiverData.unshift(element);
               }
             });

@@ -36,9 +36,9 @@ export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "comments",
   components:{ reply },
-  props:['commentProps'],
+  props:['commentProps','spaceProps'],
   computed:{
-    ...mapState('userInfo',['user','socket']),
+    ...mapState('userInfo',['user','socket','allusers']),
   },
   data() {
     return {
@@ -122,18 +122,73 @@ console.log(error.message);
     async replyNotice(){
       let message = "A9wadv::NEW动态:"+this.user.userName+"回复了你的评论.";
          this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.commentProps.commentQQ,message:message}));
-        await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.commentProps.commentQQ,noticeType:0,remarks:this.user.userName+"回复了你的评论.",noticeTime:Date.now()}).then(response=>{
+        await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.commentProps.commentQQ,noticeType:0,remarks:"回复了你的评论."+"Q-v4jvy-Q"+JSON.stringify(this.spaceProps),noticeTime:Date.now()}).then(response=>{
         console.log("已添加动态:",response.data);
+        this.mailNotice(this.commentProps.commentQQ,"[动态消息]",this.user.userName+"回复了你的评论.",this.commentProps.user.userEmail);
         },error=>{
              console.log(error.message);
         });
         
     },
+                  // 邮件通知
+       async mailNotice(toQQ,messageType,msg,sendMail){
+        let isOnline = false;
+        let isNotice = false;
+        let isInFive = false;
+            // 先查看对方是否在线
+            for (let index = 0; index < this.allusers.length; index++) {
+                const uuser = this.allusers[index];
+                if(uuser.username==toQQ){
+                    isOnline = true;
+                    console.log("对方在线,不发送邮件");
+                }
+            }
+            if(!isOnline){
+            // 查询对方的设置,是否允许通知
+            await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
+                if(response.data.spaceNotice==1){
+                    isNotice=true;
+                    console.log("设置:允许通知!");
+                    }
+            },error=>{
+                console.log(error.message); 
+            });
+            }
+            // 如果设置允许,查看是否在5分钟内
+            if(isNotice){
+             await this.$axios.post('/api/mailInFiveMs',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3}).then(response=>{
+                if(response.data==null){
+                    isInFive = true;
+                    console.log("time:5分钟内!");
+                }
+                else if(response.data.noticeTime-Date.now()>=300000){
+                    isInFive = true;
+                    console.log("5分钟相差:",response.data.noticeTime-Date.now());
+                    console.log("5分钟内!");
+                }
+             },error=>{
+                console.log(error.message); 
+             });
+            }
+            // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
+            if(isInFive){
+             await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:"SYSTEM",gooder:msg,noGooder:sendMail},).then(response=>{
+                console.log("发送返回状态码:",response.data);
+             },error=>{
+                console.log(error.message);
+             });
+             await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
+                console.log("addOneNotice添加成功!:",response.data);
+             },error=>{console.log(error.message);});
+             
+                
+            }
+        },
 
   },
   mounted(){
     // 每次开始获取备注名
-    this.getRemakeName(this.userQQ,this.comment.commentQQ);
+    this.getRemakeName(this.userQQ,this.comment.commentQQ); 
   },
 };
 </script>

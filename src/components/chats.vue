@@ -418,7 +418,7 @@ export default {
             }
             // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
             if(isInFive){
-             await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:Date.now().toLocaleString().slice(5),collector:messageType,sharer:this.user.userName,gooder:msg,noGooder:sendMail},).then(response=>{
+             await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:this.user.userName,gooder:msg,noGooder:sendMail},).then(response=>{
                 console.log("发送返回状态码:",response.data);
              },error=>{
                 console.log(error.message);

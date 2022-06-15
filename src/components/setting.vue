@@ -84,7 +84,7 @@
           <div v-show="noticeDetail" class="settingdetail">
             <!-- 声音提示 -->
             <div>
-              <span>声音提示</span>
+              <span>避难所邮箱通知</span>
               <img class="switch" src="../assets/switch.svg" alt="开关" @click="voiceSwitch" :style="voiceSwitchStyle"/>
             </div>
             <!-- 好友消息邮箱通知 -->
