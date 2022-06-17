@@ -1,26 +1,27 @@
 <template>
   <div class="rightChatBox radius">
     <br />
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" >
       <el-tab-pane label="动态可视化" name="first">
         <div class="Maincontent radius">
-          <div class="user radius">
+          <div class="user radius hovers">
             <br />
                 <span slot="label" class="tabfull"><i class="el-icon-s-custom"></i>用户列表</span>
                 <br><hr><br>
                 <el-input
                   placeholder="输入用户名/昵称."
-                  v-model="input"
+                  v-model="searchUser"
+                  @input="userSearching"
                   prefix-icon="el-icon-search"
                   class="searchInput"
                   clearable
                 >
                 </el-input>
                 <div class="allusers">
-                  <user-box :userProp="this.user"></user-box>
+               <space-user-item v-for="user of totalUsers" :userProp="user" :key="user.userId"></space-user-item>
                 </div>
           </div>
-          <div class="user radius">
+          <div class="user radius hovers">
             <br />
         <span class="tabfull" slot="label"><i class="el-icon-coffee-cup"></i>动态列表</span>
         <br><hr><br>
@@ -33,11 +34,11 @@
                 >
                 </el-input>
                 <div class="allusers">
-                  <user-box :userProp="this.user"></user-box>
+                  <space-content-item v-for="space of AllSpaces" :key="space.publishId" :spaceProp="space"></space-content-item>
                 </div>
             <br />
           </div>
-          <div class="chats radius">
+          <div class="chats radius hovers">
             <space-box></space-box>
           </div>
         </div>
@@ -50,21 +51,70 @@
 </template>
 
 <script>
-import userBox from "@/components/BackEnd/chatComponents/userBox.vue";
-import { mapState } from "vuex";
 import SpaceBox from '@/components/BackEnd/spaceComponents/spaceBox.vue';
 import SpaceDataBox from '@/components/BackEnd/spaceComponents/spaceDataBox.vue';
+import SpaceUserItem from '@/components/BackEnd/spaceComponents/spaceUserItem.vue';
+import SpaceContentItem from '@/components/BackEnd/spaceComponents/spaceContentItem.vue';
 export default {
-  components: { userBox, SpaceBox, SpaceDataBox },
+  components: {  SpaceBox, SpaceDataBox, SpaceUserItem, SpaceContentItem },
   name: "rightSpaces",
-  computed: {
-    ...mapState("userInfo", ["user"]),
-  },
   data() {
     return {
       activeName: "first",
-    };
+      totalUsers:[],
+      searchUser:'',
+      AllSpaces:[],
+      saveTemSpaces:[],
+    }
   },
+  methods:{
+    async createdInit() {
+      this.$bus.$emit("backRightLoading", true, "加载中");
+      await this.$axios
+        .post("/api/findUsers", { userQQ:""})
+        .then((response) => {
+          this.totalUsers = response.data;
+        });
+      this.$bus.$emit("backRightLoading", false, "加载中");
+    },
+
+    userSearching() {
+      this.$axios.post("/api/findUsers", { userQQ: this.searchUser }).then(
+        (response) => {
+          this.totalUsers = response.data;
+        },
+        (error) => {
+          console.log(error.message);
+        }
+      );
+    },
+        // 获取动态列表;
+   async getSpaces(theSpace){
+        this.$bus.$emit('backRightLoading',true,"动态加载中");
+    await  this.$axios.post("/api/selectSpaces", {publishQQ: theSpace.userQQ,pageStart:0,pageEnd:9999}).then(
+        (response) => {
+          console.log("response.data",response.data);
+          this.AllSpaces = response.data;
+          // 暂时存储
+          this.saveTemSpaces = response.data;
+          this.baseSpace = theSpace;
+           this.$bus.$emit('backRightLoading',false,"动态加载中");
+        },
+        (error) => {
+          console.log(error.message);
+        }
+      );
+    }
+
+  },
+  mounted(){
+    this.createdInit();
+        // 展开动态列表
+    this.$bus.$on("showSpaces", (theUser) => {
+        this.getSpaces(theUser);
+    });
+  },
+
 };
 </script>
 
@@ -127,5 +177,12 @@ export default {
   text-align: center;
   color: black;
   font-size: 2vh;
+}
+.hovers{
+    transition: 0.33s;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+.hovers:hover{
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 </style>

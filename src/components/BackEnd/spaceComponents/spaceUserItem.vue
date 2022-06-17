@@ -1,7 +1,7 @@
 // 添加好友时,出现的单个好友item
 <template>
     <transition name="frienditemT" appear>
-        <div>
+  <div>
   <div v-show="isShow" class="frienditem" @click="selectMe" :class="{select:isSelect}"> 
       <!-- 头像 -->
       <img v-if="getUser.userHead" :src="require(`../../../assets/Heads/${getUser.userHead}`)" alt="">
@@ -29,9 +29,9 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-    props:['userProp','noselect'],
+    props:['userProp'],
     // eslint-disable-next-line vue/multi-word-component-names
-    name:'userBox',
+    name:'spaceUserItem',
     data(){
         return{
             isShow:true,
@@ -52,27 +52,23 @@ export default {
     },
     methods:{
         selectMe(){
-            // 如果实在动态中查看谁谁谁赞了,不能有这个功能
-            if(this.noselect!='space'){
             // 样式变化
-            this.$bus.$emit('isSelectMe',this.userProp.userId);
+            this.$bus.$emit('isSelectMeSpace',this.userProp.userId);
             // 展开朋友列表
-            this.$bus.$emit('showFriends',this.userProp);
+            this.$bus.$emit('showSpaces',this.userProp);
             // 搜索页面重置
             this.$bus.$emit('searchReset');
-        }}
+        }
     },
     mounted(){
         // 是否选中的是我
-        this.$bus.$on('isSelectMe',(id)=>{
-            if(this.noselect!='space'){
+        this.$bus.$on('isSelectMeSpace',(id)=>{
             // 说明是我
             if(this.userProp.userId==id){
                 this.isSelect = true;
             }
             else{
                 this.isSelect = false;
-            }
             }
         })
     },
@@ -152,15 +148,14 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    overflow-y: hidden;
-}
-.signs span{
-    overflow: hidden;
-    height: 2vh;
 }
 /* 更改字体滑过时鼠标 */
 span{
     cursor: default;
+}
+.signs span{
+    overflow: hidden;
+    height: 2vh;
 }
 
 /* 好友个体进入退出动画 */

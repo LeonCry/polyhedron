@@ -55,7 +55,7 @@ export default {
 .siderbar {
   margin-top: 20px;
   width: 100%;
-  position: relative;
+  position: fixed;
   display: flex;
   flex-flow: row-reverse nowrap;
 }
@@ -83,6 +83,7 @@ export default {
   position: relative;
   margin-bottom: 10px;
   transition: 0.5s;
+   z-index: 1001;
   margin-top: 5px;
 }
 .dropdown a:hover {

@@ -7,7 +7,12 @@
       <!-- 抬头 -->
       <div class="toper">
           <!-- 名字 -->
-          <span>小李与小黑的聊天</span>
+          <span v-show="chatUserName2">
+            <span v-show="chatUserName1">{{chatUserName1}}</span>
+            与
+            <span v-show="chatUserName2">{{chatUserName2}}</span>
+            的聊天记录
+          </span>
           <!-- 退出按钮 -->
       </div>
       <!-- 内容 -->
@@ -15,70 +20,34 @@
           <!-- 聊天栏  包含了所有的人的聊天内容 -->
           <div ref="chatters" class="chatter" >
               <chat-loading></chat-loading>
-              <rightchater :friendProp="friend" :chatProp="chat" v-for="chat of receiveChatsSum" :key="chat.chatId" :id="chat.chatId"></rightchater>
+              <chatser-item :friendProp="friend" :chatProp="chat" :baseUserProp="baseUser" v-for="chat of receiveChatsSum" :key="chat.chatId" :id="chat.chatId"></chatser-item>
           </div>
-         <!-- 搜索聊天记录栏 -->
-          <transition name="rightT">
-          <div v-show="searchAppears" class="chatsSearch">
-            <search-chats :friendProps="friend"></search-chats>
-          </div>
-          </transition>
       </div>
   </div>
 </transition>
 </template>
 
 <script>
+import ChatLoading from '@/components/chatLoading.vue';
 import { mapState } from 'vuex';
-import rightchater from '../../rightchater.vue';
+import ChatserItem from './chatserItem.vue';
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "chatsBox",
-  components:{rightchater},
+  components:{ChatserItem, ChatLoading},
   data(){
       return{
-        //   控制侧边栏长度大小 0为关闭 以及透明度 和 模糊
-          moreFlex:0,
-        //   是否正在吹一吹
-        isWinding:false,
-        // 是否触发了吹飞窗口
-        windowFlys:false,
-        //   控制更多按钮的转向
-          nrrorRotateZ:180 + 'deg',
-        //   控制morer组件每个item的显示
-          itemIsShow:false,
-        //   窗口移动要用到到的x坐标
-          pox:400+'px',
-        //   窗口移动要用到到的y坐标
-          poy:500+'px',
-        //   判断是否鼠标按下的判定flag
-          isMove:false,
-          moreappears:false,
-      // 此组件Z轴高度 6 - 7
-      zIndex:6,
-    //   表情栏是否展示
-    isEmojiShow:false,
-    // 收到的emoji
-    receiveEmoji:'',
-    // 搜索框是否出现
-    searchAppears:false,
-    // 收到的friend数据
-    friend:{user:{userName:''},friendRemarkName:''},
-
-    // 键入的消息
-    message:'',
-    // 是否为换行
-    iskeyEnter:false,
-    searchFlex:0,
-    // 发送程序已激活
-    SendActice:false,
-    // 是否变宽
-    isAddWidth:false,
     // 数据请求到的聊天json list sum
     receiveChatsSum:[],
     // 仅一次请求获得的聊天json list sum
     receiveChats:[],
+    chatUserName1:'',
+    chatUserName2:'',
+    sendUserQQ:'',
+    receiveUserQQ:'',
+    friend:'',
+    baseUser:'',
       }
   },
   computed:{
@@ -98,14 +67,14 @@ export default {
                 // 请求聊天记录--一次请求20条聊天记录
                 var start = this.receiveChatsSum.length;
                 var end =  20;
-                this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
+                this.$axios.post('/api/selectChats',{sendUserQQ:this.sendUserQQ,receiveUserQQ:this.receiveUserQQ,pageStart:start,pageEnd:end}).then(response=>{
                 console.log(response.data);
-                this.$bus.$emit('receiveChat',response.data);
+                this.$bus.$emit('receiveChatBack',response.data);
                 // 停止加载
-                this.$bus.$emit('chatLoading',false,"加载聊天记录中..");
+                this.$bus.$emit('backRightLoading',false,"加载聊天记录中..");
                 // 如果已经没有数据了
                 if(response.data==''){
-                    this.$bus.$emit('chatLoading',true,"___________________________已经到头啦____________________________");
+                    this.$message.error('已经到头啦');
                     setTimeout(() => {
                         this.$bus.$emit('chatLoading',false,"已经到头啦");
                     }, 2500);
@@ -131,14 +100,16 @@ export default {
        async loadingChats(){
             var start = this.receiveChatsSum.length;
             var end =  20;
-              await  this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
+                this.$bus.$emit("backRightLoading", true, "加载中");
+              await  this.$axios.post('/api/selectChats',{sendUserQQ:this.sendUserQQ,receiveUserQQ:this.receiveUserQQ,pageStart:start,pageEnd:end}).then(response=>{
                     console.log(response.data);
-                    this.$bus.$emit('receiveChat',response.data);
+                    this.$bus.$emit('receiveChatBack',response.data);
                     console.log("loading chats.....",this.receiveChatsSum.length);
                 }),
                 error=>{
                     console.log(error.message);
                 }
+                    this.$bus.$emit("backRightLoading", false, "加载中");
         },
         // 查询聊天记录并定位
        async findOneChatst(id){
@@ -151,10 +122,10 @@ export default {
                 if(chat.chatId==id){
                     console.log("finded!");
                     if(dda<0){
-                        this.$bus.$emit('clickAgain');
+                        this.$bus.$emit('clickAgainBack');
                     }
                     // 让该条信息高亮显示
-                    this.$bus.$emit('highLightShow',id);
+                    this.$bus.$emit('highLightShowBack',id);
                     break;
                 }
                 else if(index==this.receiveChatsSum.length-1){
@@ -162,9 +133,9 @@ export default {
                     var end =  length;
                     length = length + length;
                     dda = dda - length;
-                    await this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(
+                    await this.$axios.post('/api/selectChats',{sendUserQQ:this.baseUser.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(
                         response=>{
-                        this.$bus.$emit('receiveChat',response.data);
+                        this.$bus.$emit('receiveChatBack',response.data);
                         console.log("loading chats.....",length);
                 })
                 }
@@ -175,11 +146,40 @@ export default {
   mounted(){
         // 滚动条滚动到顶部的触发函数
         this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
+
+        // 接收响应显示聊天
+        this.$bus.$on('showChats',(theUser,friend)=>{
+            this.chatUserName1 = theUser.userName;
+            this.chatUserName2 = friend.friendName;
+            this.sendUserQQ = theUser.userQQ;
+            this.receiveUserQQ = friend.friendQQ;
+            this.baseUser = theUser;
+            this.friend = friend;
+            this.receiveChatsSum = [];
+                setTimeout(() => {
+                    this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
+                }, 50);
+            this.loadingChats();
+
+        }),
+
+        // 接收聊天记录
+        this.$bus.$on('receiveChatBack',(data)=>{
+            this.receiveChats = [];
+            this.receiveChats = data;
+            this.receiveChats.forEach(chat => {
+               this.receiveChatsSum.unshift(chat); 
+            });
+            
+        })
+
         // 查询聊天记录并定位
-        this.$bus.$on('findOneChats',(id)=>{
+        this.$bus.$on('findOneChatsBack',(id)=>{
             this.findOneChatst(id);
         })
       },
+
+
       beforeDestroy(){
       }
 };

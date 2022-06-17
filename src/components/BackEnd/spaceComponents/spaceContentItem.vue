@@ -1,10 +1,10 @@
 // 添加好友时,出现的单个好友item
 <template>
     <transition name="frienditemT" appear>
-        <div>
+<div >
   <div v-show="isShow" class="frienditem" @click="selectMe" :class="{select:isSelect}"> 
       <!-- 头像 -->
-      <img v-if="getUser.userHead" :src="require(`../../../assets/Heads/${getUser.userHead}`)" alt="">
+      <img src="../../../assets/space.svg" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -12,16 +12,16 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>{{getUser.userName}}</span>
+                  <span style="overflow:hidden">发表时间: {{new Date(parseInt(spaceProp.publishTime)).toLocaleString()}}</span>
               </div>
               <!-- 个性签名 -->
               <div class="signs">
-                  <span>{{getUser.userSign}}</span>
+                  <span>{{spaceProp.spaceContent}}</span>
               </div>
           </div>
       </div>
   </div>
-  </div>
+</div>
   </transition>
 </template>
 
@@ -29,16 +29,16 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-    props:['userProp','noselect'],
+    props:['spaceProp'],
     // eslint-disable-next-line vue/multi-word-component-names
-    name:'userBox',
+    name:'spaceContentItem',
     data(){
         return{
             isShow:true,
             // 空间展示
             isSpaceShow:false,
             // 用户
-            getUser:this.userProp,
+            getUser:this.friendProp,
             // 添加留言内容
             addMessage:'',
             // 是否添加留言展示
@@ -52,27 +52,19 @@ export default {
     },
     methods:{
         selectMe(){
-            // 如果实在动态中查看谁谁谁赞了,不能有这个功能
-            if(this.noselect!='space'){
-            // 样式变化
-            this.$bus.$emit('isSelectMe',this.userProp.userId);
-            // 展开朋友列表
-            this.$bus.$emit('showFriends',this.userProp);
-            // 搜索页面重置
-            this.$bus.$emit('searchReset');
-        }}
+            this.$bus.$emit('isSelectSpace',this.spaceProp.publishId);
+            this.$bus.$emit('showSpaceContent',this.spaceProp);
+        }
     },
     mounted(){
         // 是否选中的是我
-        this.$bus.$on('isSelectMe',(id)=>{
-            if(this.noselect!='space'){
+        this.$bus.$on('isSelectSpace',(id)=>{
             // 说明是我
-            if(this.userProp.userId==id){
+            if(this.spaceProp.publishId==id){
                 this.isSelect = true;
             }
             else{
                 this.isSelect = false;
-            }
             }
         })
     },
@@ -152,17 +144,11 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    overflow-y: hidden;
-}
-.signs span{
-    overflow: hidden;
-    height: 2vh;
 }
 /* 更改字体滑过时鼠标 */
 span{
     cursor: default;
 }
-
 /* 好友个体进入退出动画 */
 .frienditemT-enter-active{
     animation: slide-in-blurred-right 0.3s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;

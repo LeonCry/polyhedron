@@ -65,15 +65,21 @@
     </el-table-column>
         <el-table-column
         show-overflow-tooltip
+        sortable
       prop="isOnline"
       label="限制登录"
       width="100">
     </el-table-column>
      <el-table-column
      show-overflow-tooltip
+      sortable
       prop="state"
       label="在线状态"
       width="100">
+      <template slot-scope="scope">
+        <span style="color:seagreen" v-if="scope.row.state==1">在线</span>
+        <span style="color:darkgray" v-if="scope.row.state==0">离线</span>
+         </template>
     </el-table-column>
         <el-table-column
       fixed="right"
@@ -110,6 +116,7 @@
     </el-table-column>
     <el-table-column
       fixed
+      sortable
       prop="userQQ"
       label="用户名"
       width="150">
@@ -130,9 +137,15 @@
       width="250">
     </el-table-column>
     <el-table-column
+      sortable
       prop="beFriendTime"
       label="成为好友时间"
       width="300">
+      <template slot-scope="scope">
+          <span> {{new Date(parseInt(scope.row.beFriendTime))
+                .toLocaleString()
+                }}</span>
+      </template>
     </el-table-column>
             </el-table>
 
@@ -206,17 +219,19 @@ created(){
   this.$axios.post('/api/findUsers',{userQQ:''}).then(response=>{
     this.userInfos = response.data;
     
-    // for (let index = 0; index < this.userInfos.length; index++) {
-    //   this.userInfos[index]['state'] = "离线";
-    //   const userr = this.userInfos[index];
-    //   for (let index2 = 0; index2 < this.allusers.length; index++) {
-    //     const uuser = this.allusers[index2];
-    //     if(userr.userQQ==uuser.username){
-    //        this.userInfos[index]['state'] = "在线";
-    //        break;
-    //     }
-    //   }
-    // }
+    for (let index = 0; index < this.userInfos.length; index++) {
+      this.userInfos[index]['state'] = 0;
+      const userr = this.userInfos[index];
+      for (let index2 = 0; index2 < this.allusers.length; index2++) {
+        const uuser = this.allusers[index2];
+        if(userr.userQQ==uuser.username){
+           this.userInfos[index]['state'] = 1;
+           break;
+        }
+      }
+    }
+
+    console.log("this.userInfos",this.userInfos);
   },error=>{
     console.log(error.message);
   });
@@ -275,9 +290,10 @@ created(){
 }
 .hovers{
     transition: 0.33s;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 .hovers:hover{
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 .head{
   width: 35px;

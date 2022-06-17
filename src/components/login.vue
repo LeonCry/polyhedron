@@ -837,6 +837,7 @@ export default {
     enterIndex() {
       // 点击后给该按钮一个点击反馈
       this.enterButtonClickState = true;
+      this.enterstate = false;
       setTimeout(() => {
         this.enterButtonClickState = false;
       }, 800);
@@ -982,6 +983,7 @@ button:hover {
   background: rgba(32, 30, 35, 1);
   box-sizing: border-box;
   border: 5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 25px 10px white;
   transition: 0.5s;
 }
 .loginbutton img {
@@ -991,7 +993,10 @@ button:hover {
 .loginbutton:hover {
   border: 50px solid black;
   background: black;
+    box-shadow: 0 0 25px 10px black;
 }
+
+
 .loginbutton:hover img {
   transform: rotateY(180deg);
   top: -20px;
@@ -1013,16 +1018,18 @@ button:hover {
   background: rgba(32, 30, 35, 1);
   box-sizing: border-box;
   border: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 20px 10px white;
   transition: 0.5s;
+}
+.enterindex:hover {
+  border: 50px solid black;
+  background: black;
+  box-shadow: 0 0 20px 10px black;
 }
 .enterindex img {
   transform: rotateY(180deg);
   position: relative;
   transition: 0.8s;
-}
-.enterindex:hover {
-  border: 50px solid black;
-  background: black;
 }
 .enterindex:hover img {
   transform: rotateZ(90deg);
@@ -1080,20 +1087,28 @@ button:hover {
   animation: scale-out-center 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 /* 进入主页进入退出动画 */
-.enterbuttonT-enter,
-.enterbuttonT-leave-to {
-  opacity: 0;
-  transform: translateX(200%) rotateZ(180deg);
+.enterbuttonT-leave-active{
+animation: puff-out-center 8s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
 }
-.enterbuttonT-enter-active,
-.enterbuttonT-leave-active {
-  transition: 0.5s;
+@keyframes puff-out-center {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-filter: blur(0px);
+            filter: blur(0px);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(5);
+            transform: scale(5);
+    -webkit-filter: blur(20px);
+            filter: blur(20px);
+    opacity: 0;
+  }
 }
-.enterbuttonT-enter-to,
-.enterbuttonT-leave {
-  opacity: 1;
-  transform: translateX(0) rotateZ(0deg);
-}
+
+
+
 /* 许多input盒子组的进入退出动画 */
 .inputboxesT-enter-active {
   animation: tracking-in-contract 0.55s cubic-bezier(0.215, 0.61, 0.355, 1) both;

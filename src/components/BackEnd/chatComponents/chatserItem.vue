@@ -1,8 +1,8 @@
 // 右侧的聊天者
 <template>
-<transition name="chaterboxT" appear>
+<transition name="chaterboxT">
   <!-- 右侧聊天 -->
-  <div  v-if="chat.sendUserQQ!=friend.friendQQ" class="rightchaterbox" :class="{highLightShow:isHighLightShow}">
+  <div  v-if="chat.sendUserQQ==friend.friendQQ" class="rightchaterbox" :class="{highLightShow:isHighLightShow}">
     <!-- 发送时间 -->
     <span> {{new Date(parseInt(chat.chatTime))
                 .toLocaleString()
@@ -12,7 +12,7 @@
     <div ref="chatcontent" class="chatcontent">
         <div class="shareBox" v-if="isShare">
           <div>
-            <img v-if="spaceData.user.userHead" :src="require(`../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
+            <img v-if="spaceData.user.userHead" :src="require(`../../../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
             <div class="cc">
             <span>
               <p></p>
@@ -25,26 +25,26 @@
             </span>
             </div>
           </div>
-      <div class="but">
+      <!-- <div class="but">
         <button @click="sendShare">查看分享</button>
-      </div>
+      </div> -->
           <span class="wz">我向你分享了一些有趣的东西,分享的内容来自于<b style="color:pink">[{{spaceData.user.userName}}]</b>的动态,快来看看吧~</span>
         </div>
     </div></div>
     <!-- 头像 -->
-    <img  v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
+    <img  v-if="friend.user.userHead" :src="require(`../../../assets/Heads/${friend.user.userHead}`)" alt="头像">
   </div>
   
   <!-- 左侧聊天 -->
-    <div v-if="chat.sendUserQQ==friend.friendQQ" class="leftchaterbox" :class="{highLightShow:isHighLightShow}">
+    <div v-if="chat.sendUserQQ!=friend.friendQQ" class="leftchaterbox" :class="{highLightShow:isHighLightShow}">
       <!-- 头像 -->
-      <img class="leftimg"  v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
+      <img class="leftimg"  v-if="this.user.userHead" :src="require(`../../../assets/Heads/${this.user.userHead}`)" alt="头像">
       <!-- 消息box -->
     <div>
     <div ref="chatcontent" class="chatcontent">
                 <div class="shareBox" v-if="isShare">
           <div>
-            <img v-if="spaceData.user.userHead" :src="require(`../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
+            <img v-if="spaceData.user.userHead" :src="require(`../../../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
             <div class="cc">
             <span>
               <p></p>
@@ -57,9 +57,9 @@
             </span>
             </div>
           </div>
-      <div class="but">
+      <!-- <div class="but">
         <button @click="sendShare">查看分享</button>
-      </div>
+      </div> -->
           <span class="wz">我向你分享了一些有趣的东西,分享的内容来自于<b style="color:pink">[{{spaceData.user.userName}}]</b>的动态,快来看看吧~</span>
         </div>
     </div>
@@ -75,14 +75,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
-  name: "rightchater",
-       props:['friendProp','chatProp'],
-     computed:{
-         ...mapState('userInfo',['user']),
-     },
+  name: "chatserItem",
+       props:['friendProp','chatProp','baseUserProp'],
      data(){
          return{
              friend:this.friendProp,
@@ -91,6 +87,7 @@ export default {
              isShare:false,
              spaceData:'',
              shareShow:false,
+             user:this.baseUserProp,
          }
      },
      methods:{
@@ -116,7 +113,7 @@ export default {
        this.messageInit();
 
       //  信息高亮
-      this.$bus.$on('highLightShow',(id)=>{
+      this.$bus.$on('highLightShowBack',(id)=>{
         if(this.chat.chatId==id){
           this.isHighLightShow = true;
           setTimeout(() => {
@@ -279,9 +276,10 @@ p{
 /* 头像 */
 .rightchaterbox img {
   position: relative;
-  height: 50px;
-  border-radius: 50px;
-  border: 2px solid black;
+  height: 45px;
+  border-radius: 45px;
+  padding: 2px;
+  border: 2px solid #d2edf6;
 }
 /* 消息box */
 .rightchaterbox > div {
@@ -413,24 +411,24 @@ p{
 
     @keyframes hight-light {
       0%{
-        background-color: white;
-        box-shadow: 0 0 15px white;
+        background-color: #409EFF;
+        box-shadow: 0 0 15px #409EFF;
       }
       25%{
         background-color: rgba(0, 0, 0, 0);
         box-shadow: none;
       }
       50%{
-        background-color: white;
-        box-shadow: 0 0 15px white;
+        background-color: #409EFF;
+        box-shadow: 0 0 15px #409EFF;
       }
       75%{
         background-color: rgba(0, 0, 0, 0);
         box-shadow: none;
       }
       100%{
-        background-color: white;
-        box-shadow: 0 0 15px white;
+        background-color: #409EFF;
+        box-shadow: 0 0 15px #409EFF;
       }
     }
 
@@ -468,10 +466,11 @@ p{
     }
     /* 头像 */
     .leftchaterbox img{
-        position: relative;
-        height: 50px;
-        border-radius: 50px;
-        border: 2px solid black;
+  position: relative;
+  height: 45px;
+  border-radius: 45px;
+  padding: 2px;
+  border: 2px solid pink;
     }
     /* 消息box */
     .leftchaterbox > div{

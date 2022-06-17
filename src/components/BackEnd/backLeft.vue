@@ -70,6 +70,9 @@
 export default {
 name:'backLeft',
 
+created(){
+  this.routerTo('overView');
+},
 
 methods:{
     // 路由跳转

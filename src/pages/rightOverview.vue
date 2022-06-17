@@ -70,6 +70,7 @@
       width="120">
     </el-table-column>
     <el-table-column
+      sortable
       prop="timeBegin"
       label="开始时间"
       width="150">
@@ -292,9 +293,12 @@ data() {
 }
 .hoverbox{
   transition: 0.33s;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 .hoverbox:hover{
   background-color: whitesmoke;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
+
 </style>

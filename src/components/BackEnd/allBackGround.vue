@@ -1,4 +1,5 @@
 <template>
+<transition name="AppearT">
 <div class="backEnd radius" v-if="isShow">
   <div class="toper">
     <span><b>POLYHEDRON 后台管理系统</b></span>
@@ -20,6 +21,7 @@
          <back-right-loading></back-right-loading>
     </el-row>
 </div>
+</transition>
 </template>
 
 <script>
@@ -30,7 +32,7 @@ export default {
 name:"allBackGround",
 data(){
     return{
-        isShow:true,
+        isShow:false,
     }
 },
 methods:{
@@ -56,11 +58,9 @@ mounted(){
 .backEnd{
     position: absolute;
     background-color: #eceff5;
-    width: 96%;
-    left: 2%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
     z-index: 999;
-    top: 2.5%;
     font-size: 1.6vh;
     overflow: hidden;
 }
@@ -125,8 +125,30 @@ mounted(){
 }
 
 
+/* 该组件--聊天框进入退出动画 */
+.AppearT-enter-active{
+    animation: swing-in-top-fwd 0.33s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+}
+.AppearT-leave-active{
+    animation: swing-in-top-fwd 0.33s cubic-bezier(0.175, 0.885, 0.320, 1.275) both reverse;
+}
 
-
+@keyframes swing-in-top-fwd {
+  0% {
+    -webkit-transform: rotateX(-100deg);
+            transform: rotateX(-100deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateX(0deg);
+            transform: rotateX(0deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 1;
+  }
+}
 
 
 @keyframes backtrans{

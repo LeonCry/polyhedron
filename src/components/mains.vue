@@ -1,22 +1,27 @@
 <template>
     <transition appear name="logoT">
-  <div :class="logopullup">
+  <div :class="{'logopullupcss':logopullup,'loginsuccesss':loginsuccess}">
       <img v-if="src" :src="require(`../assets/${src}`)" alt="logo"/>
   </div>
   </transition>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name:'mains',
     data(){
       return{
-        logopullup:'',
+        logopullup:false,
         src:'LOGOX.svg',
         srcArray:['LOGOX.svg','LOGOY.svg'],
         srcCount:0,
+        loginsuccess:false,
       }
+    },
+    computed:{
+      ...mapState('userInfo',['user']),
     },
     created(){
       setInterval(() => {
@@ -29,8 +34,13 @@ export default {
       // 收到来自兄弟组件的islogin信息,并改变logo位置
       this.$bus.$on('loginxState',(islogin)=>{
         console.log(islogin)
-        this.logopullup = 'logopullupcss';
+        this.logopullup = true;
       })
+      setTimeout(() => {
+            if(this.user.length!=0){
+            this.loginsuccess = true;
+      }
+      }, 1000);
     },
     beforeDestroy(){
       this.$bus.$off('loginxState');
@@ -61,7 +71,9 @@ div{
     opacity: 1;
 }
 
-
+.loginsuccesss{
+  margin-top: 300px;
+}
 
 /* logo闪烁样式 */
 img{
