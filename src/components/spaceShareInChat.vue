@@ -55,7 +55,6 @@ this.$bus.$on("sendShare",(showIs,spaceData)=>{
     width: 400px;
     max-height: 600px;
     left: 35%;
-    border-radius: 25px;
     display: flex;
     overflow: auto;
     overflow-x: hidden;

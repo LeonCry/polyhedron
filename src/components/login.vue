@@ -55,7 +55,7 @@
                 type="email"
                 required
                 v-model="userEmailState3"
-                maxlength="100"
+                maxlength="32"
               />
               <br />
               密 码:<input
@@ -126,6 +126,7 @@
         :class="{ loginbuttonclick: enterButtonClickState }"
       >
         <img src="../assets/loginbutton.svg" alt="进入主页" />
+        <div class="absbac"></div>
       </button>
     </transition>
     <iframe
@@ -983,17 +984,34 @@ button:hover {
   background: rgba(32, 30, 35, 1);
   box-sizing: border-box;
   border: 5px solid rgba(255, 255, 255, 0.85);
-    box-shadow: 0 0 25px 10px white;
+  box-shadow: 0 0 10px 2px white;
   transition: 0.5s;
 }
 .loginbutton img {
   position: relative;
   transition: 0.8s;
 }
+.absbac{
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  width: 100px;
+  height: 100px;
+  right: -50px;
+  top: -50px;
+  border-radius: 50%;
+}
+.absbac:hover{
+  border-left: 1px dashed white;
+  box-shadow: 0 0 15px 10px black;
+  transition: 200s;
+  transform: rotateZ(36000deg);
+}
+
 .loginbutton:hover {
   border: 50px solid black;
   background: black;
-    box-shadow: 0 0 25px 10px black;
+  box-shadow: 0 0 10px 5px black;
 }
 
 

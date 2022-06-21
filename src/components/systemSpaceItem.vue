@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span>{{notice.friendName}}<span v-show="remakeName"> ({{remakeName}})</span> <span style="color:pink">{{remarksReal}}</span></span>
+                  <span><span v-if="remakeName"> ({{remakeName}}) </span> {{notice.friendName}}<span style="color:pink">{{remarksReal}}</span></span>
                   <!-- 最后消息时间 -->
                   <span>{{new Date(parseInt(noticeprops.noticeTime))
                 .toLocaleString()
@@ -45,7 +45,7 @@ export default {
             isNormal:true,
             // 删除按钮出现
             consider:true,
-            notice:'',
+            notice:{friendName:' [已删除的好友] '},
             remakeName:'',
             spaceUser:'',
             remarksReal:'',
@@ -165,6 +165,14 @@ export default {
     height: 20px;
     flex-flow: row nowrap;
     justify-content: space-between;
+    font-size: 1.45vh;
+}
+.username  span:nth-of-type(1){
+    flex: 9;
+}
+.username  span:nth-of-type(2){
+  margin-left: 10px;
+ flex: 4;
 }
 /* 个性签名 */
 .chats{

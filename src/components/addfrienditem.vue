@@ -29,7 +29,7 @@
       <!-- 添加附言 -->
        <transition name="writeremarksT">
       <div v-show="isAddMessageShow" class="addMessagebox">
-          <input type="text"  placeholder="添加留言.." v-model="addMessage">
+          <input type="text"  placeholder="添加留言.." v-model="addMessage" maxlength="32">
           <button @click="sendAddRequest">发送</button>
       </div>
        </transition>
@@ -196,6 +196,7 @@ export default {
     position: relative;
     display: flex;
     height: 20px;
+    overflow: hidden;
     flex-flow: row nowrap;
     justify-content: space-between;
 }
@@ -205,8 +206,26 @@ export default {
     margin-top: 10px;
     display: flex;
     height: 20px;
+    overflow: hidden;
+    transition: 0.25s;
     flex-flow: row nowrap;
     justify-content: space-between;
+}
+.username > span{
+    transition: 0.25s;
+}
+.username > span:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    overflow-y: auto;
+}
+.signs:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    height: 100px;
+    overflow-y: auto;
 }
 
 /* 个人空间 */

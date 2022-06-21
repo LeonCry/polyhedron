@@ -78,7 +78,7 @@ data() {
 /* 网名和时间 */
 .usernametime {
   display: flex;
-  max-width: 150px;
+  max-width: 550px;
   height: 28px;
   flex-flow: column nowrap;
   justify-content: center;

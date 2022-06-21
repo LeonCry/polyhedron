@@ -140,6 +140,7 @@ export default {
 .username{
     margin-top: 10px;
     position: relative;
+    overflow: hidden;
     display: flex;
     height: 20px;
     flex-flow: row nowrap;

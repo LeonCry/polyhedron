@@ -110,16 +110,17 @@ export default {
     text-align: center;
     width: 90%;
     left: 5%;
-    top: 30px;
+    top: 50px;
+    min-height: 100px;
+    max-height: 140px;
+    overflow-y: auto;
     line-height: 25px;
-    height: 125px;
     font-size: 1.5vh;
 }
 .mysign span{
+    position: relative;
     text-align: center;
     padding: 10px;
-    max-height: 300px;
-    overflow-y: hidden;
     font-style: italic;
 }
 /* button */

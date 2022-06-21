@@ -1,6 +1,6 @@
 // 单个动态组件
 <template>
-  <div class="spaceitembox" v-show="isShow">
+  <div class="spaceitembox" v-if="isShow">
           <!-- 抬头 -->
       <div class="toper">
           <!-- 名字 -->
@@ -197,7 +197,7 @@ export default {
 /* 网名和时间 */
 .usernametime {
   display: flex;
-  max-width: 150px;
+  max-width: 550px;
   height: 50px;
   flex-flow: column nowrap;
   justify-content: center;

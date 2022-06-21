@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span style="overflow:hidden">{{userInfos.userName}}<span v-show="remakeName"> ({{remakeName}})</span></span>
+                  <span style="overflow:hidden"><span style="color:pink" v-show="remakeName"> ({{remakeName}}) </span>{{userInfos.userName}}</span>
                   <!-- 最后消息时间 -->
                   <span style="overflow:hidden">{{new Date(parseInt(chatTimes))
                 .toLocaleString()
@@ -299,17 +299,19 @@ export default {
 /* 头像 */
 .offline{
     position: relative;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50px;
+    padding: 3px;
     margin-left:2.5px;
     border: 4px solid rgba(61, 61, 61, 1);
 }
 .online{
     position: relative;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50px;
+    padding: 3px;
     margin-left:2.5px;
     border: 4px solid lightgreen;
 }
@@ -348,8 +350,16 @@ export default {
     display: flex;
     height: 20px;
     flex-flow: row nowrap;
-    justify-content: space-between;
 }
+.username span:nth-of-type(1){
+ flex: 7;
+}
+.username span:nth-of-type(2){
+margin-left: 10px;
+ flex: 6;
+}
+
+
 /* 个性签名 */
 .chats{
     position: relative;

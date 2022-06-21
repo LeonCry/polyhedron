@@ -90,7 +90,7 @@ export default {
         // 接收消息,添加系统通知消息数
         this.$bus.$on('sysNoticeMessage',(num,text)=>{
             this.noticeMessage = text;
-            localStorage.setItem("sysNoticesContent::" + this.user.userQQ,this.noticeMessage);
+            localStorage.setItem("sysNoticesContent::" + this.user.userName,this.noticeMessage);
             // 总信息数
             if(localStorage.getItem(":totalMessage:" + this.user.userQQ)==null){
                 localStorage.setItem(":totalMessage:" + this.user.userQQ,1);
@@ -187,10 +187,19 @@ export default {
 .signs{
     position: relative;
     margin-top: 10px;
+    transition: 0.25s;
     display: flex;
     height: 20px;
+    overflow: hidden;
     flex-flow: row nowrap;
     justify-content: space-between;
+}
+.signs:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    height: 100px;
+    overflow-y: auto;
 }
 
 /* 消息通知 */

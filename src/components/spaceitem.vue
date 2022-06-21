@@ -6,7 +6,7 @@
       <img v-if="space.user.userHead" :src="require('../assets/Heads/'+space.user.userHead)" alt="头像"/>
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>{{space.user.userName}}<span v-show="remakeName">({{remakeName}})</span></span>
+        <span><span style="color:pink" v-show="remakeName">({{remakeName}}) </span>{{space.user.userName}}</span>
         <span>{{new Date(parseInt(space.publishTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -508,7 +508,7 @@ export default {
   position: relative;
   width: 95%;
   left: 2.5%;
-  margin-top: 25px;
+  margin-top: 35px;
   margin-bottom: 15px;
   display: flex;
   flex-flow: column nowrap;
@@ -528,14 +528,17 @@ export default {
 /* 头像图片 */
 .myhead > img {
   position: relative;
+  padding: 3px;
   height: 45px;
+  border: 3px solid pink;
   border-radius: 50px;
 }
 /* 网名和时间 */
 .usernametime {
   display: flex;
-  max-width: 150px;
-  height: 50px;
+  height: 70px;
+  width:300px;
+  overflow:hidden;
   flex-flow: column nowrap;
   justify-content: center;
   align-self: flex-start;
@@ -543,16 +546,19 @@ export default {
 /* 网名 */
 .usernametime span {
   margin-left: 10px;
+  flex: 5;
   margin-top: 5px;
 }
 /* 发表时间 */
 .usernametime span:nth-of-type(2) {
+  flex: 4;
   font-size: 1.4vh;
   color: darkgray;
 }
 /* 内容 */
 .content {
   position: relative;
+  margin-top: 20px;
   width: 90%;
   padding: 10px;
 }

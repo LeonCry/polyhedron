@@ -138,6 +138,8 @@ export default {
     position: relative;
     display: flex;
     height: 20px;
+    overflow: hidden;
+    transition: 0.25s;
     flex-flow: row nowrap;
     justify-content: space-between;
 }
@@ -150,7 +152,22 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
 }
-
+.username > span{
+    transition: 0.25s;
+}
+.username > span:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    overflow-y: auto;
+}
+.signs:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    height: 100px;
+    overflow-y: auto;
+}
 /* 个人空间 */
 .starspace{
     position: relative;

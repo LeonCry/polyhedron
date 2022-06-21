@@ -6,7 +6,7 @@
       <img v-if="replys.user.userHead" :src="require(`../assets/Heads/${replys.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span style="color:yellowgreen">{{replys.user.userName}}<span v-show="remakeName">{{remakeName}}</span><span style="color:yellowgreen">#{{replys.myFloor}}层</span></span>
+        <span style="color:yellowgreen"><span v-show="remakeName">({{remakeName}}) </span>{{replys.user.userName}}<span style="color:yellowgreen">#{{replys.myFloor}}层</span></span>
         <span>{{new Date(parseInt(replys.replyTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -143,14 +143,15 @@ console.log(error.message);
 /* 头像图片 */
 .myhead > img {
   position: relative;
-  height: 35px;
+  border: 3px solid teal;
+  padding: 2px;
+  height: 30px;
   border-radius: 50px;
 }
 /* 网名和时间 */
 .usernametime {
   display: flex;
-  max-width: 150px;
-  height: 28px;
+  width: 250px;
   flex-flow: column nowrap;
   justify-content: center;
   align-self: flex-start;
@@ -183,7 +184,7 @@ console.log(error.message);
   width: 90%;
   font-size: 1.5vh;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 30px;
 }
 /* 写评论 */
 .writecomment {

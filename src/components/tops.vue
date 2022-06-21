@@ -15,9 +15,9 @@
       </transition>
     </div>
     <!-- 天气 -->
-    <div>
+    <!-- <div>
       <img id="rain" src="../assets/rain.svg" alt="天气" />
-    </div>
+    </div> -->
   </div>
 </transition>
 </template>
@@ -53,23 +53,36 @@ export default {
 <style scoped>
 /* 上方sidebar的样式 */
 .siderbar {
-  margin-top: 20px;
   width: 100%;
   position: fixed;
+  height: 40px;
   display: flex;
+  transition: 0.5s;
+  z-index: 9999;
   flex-flow: row-reverse nowrap;
+  background-color: rgba(0, 0, 0, 0);
+}
+.siderbar:hover{
+  background-color: white;
 }
 .siderbar div {
   width: 50px;
+  margin-top: 10px;
+  height: 25px;
   text-align: center;
-  color: whitesmoke;
   margin-left: 5px;
+  margin-right: 10px;
+  align-items: center;
   cursor: pointer;
   transition: 0.5s;
 }
-.siderbar div:hover {
-  background-color: rgba(0, 0, 0, 0.25);
-  border-radius: 100px 100px;
+.siderbar:hover div{
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
+.siderbar div:hover{
+  background-color: black;
+  border-radius: 10px;
 }
 /* 菜单下拉框 */
 .dropdown {

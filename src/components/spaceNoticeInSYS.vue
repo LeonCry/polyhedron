@@ -4,7 +4,7 @@
     <!-- 头部 -->
     <div class="toper">
       <!-- 设置 -->
-      <span>分享:来自动态</span>
+      <span>来自动态</span>
     </div>
           <!-- 退出按钮 -->
                 <div class="exit">
@@ -55,7 +55,6 @@ this.$bus.$on("SYSreceive",(showIs,spaceData)=>{
     width: 400px;
     left: 10%;
     max-height: 600px;
-    border-radius: 25px;
     display: flex;
     z-index: 1;
     overflow: auto;

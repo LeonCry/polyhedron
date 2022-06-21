@@ -383,6 +383,7 @@ this.allSpaceSum = goodsSpace;
   position: relative;
   width: 400px;
   height: 55px;
+  font-size: 1.4vh;
   border-radius: 25px 25px 0 0;
   display: flex;
   flex-flow: row nowrap;
@@ -435,6 +436,7 @@ this.allSpaceSum = goodsSpace;
   position: relative;
   width: 100%;
   height: 180px;
+  overflow-y: auto;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -495,6 +497,7 @@ background-color: rgba(0, 0, 0, 0.5);
 }
 .sign:hover{
   background-color: rgba(255, 255, 255, 0.8);
+  margin-top: 40px;
   color: rgba(0, 0, 0, 0.8);
 }
 .sign2{

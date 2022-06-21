@@ -3,8 +3,13 @@
   <div v-show="isShow" class="MessageShowCube" @click="enterFace" @mouseover="showAlways" @mouseout="showCancel">
   <!-- 名字和消息 -->
   <div class="nameAndMessage">
-   <span><b>{{userName}} <span v-show="this.friend.friendRemarkName!=''"> ({{this.friend.friendRemarkName}})</span></b></span>
-   <span>[新消息] <b ref="messageContent">消息内容...</b></span>
+        <div class="name">
+                   <span><b>{{userName}} <span v-show="this.friend.friendRemarkName!=''"> ({{this.friend.friendRemarkName}})</span></b></span>
+        </div>
+        <div class="cont">
+                   <b style="color:royalblue">[新消息] </b>
+                    <b ref="messageContent">消息内容...</b>
+        </div>
   </div>
   <div class="heads">
           <img v-if="this.userHead" :src="require(`../assets/Heads/${this.userHead}`)" alt="头像">
@@ -58,7 +63,12 @@ methods:{
                         this.userHead = data.friend.user.userHead;
                         // 显示消息内容
                         setTimeout(() => {
-                                this.$refs.messageContent.innerHTML = data.messageData.chatContent;
+                                if(data.messageData.chatContent=="A9wadv正在拨打..."){
+                                        this.$refs.messageContent.innerHTML = "邀请你语音通话";
+                                }
+                                else{
+                                        this.$refs.messageContent.innerHTML = data.messageData.chatContent;
+                                }
                         }, 100);
                         this.setTimeId = setTimeout(() => {
                            this.isShow = false;     
@@ -110,11 +120,15 @@ mounted(){
         border: 2.5px solid snow;
         border-right: 0;
 }
-.MessageShowCube:hover div:nth-of-type(1){
-border-right: 2px solid snow;
+.MessageShowCube:hover > div:nth-of-type(1){
 color: snow;
+border-right: 3px solid white;
 }
-.MessageShowCube:hover div:nth-of-type(2){
+.MessageShowCube:hover div:nth-of-type(3){
+border: 2px dashed snow;
+border-radius: 50%;
+}
+.MessageShowCube:hover > div:nth-of-type(2){
 border: 2px dashed snow;
 border-radius: 50%;
 }
@@ -133,11 +147,28 @@ border-radius: 50%;
         flex: 9;
         border-radius: 18px 0 0 18px;
 }
-.nameAndMessage span{
-        padding: 5px; 
+.name{
         overflow: hidden;
+        flex: 1;
+        margin-right: 5px;
         align-self: flex-end;
 }
+.cont{
+        overflow: hidden;
+        display: flex;
+        flex-flow: row nowrap;
+        flex: 1;
+}
+.cont b:nth-of-type(1){
+        flex: 2;
+}
+.cont b:nth-of-type(2){
+        height: 20px;
+        overflow: hidden;
+        flex: 5;
+}
+
+
 .heads{
         border: 3px solid #1A191B;
         margin-right: 5px;

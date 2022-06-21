@@ -27,7 +27,7 @@
         <br><hr><br>
                         <el-input
                   placeholder="输入动态内容."
-                  v-model="input"
+                  v-model="searchSpace"
                   prefix-icon="el-icon-search"
                   class="searchInput"
                   clearable
@@ -64,6 +64,7 @@ export default {
       totalUsers:[],
       searchUser:'',
       AllSpaces:[],
+      searchSpace:'',
       saveTemSpaces:[],
     }
   },

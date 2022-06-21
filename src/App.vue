@@ -2,6 +2,7 @@
   <div class="allback">
     <tops></tops>
      <all-back-ground></all-back-ground>
+     <main-menu></main-menu>
     <mains></mains>
     <loginx></loginx>
     <login></login>
@@ -29,9 +30,10 @@ import SystemPage from './components/systemPage.vue'
 import MessageShowCube from './components/MessageShowCube.vue'
 import { mapState } from 'vuex'
 import AllBackGround from './components/BackEnd/allBackGround.vue'
+import MainMenu from './components/mainMenu.vue'
 export default {
   name: "App",
-  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace, SystemPage,MessageShowCube, AllBackGround},
+  components:{tops,mains,loginx,login,user,adminlogin,chats,setting,starspace, SystemPage,MessageShowCube, AllBackGround, MainMenu},
   data(){
     return{
       // 判断是否管理员登录

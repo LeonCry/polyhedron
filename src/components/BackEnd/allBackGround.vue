@@ -1,6 +1,6 @@
 <template>
 <transition name="AppearT">
-<div class="backEnd radius" v-if="isShow">
+<div class="backEnd" v-if="isShow">
   <div class="toper">
     <span><b>POLYHEDRON 后台管理系统</b></span>
           <!-- 退出按钮 -->
@@ -60,7 +60,7 @@ mounted(){
     background-color: #eceff5;
     width: 100%;
     height: 100%;
-    z-index: 999;
+    z-index: 9999;
     font-size: 1.6vh;
     overflow: hidden;
 }
@@ -73,7 +73,6 @@ mounted(){
         position: relative;
         width: 100%;
         height: 55px;
-        border-radius: 15px 15px 0 0;
         display: flex;
         flex-flow: row nowrap;
         border-bottom: #6f7379a4 3px solid;

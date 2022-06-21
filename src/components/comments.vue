@@ -6,7 +6,7 @@
       <img v-if="comment" :src="require(`../assets/Heads/${comment.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
-        <span>{{comment.user.userName}}<span v-show="remakeName">{{remakeName}}</span><span>#{{comment.commentFloor}}楼</span></span>
+        <span><span v-show="remakeName">({{remakeName}}) </span>{{comment.user.userName}}<span>#{{comment.commentFloor}}楼</span></span>
         <span>{{new Date(parseInt(comment.commentTime))
                 .toLocaleString()
                 .slice(5)}}</span>
@@ -218,14 +218,15 @@ console.log(error.message);
 /* 头像图片 */
 .myhead > img {
   position: relative;
-  height: 40px;
+  border: 3px solid royalblue;
+  padding: 3px;
+  height: 35px;
   border-radius: 50px;
 }
 /* 网名和时间 */
 .usernametime {
   display: flex;
-  max-width: 150px;
-  height: 30px;
+  width: 300px;
   flex-flow: column nowrap;
   justify-content: center;
   align-self: flex-start;
@@ -256,7 +257,7 @@ console.log(error.message);
   position: relative;
   width: 90%;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 40px;
 }
 /* 写评论 */
 .writecomment {

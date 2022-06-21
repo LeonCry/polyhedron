@@ -25,7 +25,7 @@ created(){
     this.people = this.peopleProps.split(',');
     this.people.forEach(people => {
     this.$axios.post('/api/getUser',{userQQ:people}).then(response=>{
-        response.data.noSpace = true;
+        // response.data.noSpace = true;
             this.peopleUser.push(response.data);
         },error=>{
             console.log(error.message);

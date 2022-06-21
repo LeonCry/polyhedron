@@ -7,7 +7,7 @@
     <div class="Maincontent radius">
       <div class="user radius hovers">
         <br />
-        <el-tabs v-model="activeName" >
+        <el-tabs  >
           <div><span slot="label" class="tabfull"><i class="el-icon-s-custom"></i> 用户列表</span>
           <br><br>
             <el-input
@@ -34,7 +34,7 @@
       </div>
       <div class="user radius hovers">
         <br />
-        <el-tabs v-model="activeName" >
+        <el-tabs  >
           <el-tab-pane
             ><span class="eltab" slot="label"
               ><i class="el-icon-lollipop"></i>朋友列表</span

@@ -5,8 +5,6 @@
     <el-menu
       default-active="0"
       class="el-tot"
-      @open="handleOpen"
-      @close="handleClose"
       background-color="rgba(0,0,0,0)"
       text-color="#fff"
       active-text-color="#ffd04b">

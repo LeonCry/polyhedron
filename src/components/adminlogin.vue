@@ -79,7 +79,7 @@ export default {
   width: 100%;
   height: 100%;
   top: 0;
-  z-index: 10;
+  z-index: 9999;
   display: flex;
   font-size: 1.6vh;
   font-weight: bold;

@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span style="overflow:hidden">{{this.friendProp.user.userName}} <span v-show="this.friendProp.friendRemarkName!=''"> ({{this.friendProp.friendRemarkName}})</span></span>
+                  <b style="overflow:hidden"><b style="color:pink" v-show="this.friendProp.friendRemarkName!=''"> ({{this.friendProp.friendRemarkName}}) </b>{{this.friendProp.user.userName}}</b>
                   <!-- 消息数目 -->
                  <span v-show="messageNums!=0" class="messagenum">{{messageNums}}</span>
               </div>
@@ -249,18 +249,20 @@ export default {
 /* 头像 */
 .offline{
     position: relative;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50px;
+    padding: 3px;
     margin-left:2.5px;
     border: 4px solid rgba(61, 61, 61, 1);
 }
 .online{
     position: relative;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50px;
     margin-left:2.5px;
+    padding: 3px;
     border: 4px solid lightgreen;
 }
 /* 网名,个签内容物 */

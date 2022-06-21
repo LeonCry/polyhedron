@@ -137,6 +137,7 @@ export default {
     margin-top: 10px;
     position: relative;
     display: flex;
+    overflow: hidden;
     height: 20px;
     flex-flow: row nowrap;
     justify-content: space-between;

@@ -47,7 +47,7 @@ export default {
             this.friendListInitialization();
         })
         // 获取所有好友信息
-        this.$bus.$on('getAllFriends',data=>{
+        this.$bus.$on('getAllFriends',(data)=>{
             // this.friendLists=[];
             this.friendLists = data;
         })

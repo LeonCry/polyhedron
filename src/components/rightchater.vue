@@ -137,6 +137,7 @@ export default {
   margin-left: 20px;
   margin-top: 20px;
   margin-bottom: 10px;
+  margin-right: 10px;
   align-self: flex-end;
 }
 .shareBox{
@@ -279,9 +280,10 @@ p{
 /* 头像 */
 .rightchaterbox img {
   position: relative;
-  height: 50px;
-  border-radius: 50px;
-  border: 2px solid black;
+  height: 45px;
+  padding: 3px;
+  border-radius: 40px;
+  border: 3px solid #d2edf6;
 }
 /* 消息box */
 .rightchaterbox > div {
@@ -462,16 +464,17 @@ p{
         max-width: 70%;
         display: flex;
         flex-flow: row nowrap;
-        margin-left: 20px;
+        margin-left: 10px;
         margin-top: 20px;
         margin-bottom: 10px;
     }
     /* 头像 */
     .leftchaterbox img{
         position: relative;
-        height: 50px;
-        border-radius: 50px;
-        border: 2px solid black;
+        height: 45px;
+        padding: 3px;
+        border-radius: 40px;
+        border: 3px solid pink;
     }
     /* 消息box */
     .leftchaterbox > div{

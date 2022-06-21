@@ -20,7 +20,7 @@
             <!-- 用户名 -->
             <span
               >{{ prefix }}
-              <span style="color: pink">{{ notice.userName }}</span>
+              <span class="usernameclass" style="color: pink">{{ notice.userName }}</span>
               <span>{{ suffix }}</span></span
             >
             <!-- 最后消息时间 -->
@@ -37,12 +37,12 @@
         </div>
         <!-- 个人空间 -->
         <div class="starspace">
-          <img
+          <!-- <img
             class="star"
             src="../assets/space.svg"
             alt="空间"
             @click="enterHerSpace"
-          />
+          /> -->
           <img
             v-show="consider"
             class="accpet"
@@ -99,10 +99,10 @@ export default {
   },
   methods: {
     // 进入她的空间
-    enterHerSpace() {
-      // 向starspace组件发送数据,显示聊天框
-      this.$bus.$emit("spaceappear", true, false,this.noticeprops.user);
-    },
+    // enterHerSpace() {
+    //   // 向starspace组件发送数据,显示聊天框
+    //   this.$bus.$emit("spaceappear", true, false,this.noticeprops.user);
+    // },
     // 接受作为好友的状态class
     greenAccept() {
       this.isAccept = true;
@@ -136,6 +136,7 @@ export default {
         .then(
           (response) => {
             console.log("已接受该好友请求", response.data);
+            this.$bus.$emit('refreshLists');
             this.greenAccept();
           },
           (error) => {
@@ -350,15 +351,31 @@ export default {
   position: relative;
   display: flex;
   height: 20px;
+  transition: 0.25s;
   flex-flow: row nowrap;
+  overflow: hidden;
   justify-content: space-between;
 }
+.username  span:nth-of-type(1){
+ flex: 9;
+}
+.username  span:nth-of-type(2){
+  margin-left: 10px;
+ flex: 4;
+}
+.username:hover{
+    height: 100px;
+    border-radius: 5px;
+    overflow-y: auto;
+}
+
 /* 个性签名 */
 .chats {
   position: relative;
   margin-top: 10px;
   display: flex;
   height: 20px;
+  overflow-y: auto;
   flex-flow: row nowrap;
   justify-content: space-between;
 }
