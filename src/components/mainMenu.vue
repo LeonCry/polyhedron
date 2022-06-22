@@ -1,8 +1,10 @@
 <template>
-  <div class="mainMenuBox" ref="back">
+<transition name="menuT">
+  <div class="mainMenuBox" ref="back" v-show="isShow">
     <img class="imgs" :src="imgsrc" alt="" ref="imgg">
     <div class="blackzz"> </div>
-    <div class="topper"></div>
+    <div class="topper">
+    </div>
     <div class="content">
         <div class="line">
             <card-item :cardContent="file"></card-item>
@@ -22,6 +24,7 @@
     </div>
     <div class="bottommer"></div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -31,6 +34,7 @@ export default {
 name:'mainMenu',
 data(){
     return{
+        isShow:false,
         // 文件夹
         file:{
             oneFont:'文',
@@ -52,7 +56,7 @@ data(){
             oneFont:'活',
             title:'游戏:活着',
             info:'在游戏:活着中,你将扮演一名因世界灾难活下来的幸存者,在末世中搜寻食物与资源,努力活下去,但同时也要小心,这个世界不止你一个幸存者...',
-            to:'gamelife',
+            to:'gameLife',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2ju9hhgj21il0u0tao.jpg',
         },
          // shangpin
@@ -119,12 +123,11 @@ mounted(){
         // this.$refs.imgg.style.opacity = 1;
         // }, 100);
     });
-    this.$bus.$on('defaultsBack',()=>{
-        this.$refs.imgg.style.opacity = 0;
-        this.clearTime = setTimeout(() => {
-            this.imgsrc = '';
-        }, 1000);
+
+    this.$bus.$on('menuShow',(data)=>{
+        this.isShow = data;
     });
+
 }
 }
 </script>
@@ -198,4 +201,18 @@ mounted(){
     align-items: center;
 }
 
+.menuT-enter-active{
+animation: fade-in 0.51s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+.menuT-leave-active{
+animation: fade-in 0.51s cubic-bezier(0.390, 0.575, 0.565, 1.000) both reverse;
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 </style>

@@ -1,8 +1,14 @@
 <template> 
 <transition appear name="iconsT">
   <div class="siderbar">
+    <div class="back" v-show="backShow">
+      <button class="backbut" @click="backs"> ◀BACK </button>
+    </div>
+    <div class="mieedd">
+
+    </div>
     <!-- 菜单 -->
-    <div>
+    <div class="droop">
       <img src="../assets/menu.svg" alt="菜单" @click="isShow = !isShow"/>
       <!-- 下拉菜单 -->
       <transition name="dropT">
@@ -29,6 +35,7 @@ export default {
   data() {
     return {
       isShow: false,
+      backShow:false,
     };
   },
   methods:{
@@ -36,16 +43,22 @@ export default {
       this.isShow = false;
       // 向adminlogin组件传达数据,展示管理员登录界面
       this.$bus.$emit('tologin',true);
+    },
+    backs(){
+      // router用来操作对象,route用来获取信息
+      setTimeout(() => {
+              if(this.$route.path=='/'){
+        this.$bus.$emit('backShow',false);
+      }
+      }, 100);
+      this.$bus.$emit('menuShow',false);
+      this.$bus.$emit('Approuter',-1);
     }
   },
-  created(){
-    // // 获取位置
-    // console.log("获取位置中...");
-    // this.$axios.get("/location/service/getIpInfo.php?ip="+'124.127.108.133').then(response=>{
-    //   console.log("location:",response.data);
-    // },error=>{
-    //   console.log(error.message);
-    // });
+  mounted(){
+     this.$bus.$on('backShow',(data)=>{
+      this.backShow = data;
+     });
   }
 };
 </script>
@@ -59,12 +72,13 @@ export default {
   display: flex;
   transition: 0.5s;
   z-index: 9999;
-  flex-flow: row-reverse nowrap;
+  flex-flow: row nowrap;
   background-color: rgba(0, 0, 0, 0);
 }
 .siderbar:hover{
   background-color: white;
 }
+
 .siderbar div {
   width: 50px;
   margin-top: 10px;
@@ -104,6 +118,25 @@ export default {
   right: 5px;
   border-right: 5px solid rgba(0, 0, 0, 0);
   cursor: pointer;
+}
+.mieedd{
+  flex: 22;
+  opacity: 0;
+  cursor: default;
+}
+.droop{
+  flex: 1;
+}
+.back{
+  flex: 1;
+}
+.backbut{
+  border: none;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 2vh;
+  font-weight: bolder;
+  cursor: pointer;
+  color: white;
 }
 /* 下拉框动画 */
 .dropT-enter,

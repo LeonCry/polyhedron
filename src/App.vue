@@ -2,6 +2,7 @@
   <div class="allback">
     <tops></tops>
      <all-back-ground></all-back-ground>
+     <router-view></router-view>
      <main-menu></main-menu>
     <mains></mains>
     <loginx></loginx>
@@ -63,6 +64,20 @@ export default {
           // 接收chats组件消息,以展示未读消息
          }
          })
+  
+    // 接收进行路由跳
+    this.$bus.$on('Approuter',(data)=>{
+      if(data==-1){
+        this.$router.go(-1);
+      }
+      else{
+            this.$router.push({
+            name:data,
+        })
+      }
+    })
+  
+  
   },
     
   created(){

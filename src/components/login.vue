@@ -842,6 +842,14 @@ export default {
       setTimeout(() => {
         this.enterButtonClickState = false;
       }, 800);
+      setTimeout(() => {
+        this.$bus.$emit('menuShow',true);
+        this.$bus.$emit('backShow',true);
+      }, 2500);
+      setTimeout(() => {
+              this.enterButtonClickState = false;
+              this.enterstate = true;
+      }, 3000);
     },
   },
   mounted() {
