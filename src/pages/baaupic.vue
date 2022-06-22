@@ -1,12 +1,16 @@
 <template>
   <div class="beauBox">
-
+    <div ref="allpass" class="allpassbe">
+      RELOADING..
+    </div>
     <div class="topBox">
       
       <div class="picture">
+        <div class="imgpass" ref="imgpass">Loading...</div>
         <!-- <img class="imgg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3gxanzo5hj21900u0gog.jpg" alt=""> -->
       </div>
       <div class="blueInfo">
+        <div class="infopass" ref="infopass"></div>
         <div class="hovers"> <i class="el-icon-guide"></i> <b> 红绿灯</b> </div>
         <div class="hovers"> <i class="el-icon-camera"></i> <b> Canon EOS 850D</b> </div>
         <div class="hovers"> <i class="el-icon-video-camera"></i> <b>EF 50mm f1.8</b> </div>
@@ -16,7 +20,10 @@
         <div class="hovers"> <i class="el-icon-watch"></i> <b>18:03</b> </div>
         <div style="font-size:5vh"> <i class="el-icon-sunny"></i> </div>
       </div>
+       
       <div class="info">
+       <div class="commentPass" ref="commentPass"></div>
+       <div class="bacright"></div>
             <div class="writecomment">
             <input ref="searchInput" type="text" v-model="contents" placeholder="写下感言..">
             <button>发表</button>
@@ -30,16 +37,16 @@
         <picture-comment :commentProps="comment"></picture-comment>
         <picture-comment :commentProps="comment"></picture-comment>
       </div>
+      
     </div>
 
      <div class="botBox">
       <div class="more">
-        <div class="progress" ref="progress">
-
-        </div>
+        <div class="morepass" ref="morepass"></div>
+        <div class="progress" ref="progress"></div>
 
         <div class="page">
-          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2nmx5tuj21hb0u047z.jpg" alt="">
+          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2nmx5tuj21hb0u047z.jpg" alt="" @click="pageUp">
           <div class="pagefont">
           <b style="font-size:3.2vh"> </b>
           <br>
@@ -48,7 +55,7 @@
           
         </div>
         <div class="page">
-          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2ju9hhgj21il0u0tao.jpg" alt="">
+          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2ju9hhgj21il0u0tao.jpg" alt="" @click="pageDown">
           <div class="pagefont">
           <b style="font-size:3.2vh"> </b>
           <br>
@@ -61,7 +68,7 @@
           <i class="el-icon-video-play pausing" ref="pausing" @click="playIt"></i>
       </div>
       <div class="good" ref="good">
-
+          <div class="goodpass" ref="goodpass"></div>
         <transition-group name="operationT">
         <img key="3" v-show="!isLike" src="../assets/good.svg" alt="点赞" @click="likes" class="cmgs">
         <img key="4" v-show="isLike" src="../assets/goodactive.svg" alt="点赞active" @click="likes" class="cmgs">
@@ -78,6 +85,7 @@
 
       </div>
       <div class="userSeen">
+        <div class="tocollpass" ref="tocollpass"></div>
         <div class="tocollection">
             TO MY COL
         </div>
@@ -132,7 +140,7 @@ methods:{
     this.$refs.playing.style.Zindex = 1;
     this.$refs.pausing.style.display = 'inline';
     this.$refs.pausing.style.Zindex = 2;
-    this.$refs.progress.style.animationPlayState = 'paused';
+    this.animationPlayState('paused');
   },
   playIt(){
     console.log("playIt");
@@ -140,8 +148,57 @@ methods:{
     this.$refs.playing.style.Zindex = 2;
     this.$refs.pausing.style.display = 'none';
     this.$refs.pausing.style.Zindex = 1;
-    this.$refs.progress.style.animationPlayState = 'running';
+    this.animationPlayState('running');
   },
+  animationPlayState(state){
+     this.$refs.progress.style.animationPlayState = state;
+     this.$refs.imgpass.style.animationPlayState = state;
+     this.$refs.infopass.style.animationPlayState = state;
+     this.$refs.commentPass.style.animationPlayState = state;
+     this.$refs.morepass.style.animationPlayState = state;
+     this.$refs.goodpass.style.animationPlayState = state;
+     this.$refs.tocollpass.style.animationPlayState = state;
+  },
+  pageUp(){
+    this.emptypass(false);
+    this.$refs.allpass.className = "allpass";
+    setTimeout(() => {
+      this.emptypass(true);
+    }, 500);
+    setTimeout(() => {
+      this.$refs.allpass.className = "allpassbe";
+    }, 2000);
+  },
+  pageDown(){
+    this.emptypass(false);
+    this.$refs.allpass.className = "allpass";
+        setTimeout(() => {
+      this.emptypass(true);
+    }, 500);
+    setTimeout(() => {
+      this.$refs.allpass.className = "allpassbe";
+    }, 2000);
+  },
+  emptypass(data){
+    if(!data){
+     this.$refs.progress.className = ' ';
+     this.$refs.imgpass.className = ' ';
+     this.$refs.infopass.className = ' ';
+     this.$refs.commentPass.className = ' ';
+     this.$refs.morepass.className = ' ';
+     this.$refs.goodpass.className = ' ';
+     this.$refs.tocollpass.className = ' ';
+    }
+    else{
+     this.$refs.progress.className = 'progress';
+     this.$refs.imgpass.className = 'imgpass';
+     this.$refs.infopass.className = 'infopass';
+     this.$refs.commentPass.className = 'commentPass';
+     this.$refs.morepass.className = 'morepass';
+     this.$refs.goodpass.className = 'goodpass';
+     this.$refs.tocollpass.className = 'tocollpass';
+    }
+  }
 },
 }
 </script>
@@ -171,6 +228,7 @@ methods:{
 .picture{
   position: relative;
   flex: 6;
+  z-index: 10;
   background-size: 100% 100%;
   background-image: url('https://tva1.sinaimg.cn/large/e6c9d24ely1h3gxanzo5hj21900u0gog.jpg');
 }
@@ -182,6 +240,7 @@ methods:{
   background-color: #F0ECE0;
   display: flex;
   font-size: 2.3vh;
+  z-index: 7;
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
@@ -194,6 +253,14 @@ methods:{
   flex: 2;
   background-color: #70D2CB;
 }
+.bacright{
+  position: absolute;
+  width: 10%;
+  right: 0;
+  top: 0;
+  height: 750px;
+  background-color: deepskyblue;
+}
 /* 下方 */
 .botBox{
   flex: 2;
@@ -202,6 +269,7 @@ methods:{
 }
 .more{
   flex: 5;
+  z-index: 6;
   background-color: #FFE396;
   display: flex;
   flex-flow: row nowrap;
@@ -209,12 +277,13 @@ methods:{
 }
 .play{
   flex: 1;
+  z-index: 5;
   transition: 0.4s;
-  background-color: lightblue;
+  background-color: #9499ff;
   filter: blur(1px);
 }
 .play:hover{
-  background-color: rgb(30, 160, 241);
+  background-color: #535adf;
 }
 .playing{
   position: absolute;
@@ -246,8 +315,8 @@ methods:{
   position: absolute;
   height: 100%;
   z-index: 2;
-  border-right: 3px solid black;
-  animation: progress 12s both ease-in-out;
+  border-right: 4px solid black;
+  animation: progress 10s both ease-in-out infinite;
 }
 .page{
   width: 250px;
@@ -278,21 +347,23 @@ methods:{
 
 .good{
   flex: 1;
+  z-index: 3;
   transition: 0.4s;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: grey;
   /* background-color: rgb(63, 196, 121); */
 }
 .good:hover{
-  background-color: rgba(0, 0, 0, 1);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 .save{
   flex: 1;
+  z-index: 2;
   transition: 0.4s;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: grey;
   /* background-color: rgb(63, 196, 121); */
 }
 .save:hover{
-  background-color: rgba(0, 0, 0, 1);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 .userSeen{
   flex: 2;
@@ -329,14 +400,14 @@ methods:{
   background-color: #F97796;
 }
 
-.userSeen:hover>div:nth-of-type(1){
+.userSeen:hover>div:nth-of-type(2){
   cursor: pointer;
   flex: 50;
   background-color: white;
   border: 1px solid black;
   border-right: none;
 }
-.userSeen:hover>div:nth-of-type(2){
+.userSeen:hover>div:nth-of-type(3){
     cursor: pointer;
     flex: 0;
     font-size: 0;
@@ -344,7 +415,7 @@ methods:{
    color: seagreen;
 }
 
-.userSeen:hover>div:nth-of-type(3){
+.userSeen:hover>div:nth-of-type(4){
     cursor: pointer;
     flex: 50;
    background-color: black;
@@ -485,13 +556,247 @@ methods:{
 @keyframes progress {
   0%{
     width: 0;
-    background-color: #525afd;
+    background-color: #9298ff;
+    filter: blur(2px);
+  }
+  80%{
+    width: 50%;
+    background-color: #9499ff;
+    filter: blur(2px);
+  }
+  95%{
+    width: 50%;
+    background-color: #9499ff;
     filter: blur(2px);
   }
   100%{
-    width: 50%;
-    background-color: #fd5252;
-    filter: blur(5px);
+    width: 0;
+    background-color: #9298ff;
+    filter: blur(2px);
+  }
+}
+
+/* 图片PASS */
+.imgpass{
+  position: absolute;
+  text-align: center;
+  font-size: 15vh;
+  color: white;
+  font-style: italic;
+  line-height: 500%;
+  overflow: hidden;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bolder;
+  /* overflow: hidden; */
+  height: 100%;
+  width: 0;
+  right: 0;
+  z-index: 11;
+  background-color: #F97796;
+  animation: imgpassF 10s both ease-in-out infinite;
+}
+
+@keyframes imgpassF {
+  0%{
+    width: 0;
+    right: 0;
+  }
+  80%{
+    width: 0;
+    right: 0;
+  }
+  90%{
+    width: 100%;
+    right: 0;
+  }
+  100%{
+    width: 100%;
+    right: 100%;
+  }
+}
+/* 信息PASS */
+.infopass{
+    position: absolute;
+    width: 0;
+    height: 750px;
+    right: 20%;
+    z-index: 8;
+    background-color: deepskyblue;
+    animation: infopassF 10s both infinite;
+}
+@keyframes infopassF {
+  0%{
+    width: 0;
+    right: 20%;
+  }
+  85%{
+    width: 0;
+    right: 20%;
+  }
+  90%{
+    width: 20%;
+    right: 20%;
+  }
+  95%{
+    width: 20%;
+    right: 40%;
+  }
+  100%{
+    width: 20%;
+    right: 40%;
+  }
+}
+.commentPass{
+  position: absolute;
+  width: 0;
+  right: 0;
+  top: 0;
+  height: 750px;
+  z-index: 6;
+  background-color: rgb(255, 138, 118);
+  animation: commentPassF 10s both infinite;
+
+}
+@keyframes commentPassF {
+  0%{
+    width: 0;
+    right: 0;
+  }
+  75%{
+    width: 0;
+    right: 0;
+  }
+  85%{
+    width: 20%;
+    right: 0;
+  }
+  98%{
+    width: 20%;
+    right: 20%;
+  }
+  100%{
+    width: 20%;
+    right: 20%;
+  }
+}
+.morepass{
+  position: absolute;
+  width:0;
+  right: 40%;
+  z-index: 6;
+  height: 100%;
+  background-color: rgb(255, 62, 62);
+  animation: morepassF 10s both infinite;
+}
+@keyframes morepassF {
+  0%{
+    width: 0;
+    right: 40%;
+  }
+  75%{
+    width: 0;
+    right: 40%;
+  }
+  90%{
+    width: 60%;
+    right: 40%;
+  }
+  100%{
+    width: 60%;
+    right: 100%;
+  }
+}
+.goodpass{
+ position: absolute;
+ width: 10%;
+ right: 20%;
+ height: 100%;
+ z-index: 4;
+ background-color: #FFE396;
+ animation: goodpass 10s both infinite;
+}
+@keyframes goodpass {
+  0%{
+    width: 0;
+    right: 20%;
+  }
+  85%{
+    width: 0;
+    right: 20%;
+  }
+  90%{
+    width: 20%;
+    right: 20%;
+  }
+  95%{
+    width: 20%;
+    right: 40%;
+  }
+  100%{
+    width: 20%;
+    right: 40%;
+  }
+}
+.tocollpass{
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  right: 0;
+  z-index: 1;
+  background-color: #70D2CB;
+  animation: tocollpassF 10s infinite both;
+}
+@keyframes tocollpassF {
+  0%{
+    width: 0;
+    right: 0%;
+  }
+  78%{
+    width: 0;
+    right: 0;
+  }
+  88%{
+    width: 20%;
+    right: 0;
+  }
+  98%{
+    width: 20%;
+    right: 20%;
+  }
+  100%{
+    width: 20%;
+    right: 20%;
+  }
+}
+.allpass{
+  position: absolute;
+  z-index: 100;
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  font-size: 20vh;
+  color: white;
+  font-style: italic;
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 500%;
+  background-color: #2f3542;
+  animation: allpassF 2s both;
+}
+.allpassbe{
+  display: none;
+}
+@keyframes allpassF {
+  0%{
+    width: 0;
+    left: 0;
+  }
+  50%{
+    width: 100%;
+    left: 0;
+  }
+  100%{
+    width: 100%;
+    left: 100%;
   }
 }
 
