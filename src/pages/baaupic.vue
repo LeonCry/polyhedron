@@ -122,7 +122,7 @@ methods:{
       this.$refs.save.style.backgroundColor = "rgb(63, 196, 121)";
     }
     else{
-      this.$refs.save.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+      this.$refs.save.style.backgroundColor = "gray";
     }
   },
   likes(){
@@ -131,7 +131,7 @@ methods:{
       this.$refs.good.style.backgroundColor = "rgb(63, 196, 121)";
     }
     else{
-      this.$refs.good.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+      this.$refs.good.style.backgroundColor = "gray";
     }
   },
   pauseIt(){
@@ -353,7 +353,7 @@ methods:{
   /* background-color: rgb(63, 196, 121); */
 }
 .good:hover{
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: black;
 }
 .save{
   flex: 1;
@@ -363,7 +363,7 @@ methods:{
   /* background-color: rgb(63, 196, 121); */
 }
 .save:hover{
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: black;
 }
 .userSeen{
   flex: 2;

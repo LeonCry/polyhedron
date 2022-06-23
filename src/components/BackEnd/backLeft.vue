@@ -39,7 +39,7 @@
         <span slot="title">兑换品</span>
       </el-menu-item>
       <br>
-      <el-menu-item index="3">
+      <el-menu-item index="3" @click="routerTo('rightPics')">
         <i class="el-icon-camera-solid"></i>
         <span slot="title">相册集</span>
       </el-menu-item>

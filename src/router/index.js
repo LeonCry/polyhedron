@@ -11,6 +11,7 @@ import shopping from "../pages/shopping.vue"
 import videos from "../pages/videos.vue"
 import cacaulate from "../pages/cacaulate.vue"
 import other from "../pages/other.vue"
+import rightPics from "../pages/rightPics.vue"
 // 安装插件
 Vue.use(VueRouter)
 
@@ -27,6 +28,7 @@ const routes = [
     {name:"videos",path:"/videos",component:videos},
     {name:"cacaulate",path:"/cacaulate",component:cacaulate},
     {name:"other",path:"/other",component:other},
+    {name:"rightPics",path:"/rightPics",component:rightPics},
 ]
 
 // 配置路由和组件之间的关系
