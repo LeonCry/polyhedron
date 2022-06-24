@@ -8,6 +8,7 @@
               <img src="../../assets/exit.svg" alt="退出" @click="exitChat">
           </div>
   </div>
+  <back-notice></back-notice>
     <el-row>
          <el-col :span="4" class="on-left">
             <back-left></back-left>
@@ -16,7 +17,7 @@
             <div class="test"></div>
          </el-col>
          <el-col :span="19" class="on-right">
-            <router-view></router-view>
+            <router-view name="backs"></router-view>
          </el-col>
          <back-right-loading></back-right-loading>
     </el-row>
@@ -26,9 +27,10 @@
 
 <script>
 import backLeft from './backLeft.vue';
+import BackNotice from './backNotice.vue';
 import BackRightLoading from './backRightLoading.vue';
 export default {
-  components: { backLeft, BackRightLoading},
+  components: { backLeft, BackRightLoading, BackNotice},
 name:"allBackGround",
 data(){
     return{
@@ -60,7 +62,7 @@ mounted(){
     background-color: #eceff5;
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 100;
     font-size: 1.6vh;
     overflow: hidden;
 }

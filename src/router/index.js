@@ -17,18 +17,18 @@ Vue.use(VueRouter)
 
 // 创建VueRouter对象
 const routes = [
-    {name:"overView",path:"/overView",component:rightOverview},
-    {name:"userInfo",path:"/userInfo",component:rightUserInfo},
-    {name:"userChats",path:"/userChats",component:rightChat},
-    {name:"userSpaces",path:"/userSpaces",component:rightSpaces},
-    {name:"fileAndApp",path:"/fileAndApp",component:fileAndApp},
-    {name:"baaupic",path:"/baaupic",component:baaupic},
-    {name:"gameLife",path:"/gameLife",component:gameLife},
-    {name:"shopping",path:"/shopping",component:shopping},
-    {name:"videos",path:"/videos",component:videos},
-    {name:"cacaulate",path:"/cacaulate",component:cacaulate},
-    {name:"other",path:"/other",component:other},
-    {name:"rightPics",path:"/rightPics",component:rightPics},
+    {name:"overView",path:"/overView",components:{backs:rightOverview}},
+    {name:"userInfo",path:"/userInfo",components:{backs:rightUserInfo}},
+    {name:"userChats",path:"/userChats",components:{backs:rightChat}},
+    {name:"userSpaces",path:"/userSpaces",components:{backs:rightSpaces}},
+    {name:"rightPics",path:"/rightPics",components:{backs:rightPics}},
+    {name:"fileAndApp",path:"/fileAndApp",components:{pres:fileAndApp}},
+    {name:"baaupic",path:"/baaupic",components:{pres:baaupic}},
+    {name:"gameLife",path:"/gameLife",components:{pres:gameLife}},
+    {name:"shopping",path:"/shopping",components:{pres:shopping}},
+    {name:"videos",path:"/videos",components:{pres:videos}},
+    {name:"cacaulate",path:"/cacaulate",components:{pres:cacaulate}},
+    {name:"other",path:"/other",components:{pres:other}},
 ]
 
 // 配置路由和组件之间的关系

@@ -87,7 +87,6 @@
       width="100">
       <template slot-scope="scope">
         <el-button
-          @click.native.prevent="deleteRow(scope.$index, tableData)"
           type="danger"
           size="small">
           限制登录

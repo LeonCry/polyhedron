@@ -2,7 +2,7 @@
   <div class="allback">
     <tops></tops>
      <all-back-ground></all-back-ground>
-     <router-view></router-view>
+     <router-view name="pres"></router-view>
      <main-menu></main-menu>
     <mains></mains>
     <loginx></loginx>

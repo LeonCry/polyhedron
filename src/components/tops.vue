@@ -71,7 +71,7 @@ export default {
   height: 40px;
   display: flex;
   transition: 0.5s;
-  z-index: 9999;
+  z-index: 99;
   flex-flow: row nowrap;
   background-color: rgba(0, 0, 0, 0);
 }
