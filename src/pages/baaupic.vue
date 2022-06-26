@@ -5,37 +5,33 @@
     </div>
     <div class="topBox">
       
-      <div class="picture">
+      <div class="picture" ref="picture">
         <div class="imgpass" ref="imgpass">Loading...</div>
         <!-- <img class="imgg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3gxanzo5hj21900u0gog.jpg" alt=""> -->
       </div>
       <div class="blueInfo">
         <div class="infopass" ref="infopass"></div>
-        <div class="hovers"> <i class="el-icon-guide"></i> <b> 红绿灯</b> </div>
-        <div class="hovers"> <i class="el-icon-camera"></i> <b> Canon EOS 850D</b> </div>
-        <div class="hovers"> <i class="el-icon-video-camera"></i> <b>EF 50mm f1.8</b> </div>
-        <div class="hovers"> <i class="el-icon-set-up"></i> <b>f1.8 1/60s ISO 6400</b> </div>
-        <div class="hovers"> <i class="el-icon-location-information"></i> <b>济南会展路</b> </div>
-        <div class="hovers"> <i class="el-icon-time"></i> <b>2022-6-10</b> </div>
-        <div class="hovers"> <i class="el-icon-watch"></i> <b>18:03</b> </div>
-        <div style="font-size:5vh"> <i class="el-icon-sunny"></i> </div>
+        <div v-if="allPics.length!=0" class="hovers"> <i class="el-icon-guide"></i> <b>{{allPics[currPicPage].picName}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-camera"></i> <b>{{allPics[currPicPage].cameraName}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-video-camera"></i> <b>{{allPics[currPicPage].cameraInfo}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-set-up"></i> <b>{{allPics[currPicPage].cameraSetting}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-location-information"></i> <b>{{allPics[currPicPage].location}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-time"></i> <b>{{new Date(parseInt(allPics[currPicPage].picTime)).toLocaleString().split(' ')[0]}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-watch"></i> <b>{{new Date(parseInt(allPics[currPicPage].picTime)).toLocaleString().split(' ')[1]}}</b> </div>
+        <div v-if="allPics.length!=0"  class="hovers"> <i class="el-icon-sunny"></i> <b>{{allPics[currPicPage].weather}}</b></div>
+        <el-button v-if="allPics.length!=0" type="primary" round icon="el-icon-loading" @click="copySrc(allPics[currPicPage].picScr)">复制图片链接</el-button>
       </div>
        
       <div class="info">
        <div class="commentPass" ref="commentPass"></div>
        <div class="bacright"></div>
             <div class="writecomment">
-            <input ref="searchInput" type="text" v-model="contents" placeholder="写下感言..">
-            <button>发表</button>
+            <input ref="searchInput" type="text" v-model="inputText" placeholder="写下感言..">
+            <button @click="putText">发表</button>
             </div>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
-        <picture-comment :commentProps="comment"></picture-comment>
+            <transition-group name="commentT" appear v-if="allPics.length!=0">
+        <picture-comment :commentProps="comment" v-for="comment of allComments" :key="comment.picCommentId"></picture-comment>
+        </transition-group>
       </div>
       
     </div>
@@ -45,21 +41,21 @@
         <div class="morepass" ref="morepass"></div>
         <div class="progress" ref="progress"></div>
 
-        <div class="page">
-          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2nmx5tuj21hb0u047z.jpg" alt="" @click="pageUp">
+        <div class="page" v-if="currPicPage>0">
+          <img class="pageimg" :src="allPics[currPicPage-1].picScr" alt="" @click="pageUp">
           <div class="pagefont">
           <b style="font-size:3.2vh"> </b>
           <br>
-          <span style="font-weight: lighter;"> 绿灯停 ▶</span>
+          <span style="font-weight: lighter;">{{allPics[currPicPage-1].picName}} ▶</span>
           </div>
           
         </div>
-        <div class="page">
-          <img class="pageimg" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2ju9hhgj21il0u0tao.jpg" alt="" @click="pageDown">
+        <div class="page" v-if="currPicPage<allPics.length-1">
+          <img class="pageimg" :src="allPics[currPicPage+1].picScr" alt="" @click="pageDown">
           <div class="pagefont">
           <b style="font-size:3.2vh"> </b>
           <br>
-          <span  style="font-weight: lighter;">红灯行 ▶</span>
+          <span  style="font-weight: lighter;">{{allPics[currPicPage+1].picName}} ▶</span>
           </div>
         </div>
       </div>
@@ -73,7 +69,7 @@
         <img key="3" v-show="!isLike" src="../assets/good.svg" alt="点赞" @click="likes" class="cmgs">
         <img key="4" v-show="isLike" src="../assets/goodactive.svg" alt="点赞active" @click="likes" class="cmgs">
         </transition-group>
-
+        <p v-show="allPics[currPicPage].goodNumbers!=0"  v-if="allPics.length!=0" style=" position: relative;margin-top:85px;color:white;font-size:1.6vh">{{allPics[currPicPage].goodNumbers}}</p>
 
       </div>
       <div class="save" ref="save">
@@ -82,6 +78,7 @@
         <img key="1" v-show="!isCollection" src="../assets/space.svg" alt="收藏" @click="collection" class="cmgs" >
         <img key="2" v-show="isCollection" src="../assets/spaceactive.svg" alt="收藏active" @click="collection" class="cmgs">
         </transition-group>
+        <p v-show="allPics[currPicPage].collectionNumbers!=0"  v-if="allPics.length!=0" style=" position: relative;margin-top:85px;color:white;font-size:1.6vh">{{allPics[currPicPage].collectionNumbers}}</p>
 
       </div>
       <div class="userSeen">
@@ -103,6 +100,7 @@
 
 <script>
 import PictureComment from '@/components/pictureApp/pictureComment.vue'
+import { mapState } from 'vuex';
 export default {
   components: { PictureComment },
 // eslint-disable-next-line vue/multi-word-component-names
@@ -111,9 +109,23 @@ data(){
   return{
     isCollection:false,
     isLike:false,
-    contents:'',
-    comment:{user:{userHead:'defaultHead.jpg',userName:'小李'},commentTime:465465465454,commentContent:'真好看',commentQQ:'lbh'}
+    comment:{user:{userHead:'defaultHead.jpg',userName:'小李'},commentTime:465465465454,commentContent:'真好看',commentQQ:'lbh'},
+    allPics:[],
+    currPicPage:0,
+    setIntervalId:0,
+    setIntervalAllId:0,
+    setIntervalPassId:0,
+    passTime:0,
+    t:0,
+    timeBegin:0,
+    timeEnd:0,
+    isPausing:false,
+    inputText:'',
+    allComments:[],
   }
+},
+computed:{
+  ...mapState('userInfo',['user']),
 },
 methods:{
   collection(){
@@ -135,15 +147,38 @@ methods:{
     }
   },
   pauseIt(){
+    this.timeEnd = new Date().getTime();
     console.log("pauseIt");
     this.$refs.playing.style.display = 'none';
     this.$refs.playing.style.Zindex = 1;
     this.$refs.pausing.style.display = 'inline';
     this.$refs.pausing.style.Zindex = 2;
     this.animationPlayState('paused');
+    this.isPausing = true;
+    clearInterval(this.setIntervalAllId);
+    clearInterval(this.setIntervalPassId);
+    clearInterval(this.setIntervalId);
+    this.t = this.timeEnd-this.timeBegin;
+    this.t = 10000 - this.t;
+    console.log("剩余时间:",this.t);
   },
   playIt(){
+      setTimeout(() => {
+        if(this.currPicPage==this.allPics.length-1){
+        this.currPicPage = 0;
+      }
+      else{
+        this.currPicPage++;
+      }
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+      console.log("this.currpageChange++",this.currPicPage);
+      this.selectComments();
+      }, this.t-1000);
+      setTimeout(() => {
+        this.currpageChange();
+      }, this.t);
     console.log("playIt");
+    this.isPausing = false;
     this.$refs.playing.style.display = 'inline';
     this.$refs.playing.style.Zindex = 2;
     this.$refs.pausing.style.display = 'none';
@@ -160,23 +195,43 @@ methods:{
      this.$refs.tocollpass.style.animationPlayState = state;
   },
   pageUp(){
+    clearInterval(this.setIntervalAllId);
+    clearInterval(this.setIntervalPassId);
+    clearInterval(this.setIntervalId);
+    this.t = 10000;
     this.emptypass(false);
     this.$refs.allpass.className = "allpass";
     setTimeout(() => {
-      this.emptypass(true);
+      this.currPicPage--;
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+      this.selectComments();
     }, 500);
     setTimeout(() => {
+      this.emptypass(true);
       this.$refs.allpass.className = "allpassbe";
+      if(!this.isPausing){
+      this.currpageChange();
+      }
     }, 2000);
   },
   pageDown(){
+    clearInterval(this.setIntervalAllId);
+    clearInterval(this.setIntervalPassId);
+    clearInterval(this.setIntervalId);
+    this.t = 10000;
     this.emptypass(false);
     this.$refs.allpass.className = "allpass";
         setTimeout(() => {
-      this.emptypass(true);
+      this.currPicPage++;
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+      this.selectComments();
     }, 500);
     setTimeout(() => {
+      this.emptypass(true);
       this.$refs.allpass.className = "allpassbe";
+      if(!this.isPausing){
+      this.currpageChange();
+      }
     }, 2000);
   },
   emptypass(data){
@@ -198,7 +253,116 @@ methods:{
      this.$refs.goodpass.className = 'goodpass';
      this.$refs.tocollpass.className = 'tocollpass';
     }
+  },
+  getPicsCreated(){
+    this.$axios.post('/api/returnPics',{picId:0,pageStart:0,pageEnd:9999}).then(response=>{
+      this.allPics = this.shuffle(response.data);
+      console.log("getAllResponse",this.allPics);
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+    },error=>{
+      console.log(error.message);
+    });
+  },
+  // 打乱数组顺序
+  shuffle(arr) {
+  var length = arr.length,
+      randomIndex,
+      temp;
+  while (length) {
+    randomIndex = Math.floor(Math.random() * (length--));
+    temp = arr[randomIndex];
+    arr[randomIndex] = arr[length];
+    arr[length] = temp
   }
+  return arr;
+},
+// 复制照片信息
+  copySrc(src){
+	let oInput = document.createElement("input");
+	oInput.value = src;
+	document.body.appendChild(oInput);
+	oInput.select();
+	document.execCommand("Copy");
+	oInput.remove();
+  this.$message({
+          message: '照片地址复制成功!',
+          type: 'success'
+        });
+  },
+  // 改变当前页
+  currpageChange(){
+    this.timeBegin = new Date().getTime();
+  this.setIntervalAllId = setInterval(() => {
+      this.timeBegin = new Date().getTime();
+      clearInterval(this.setIntervalId);
+        this.setIntervalId = setInterval(() => {
+      if(this.currPicPage==this.allPics.length-1){
+        this.currPicPage = 0;
+      }
+      else{
+        this.currPicPage++;
+      }
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+      console.log("this.currpageChange",this.currPicPage);
+      this.selectComments();
+    }, 9000);
+    }, 10000);
+  this.setIntervalId = setInterval(() => {
+      if(this.currPicPage==this.allPics.length-1){
+        this.currPicPage = 0;
+      }
+      else{
+        this.currPicPage++;
+      }
+      this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
+      console.log("this.currpageChange",this.currPicPage);
+      this.selectComments();
+    }, 9000);
+  },
+
+  // 写下感言
+  putText(){
+    if(this.inputText==''){
+      this.$message.error("不可输入空白内容!");
+    }
+    else{
+      this.$axios.post('/api/insertPicComment',{picCommentPicId:this.allPics[this.currPicPage].picId,picCommentQQ:this.user.userQQ,picCommentContent:this.inputText,picCommentTime:Date.now()}).then(response=>{
+        console.log("已发布",response.data);
+        this.selectComments();
+        this.$message({
+          message: '已成功发表感言!',
+          type: 'success'
+        });
+      },error=>{
+        console.log(error.message);
+      });
+      this.inputText = '';
+    }
+  },
+  // 返回留言
+  selectComments(){
+    this.allComments = [];
+    this.$axios.post('/api/selectPicCommentByPicId',{picCommentPicId:this.allPics[this.currPicPage].picId}).then(response=>{
+      console.log("allComments:::",response.data);
+      this.allComments = response.data;
+    },error=>{
+      console.log(error.message);
+    });
+  },
+
+
+
+
+
+
+},
+created(){
+  // 初次初始化获得所有照片信息
+  this.getPicsCreated();
+  this.currpageChange();
+  setTimeout(() => {
+      this.selectComments();
+  }, 250);
 },
 }
 </script>
@@ -230,7 +394,8 @@ methods:{
   flex: 6;
   z-index: 10;
   background-size: 100% 100%;
-  background-image: url('https://tva1.sinaimg.cn/large/e6c9d24ely1h3gxanzo5hj21900u0gog.jpg');
+  /* background-image: url('https://tva1.sinaimg.cn/large/e6c9d24ely1h3gxanzo5hj21900u0gog.jpg'); */
+  background-color: #F97796;
 }
 .imgg{
   position: relative;
@@ -333,16 +498,17 @@ methods:{
   z-index: 3;
   position: absolute;
   transition: 0.33s;
-  width: 180px;
+  width: 150px;
   margin-top: 10px;
   border-radius: 10px;
-  border: 3px solid white;
+  border: 3px solid skyblue;
 }
 .pageimg:hover{
-  width: 190px;
+  width: 160px;
   cursor: pointer;
   margin-top: 5px;
   margin-left: -5px;
+  border: 3px solid darksalmon;
 }
 
 .good{
@@ -499,6 +665,26 @@ methods:{
 .operationT-leave-active{
     animation: bounce-top 0.55s both reverse;
 }
+.commentT-enter-active{
+    animation: tilt-in-left-1 0.44s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+.commentT-leave-active{
+    animation: tilt-in-left-1 0.01s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+}
+@keyframes tilt-in-left-1 {
+  0% {
+    -webkit-transform: rotateX(-30deg) translateX(-200px) skewX(-30deg);
+            transform: rotateX(-30deg) translateX(-200px) skewX(-30deg);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateX(0deg) translateX(0) skewX(0deg);
+            transform: rotateX(0deg) translateX(0) skewX(0deg);
+    opacity: 1;
+  }
+}
+
+
 @keyframes bounce-top {
   0% {
     -webkit-transform: translateY(-45px);
@@ -670,9 +856,9 @@ methods:{
     width: 20%;
     right: 0;
   }
-  98%{
+  95%{
     width: 20%;
-    right: 20%;
+    right: 0;
   }
   100%{
     width: 20%;

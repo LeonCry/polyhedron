@@ -7,14 +7,14 @@
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span><span v-show="remakeName">({{remakeName}}) </span>{{comment.user.userName}}</span>
-        <span>{{new Date(parseInt(comment.commentTime))
+        <span>{{new Date(parseInt(comment.picCommentTime))
                 .toLocaleString()
                 .slice(5)}}</span>
       </div>
     </div>
     <!-- 评论内容 -->
     <div class="content">
-      {{comment.commentContent}}
+      {{comment.picCommentContent}}
     </div>
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
   },
   mounted(){
     // 每次开始获取备注名
-    this.getRemakeName(this.userQQ,this.comment.commentQQ); 
+    this.getRemakeName(this.userQQ,this.comment.picCommentQQ); 
   },
 };
 </script>

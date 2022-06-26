@@ -23,6 +23,9 @@
             <el-form-item label="镜头信息">
               <el-input v-model="picInfo.cameraInfo"></el-input>
             </el-form-item>
+            <el-form-item label="拍摄参数">
+              <el-input v-model="picInfo.cameraSetting"></el-input>
+            </el-form-item>
              <el-form-item label="拍摄地点">
               <el-input v-model="picInfo.location"></el-input>
             </el-form-item>
@@ -128,6 +131,12 @@
       width="250">
     </el-table-column>
     <el-table-column
+      prop="cameraSetting"
+      label="拍摄参数"
+      align="center"
+      width="250">
+    </el-table-column>
+    <el-table-column
       prop="location"
       label="拍摄地点"
       align="center"
@@ -204,6 +213,9 @@
             <el-form-item label="镜头信息">
               <el-input v-model="picEditInfo.cameraInfo"></el-input>
             </el-form-item>
+            <el-form-item label="拍摄参数">
+              <el-input v-model="picEditInfo.cameraSetting"></el-input>
+            </el-form-item>
              <el-form-item label="拍摄地点">
               <el-input v-model="picEditInfo.location"></el-input>
             </el-form-item>
@@ -236,7 +248,7 @@
     </el-tab-pane>
     
     
-    <el-tab-pane label="用户互动" name="second" class="tab">
+    <el-tab-pane label="点赞收藏" name="second" class="tab">
         
 
         
@@ -268,6 +280,7 @@ data(){
           picName: '',
           cameraName: '',
           cameraInfo: '',
+          cameraSetting:'',
           location:'',
           weather:'',
           picTime:'',
@@ -277,6 +290,7 @@ data(){
           picName: '',
           cameraName: '',
           cameraInfo: '',
+          cameraSetting:'',
           location:'',
           weather:'',
           picTime:'',
