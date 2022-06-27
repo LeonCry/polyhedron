@@ -62,7 +62,7 @@ mounted(){
     background-color: #eceff5;
     width: 100%;
     height: 100%;
-    z-index: 100;
+    z-index: 10001;
     font-size: 1.6vh;
     overflow: hidden;
 }

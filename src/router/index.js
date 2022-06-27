@@ -12,6 +12,7 @@ import videos from "../pages/videos.vue"
 import cacaulate from "../pages/cacaulate.vue"
 import other from "../pages/other.vue"
 import rightPics from "../pages/rightPics.vue"
+import baaupicSelf from "../pages/baaupicSelf.vue"
 // 安装插件
 Vue.use(VueRouter)
 
@@ -29,6 +30,7 @@ const routes = [
     {name:"videos",path:"/videos",components:{pres:videos}},
     {name:"cacaulate",path:"/cacaulate",components:{pres:cacaulate}},
     {name:"other",path:"/other",components:{pres:other}},
+    {name:"baaupicSelf",path:"/baaupicSelf",components:{pres:baaupicSelf},},
 ]
 
 // 配置路由和组件之间的关系

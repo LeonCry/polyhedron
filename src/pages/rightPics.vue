@@ -249,12 +249,87 @@
     
     
     <el-tab-pane label="点赞收藏" name="second" class="tab">
-        
+          <el-table
+    :data="allOperations"
+    stripe
+    style="width: 100%"
+    height="600">
+    <el-table-column
+      fixed
+      :header-align="center"
+      prop="picWithId"
+      label="ID"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="picWithQQ"
+      label="用户名"
+      sortable
+      :header-align="center"
+      width="400">
+    </el-table-column>
+    <el-table-column
+      prop="picCollections"
+      label="收藏照片ID"
+      :header-align="center"
+      width="400">
+    </el-table-column>
+    <el-table-column
+      prop="picGoods"
+      label="点赞照片ID"
+      :header-align="center"
+      width="400">
+    </el-table-column>
+  </el-table>
 
         
         </el-tab-pane>
     <el-tab-pane label="用户评论" name="third" class="tab">
-        
+                  <el-table
+    :data="allComments"
+    stripe
+    style="width: 100%"
+    height="600">
+    <el-table-column
+      fixed
+      :header-align="center"
+      prop="picCommentId"
+      label="ID"
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="picCommentPicId"
+      label="评论照片ID"
+      sortable
+      :header-align="center"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="picCommentQQ"
+      label="评论者"
+      sortable
+      :header-align="center"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="picCommentContent"
+      label="评论内容"
+      :header-align="center"
+      width="400">
+    </el-table-column>
+    <el-table-column
+      prop="picCommentTime"
+      label="评论时间"
+      sortable
+      :header-align="center"
+      width="300">
+      <template slot-scope="scope">
+      <span> {{new Date(parseInt(scope.row.picCommentTime))
+      .toLocaleString()
+      }}</span>
+      </template>
+    </el-table-column>
+  </el-table>
 
         
         </el-tab-pane>
@@ -295,6 +370,8 @@ data(){
           weather:'',
           picTime:'',
         },
+        allComments:[],
+        allOperations:[],
         
     }
 },
@@ -411,6 +488,20 @@ delPic(id){
   pageNext(val){
     this.currentPage = val;
     this.returnAllPicData((this.currentPage-1)*this.pageSize,this.currentPage);
+  },
+  operationsCreated(){
+    this.$axios.post('/api/returnAllPicWith').then(response=>{
+      this.allOperations = response.data;
+    },error=>{
+      console.log(error.message);
+    });
+  },
+  commentCreated(){
+    this.$axios.post('/api/returnAllPicComment').then(response=>{
+      this.allComments = response.data;
+    },error=>{
+      console.log(error.message);
+    });
   }
 },
 mounted(){
@@ -418,6 +509,12 @@ mounted(){
 created(){
    this.returnAllPicDataCreated();
    this.returnAllPicData(0,10);
+   setTimeout(() => {
+   this.operationsCreated();
+   this.commentCreated();
+   }, 250);
+
+
 }
 }
 </script>

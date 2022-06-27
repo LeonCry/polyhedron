@@ -571,6 +571,12 @@ export default {
                   this.$bus.$emit("errormessage", error.message);
                 }
               );
+              // 注册picwith
+              this.$axios.post('/api/insertPicWith',{picWithQQ:this.userNameState3}).then(response=>{
+                console.log("picwith::",response.data);
+              },error=>{
+                console.log(error.message);
+              });
 
             // 取消已输入的内容
             this.userNameState1 = this.userNameState3;
