@@ -79,7 +79,7 @@ export default {
       isSpaceEmpty: false,
       isReceiverEmpty: false,
       isSenderEmpty: false,
-      zIndex: 8,
+      zIndex: 108,
       asSpaceData: [],
       asReceiverData: [],
       asSenderData: [],
@@ -140,7 +140,6 @@ export default {
               .post("/api/selectBySender", { sendUserQQ: this.user.userQQ })
               .then(
                 (response) => {
-                  console.log("发送方数据...");
                   response.data.forEach(data => {
                      this.asSenderData.unshift(data);
                   });
@@ -189,17 +188,15 @@ export default {
 
       if (!spaceDelete) {
         // 为空
-        console.log("空间为空");
         this.isSpaceEmpty = true;
       }
       if (!receiveDelete) {
         // 为空
-        console.log("新的好友为空");
         this.isReceiverEmpty = true;
       }
       if (!sendDelete) {
         // 为空
-        console.log("我的请求为空");
+
         this.isSenderEmpty = true;
       }
     },
@@ -241,7 +238,7 @@ export default {
   height: 550px;
   top: 12%;
   left: 25%;
-  z-index: 6;
+  z-index: 106;
   background-color: #1a191b;
   border-radius: 15px;
   box-shadow: 0 0 25px 5px black;

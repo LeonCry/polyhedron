@@ -82,8 +82,8 @@ methods:{
 },
 mounted(){
     // 接收登录成功通知
+    // eslint-disable-next-line no-unused-vars
     this.$bus.$on('loginSuccess',(enterstate)=>{
-        console.log(enterstate);
         setTimeout(() => {
             this.isShow = true;
         }, 1500);
@@ -124,6 +124,7 @@ beforeDestroy(){
 
 <style scoped>
 /* 用户 */
+
 .user{
     position: absolute;
     width: 50px;
@@ -133,7 +134,7 @@ beforeDestroy(){
     transition: 0.55s;
     right: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: 100;
 }
 .user img{
     margin-top: 5px;
@@ -156,6 +157,7 @@ beforeDestroy(){
     right: 60px;
     bottom: 10px;
     z-index: 5;
+    z-index: 100;
 }
 
 .optionbox:hover{

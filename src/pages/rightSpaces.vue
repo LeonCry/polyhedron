@@ -94,7 +94,6 @@ export default {
         this.$bus.$emit('backRightLoading',true,"动态加载中");
     await  this.$axios.post("/api/selectSpaces", {publishQQ: theSpace.userQQ,pageStart:0,pageEnd:9999}).then(
         (response) => {
-          console.log("response.data",response.data);
           this.AllSpaces = response.data;
           // 暂时存储
           this.saveTemSpaces = response.data;

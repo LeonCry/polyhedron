@@ -118,12 +118,16 @@
           <div v-show="serviceDetail" class="settingdetail">
             <!-- 客服热线1 -->
             <div>
-              <span>小姐姐QQ</span>
-              <span>1793023418</span>
+              <span>邮箱</span>
+              <span>lbh_ldu@163.com</span>
             </div>
             <div>
-              <span>小哥哥QQ</span>
+              <span>QQ</span>
               <span>1395346178</span>
+            </div>
+            <div>
+              <span>微信</span>
+              <span>LeovilMayCry</span>
             </div>
           </div>
         </transition>
@@ -180,7 +184,7 @@ export default {
       serviceDetail: false,
       serviceDetailDrop: 0,
       // 此组件Z轴高度 6 - 7
-      zIndex:6,
+      zIndex:106,
       // 用户信息相关数据
       userQQ:'',
       userName:'',
@@ -253,8 +257,6 @@ export default {
       this.headRou = e.target.files[0].name;
       this.userHeadfile = e.target.files[0];
       // 限制大小 < 2m
-      console.log(this.userHeadfile.size/1024/1024);
-      
       if(this.userHeadfile.size/1024/1024>2){
       this.headRou = '文件大小超出2M';
       this.$bus.$emit('errorshow',false,"头像文件大小限制在2MB以内.");
@@ -417,8 +419,8 @@ export default {
     friendNameChange(friendName){
             // 更新名称信息
             this.$axios.post("/api/changeFriendNames",{friendQQ:this.user.userQQ,friendName:friendName}).then(
+              // eslint-disable-next-line no-unused-vars
               (response)=>{
-                console.log("更改完成?",response.data);
                 
               },
               (error)=>{
@@ -505,7 +507,6 @@ export default {
       this.poy = e.clientY;
       // 判定在按下
       this.isMove = true;
-      console.log(this.isMove);
     },
     // 退出按钮
     exitChat() {
@@ -517,7 +518,7 @@ export default {
     changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',6,6,7);
+      this.$bus.$emit('changeZindex',106,106,107);
         },
   },
   mounted() {
@@ -530,7 +531,6 @@ export default {
         this.pox = e.clientX;
         // 获得按下的y坐标
         this.poy = e.clientY;
-        console.log(this.poy);
       }
     }),
       //   实时监听--鼠标停止按下,则不再进行移动功能
@@ -542,7 +542,7 @@ export default {
       this.$bus.$on("settingappear", () => {
         this.isShow = !this.isShow;
         // 初次出现,置顶
-        if(this.isShow){this.zIndex = 8}
+        if(this.isShow){this.zIndex = 108}
       // 用户信息/设置初始化--每次点击设置的时候都会初始化
       this.userInfoInitialization();
       this.userSettingInitialization();
@@ -567,7 +567,7 @@ export default {
   height: 600px;
   top: 12%;
   left: 25%;
-  z-index: 6;
+  z-index: 106;
   background-color: #1a191b;
   border-radius: 15px;
   box-shadow: 0 0 25px 5px black;

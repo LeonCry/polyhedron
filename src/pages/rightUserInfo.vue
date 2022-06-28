@@ -230,7 +230,6 @@ created(){
       }
     }
 
-    console.log("this.userInfos",this.userInfos);
   },error=>{
     console.log(error.message);
   });

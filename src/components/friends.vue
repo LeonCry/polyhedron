@@ -1,6 +1,6 @@
 <template>
 <transition name="friendsT">
-  <div v-show="isShow">
+  <div v-show="isShow" class="friendBox">
       <!-- 整个friend界面 -->
       <div class="friend">
       <!-- friend界面顶端仿手机栏 -->
@@ -194,7 +194,6 @@ export default {
         // 请求,获得所有好友列表
         getFriendList(){
             this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
-                console.log("获得了所有的好友信息",response.data);
                 this.$bus.$emit('getAllFriends',response.data);
             },error=>{
                 console.log(error.message);
@@ -249,7 +248,6 @@ export default {
                 this.$bus.$emit('friendLoading',true,'查找中..');
                 // 发送请求-查询数据库
                 this.$axios.post("/api/findUsers",{"userQQ":this.searchContent}).then(response=>{
-                    console.log(response.data);
                     // 向searchaddpage发送数据库查找到的数据
                     this.$bus.$emit('findUsers',response.data,this.searchContent);
                     this.$bus.$emit('friendLoading',false,'查找中..');
@@ -340,6 +338,9 @@ export default {
     white-space: 5px;
     font-weight: bold;
 }
+.friendBox{
+    z-index: 100;
+}
 /* 搜索div样式 */
 .searchbox{
     position: absolute;
@@ -352,6 +353,7 @@ export default {
     background-color: #1A191B;
     top: 120px;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
+    z-index: 100;
 }   
 /* 输入框 */
 .searchbox input{
@@ -403,6 +405,7 @@ export default {
     right: 0;
     bottom: 85px;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
+    z-index: 100;
 }
 .friend:hover{
         transition-delay:0.1s;

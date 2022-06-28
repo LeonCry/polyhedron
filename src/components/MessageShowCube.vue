@@ -47,9 +47,7 @@ methods:{
                         }, 1000);
          },
 //     显示详细信息
-        shwoMessage(data){
-                console.log("showmessage:",data);
-                
+        shwoMessage(data){          
                 this.friend = data.friend;
                 // 如果发送的上一条未显示完,则清除定时器
                 if(this.isShow){
@@ -103,7 +101,7 @@ mounted(){
   position: absolute;
   right: 0;
   top: 10px;
-  z-index: 100;
+  z-index: 999;
   transition: 0.55s;
   border-radius: 18px 0 0 18px;
   border: 4px solid #1A191B;

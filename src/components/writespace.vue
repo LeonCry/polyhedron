@@ -66,8 +66,8 @@ export default {
       this.publishContent = this.$refs.typetext.innerHTML.replaceAll("<img","<img style='max-width:350px;max-height:600px'");
       this.$refs.typetext.innerHTML = '';
       let data = {publishQQ:this.user.userQQ,spaceContent:this.publishContent,publishTime:Date.now()};
+      // eslint-disable-next-line no-unused-vars
      await this.$axios.post('/api/addOneSpace',data).then(response=>{
-        console.log(response.data);
         this.$bus.$emit('spaceNotice',true,"发表成功!");
         this.$bus.$emit('spaceLoading',false,"发表中..!");
         this.publishContent = '';
@@ -90,7 +90,6 @@ export default {
       // 首先查询该用户的所有好友列表
      await this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
         friendList = response.data;
-        console.log("friendList:",friendList);
 
      }
       ,error=>{
@@ -99,8 +98,8 @@ export default {
       for (let index = 0; index < friendList.length; index++) {
         const friend = friendList[index];
         this.socket.send(JSON.stringify({from:this.user.userQQ,to:friend.friendQQ,message:message}));
+        // eslint-disable-next-line no-unused-vars
         await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:friend.friendQQ,noticeType:0,remarks:"发布了一条动态."+"Q-v4jvy-Q"+JSON.stringify({spaceUserQQ:this.user.userQQ,user:this.user}),noticeTime:Date.now()}).then(response=>{
-        console.log("已添加动态:",response.data);
         },error=>{
              console.log(error.message);
         });
@@ -109,7 +108,6 @@ export default {
     },
                   // 邮件通知
        async mailNotice(toQQ,messageType,msg,sendMail){
-        console.log("发送邮件函数启动..");
         
         let isOnline = false;
         let isNotice = false;
@@ -119,7 +117,6 @@ export default {
                 const uuser = this.allusers[index];
                 if(uuser.username==toQQ){
                     isOnline = true;
-                    console.log("对方在线,不发送邮件");
                 }
             }
             if(!isOnline){
@@ -127,7 +124,6 @@ export default {
             await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
                 if(response.data.spaceNotice==1){
                     isNotice=true;
-                    console.log("设置:允许通知!");
                     }
             },error=>{
                 console.log(error.message); 
@@ -138,12 +134,9 @@ export default {
              await this.$axios.post('/api/mailInFiveMs',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3}).then(response=>{
                 if(response.data==null){
                     isInFive = true;
-                    console.log("time:5分钟内!");
                 }
                 else if(response.data.noticeTime-Date.now()>=300000){
                     isInFive = true;
-                    console.log("5分钟相差:",response.data.noticeTime-Date.now());
-                    console.log("5分钟内!");
                 }
              },error=>{
                 console.log(error.message); 
@@ -151,13 +144,13 @@ export default {
             }
             // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
             if(isInFive){
+              // eslint-disable-next-line no-unused-vars
              await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:"SYSTEM",gooder:msg,noGooder:sendMail},).then(response=>{
-                console.log("发送返回状态码:",response.data);
              },error=>{
                 console.log(error.message);
              });
+             // eslint-disable-next-line no-unused-vars
              await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
-                console.log("addOneNotice添加成功!:",response.data);
              },error=>{console.log(error.message);});
              
                 
@@ -179,7 +172,6 @@ export default {
         //清除回车
         text = text.replace(/\[\d+\]|\n|\r/ig,"")
         // 插入
-        console.log("阻止默认粘贴");
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
         },
    // 图片提示

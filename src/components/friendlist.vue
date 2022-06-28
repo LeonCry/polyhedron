@@ -28,7 +28,6 @@ export default {
         friendListInitialization(){
             setTimeout(() => {
              this.$axios.post('/api/getAllFriends',{userQQ:this.user.userQQ}).then(response=>{
-                console.log("初始化获得了所有的好友信息",response.data);
                 this.friendLists = response.data;
             },error=>{
                 console.log(error.message);

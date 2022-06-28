@@ -97,11 +97,9 @@ data(){
 },
 methods:{
     hovers(){
-        console.log(111);
         this.$refs.imgg.style.opacity = 1;
     },
     enter(){
-        console.log('xxx');
     }
 },
 mounted(){
@@ -138,7 +136,7 @@ mounted(){
     background-color: #2f3542;
     width: 100%;
     height: 100%;
-    z-index: 900;
+    z-index: 80;
     transition: 0.55s;
     font-size: 1.6vh;
     overflow: hidden;

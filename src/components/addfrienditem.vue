@@ -102,7 +102,6 @@ export default {
                         this.$bus.$emit(noticeEmit,false,"你们已经成为好友啦");
                     }
                     else{
-                        console.log("添加好友:",response.data);
                         this.$bus.$emit(noticeEmit,true,"已向TA发送好友请求~");
                         // 发送好友请求通知
                         this.sendNoticeByWST();

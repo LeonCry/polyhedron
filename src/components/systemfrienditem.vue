@@ -134,8 +134,8 @@ export default {
           isAccept: 1,
         })
         .then(
+          // eslint-disable-next-line no-unused-vars
           (response) => {
-            console.log("已接受该好友请求", response.data);
             this.$bus.$emit('refreshLists');
             this.greenAccept();
           },
@@ -184,8 +184,8 @@ export default {
           isAccept: 2,
         })
         .then(
+          // eslint-disable-next-line no-unused-vars
           (response) => {
-            console.log("已拒绝该好友请求", response.data);
             this.$bus.$emit("systemNotice", false, "已拒绝该好友请求~");
             this.redAccept();
           },

@@ -384,8 +384,8 @@ methods:{
        this.$bus.$emit('backNotice',false,"您有未填项哦~");
     }
     else{
+      // eslint-disable-next-line no-unused-vars
       this.$axios.post('/api/InsertPic',this.picInfo).then(response=>{
-        console.log("created OK",response.data);
         this.resetPicInfo();
         this.$bus.$emit('backNotice',true,"新添加一张图片成功!");
         this.pageChange(this.currentPage);
@@ -424,8 +424,6 @@ methods:{
     this.tableData = [];
     this.$axios.post('/api/returnPics',{picId:0,pageStart:start,pageEnd:end}).then(response=>{
       this.tableData = response.data;
-      console.log("start,end",start,end);
-      console.log("this.tableData",response.data);
     },error=>{
       console.log(error.message);
     });
@@ -440,9 +438,8 @@ methods:{
   },
 // 删除照片
 delPic(id){
-  console.log('del',id);
+  // eslint-disable-next-line no-unused-vars
   this.$axios.post('/api/delPic',{picId:id}).then(response=>{
-    console.log("del",response.data);
     this.$bus.$emit('backNotice',true,"已删除!");
     this.pageChange(this.currentPage);
   },error=>{
@@ -461,8 +458,8 @@ delPic(id){
        this.$bus.$emit('backNotice',false,"您有未填项哦~");
     }
     else{
+      // eslint-disable-next-line no-unused-vars
        this.$axios.post('/api/updatePic',this.picEditInfo).then(response=>{
-        console.log("Change OK",response.data);
         this.resetPicInfo();
         this.$bus.$emit('backNotice',true,"更新照片信息成功!");
          this.rightLabelShow = false;

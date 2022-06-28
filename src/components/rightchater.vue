@@ -100,7 +100,6 @@ export default {
         if(this.chatProp.chatContent.substring(0,26)=="我向你分享了[分享],点击查看详情........."){
           this.isShare = true;
           this.spaceData = JSON.parse(this.chatProp.chatContent.substring(26));
-          console.log("this.spaceData",this.spaceData);
         }
         else{
           this.$refs.chatcontent.innerHTML = this.chatProp.chatContent;

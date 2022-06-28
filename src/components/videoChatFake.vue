@@ -135,7 +135,7 @@ mounted(){
         this.$bus.$emit('videoMessage',"A9wadv正在拨打...");
         this.$refs.video.play();
         if(this.isShow){
-            console.log("已经在拨打电话了");
+            console.log("");
         }
         else{
         this.isShow = true;
@@ -178,9 +178,7 @@ mounted(){
 this.$bus.$on('getSocketMessage',(data)=>{
     setTimeout(() => {
             // 如果是发起者的操作 data.from==this.senderQQ
-            if(data.from==this.senderQQ && data.to==this.user.userQQ){     
-                console.log("data.text====",data.text);
-                    
+            if(data.from==this.senderQQ && data.to==this.user.userQQ){                    
                 if(data.text.substring(0,6)=="A9wadv"){
                     // 进行判断
                     if(data.text=="A9wadv:发送方取消语音通话"){

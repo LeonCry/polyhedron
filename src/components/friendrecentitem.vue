@@ -69,7 +69,6 @@ export default {
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('chatboxappear',true);
             this.$bus.$emit('toChatBox',this.friend);
-            console.log("this.friendrecent",this.friend);
             this.returnChats();
             this.messageNums = 0;
             // 本地存储,设置为0
@@ -80,7 +79,6 @@ export default {
         // 删除最近聊天
         deleteThis(){
             // 删除最近聊天
-            console.log("has deleted");
             this.isShow = false;     
             // 本地化存储
             let localSave =  JSON.parse(localStorage.getItem(':allRecent:'+this.user.userQQ));
@@ -124,7 +122,6 @@ export default {
          // 发送请求,返回聊天记录
         returnChats(){
             this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.userInfos.userQQ,pageStart:0,pageEnd:20}).then(response=>{
-                console.log("发送请求,返回聊天记录:",response.data);
                 this.$bus.$emit('receiveChat',response.data);
             },error=>{
                 console.log(error.message);
@@ -168,7 +165,6 @@ export default {
         onlineCheck(data){
             data.forEach(userf => {
                 if(userf.username==this.recentProps.sendUserQQ){
-                    console.log("userf",userf);
                     this.isOnline = true;
                 }
                 else{
@@ -191,7 +187,6 @@ export default {
       if(data.to==this.user.userQQ && data.from==this.recentInfo.sendUserQQ){
           if(data.text.substring(0,11)!="A9wadv::NEW"){            
            this.isShow = true;
-           console.log("its error!!!");
             // 文本截取,防止溢出
             setTimeout(() => {
           this.$refs.chatContents.innerHTML = data.text;
@@ -239,7 +234,6 @@ export default {
             // {friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,messageNums:this.messageNums}
             if(data.friendQQ==this.userInfos.userQQ && data.userQQ==this.user.userQQ){
                 this.messageNums = data.messageNums;
-                console.log("recentmessageNums:",this.messageNums);
                 
             }
         });    

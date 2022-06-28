@@ -81,7 +81,6 @@ export default {
     })
     // 接收来自login处改变登录选项的数据,更改svg图标
     this.$bus.$on('svgchange',(data1,data2)=>{
-      console.log(data1);
       this.svgForward = data1;
       this.svgBackward = data2;
       

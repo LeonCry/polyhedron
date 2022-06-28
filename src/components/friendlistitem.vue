@@ -73,7 +73,6 @@ export default {
         // 发送请求,返回聊天记录
         returnChats(){
             this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friendProp.friendQQ,pageStart:0,pageEnd:20}).then(response=>{
-                console.log(response.data);
                 this.$bus.$emit('receiveChat',response.data);
             },error=>{
                 console.log(error.message);
@@ -131,7 +130,6 @@ export default {
         onlineCheck(data){
             data.forEach(userf => {
                 if(userf.username==this.friendProp.friendQQ){
-                    console.log("userf",userf);
                     this.isOnline = true;
                 }
                 else{

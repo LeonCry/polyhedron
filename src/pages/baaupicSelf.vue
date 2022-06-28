@@ -6,7 +6,7 @@
     </el-carousel-item>
   </el-carousel>
   <div class="title">
-        <span> All Pictures </span>
+        <span> {{titles}} </span>
     </div>
 <br><br>
 <el-row :gutter="20">
@@ -61,7 +61,6 @@ methods:{
     this.$axios.post('/api/returnPics',{picId:0,pageStart:0,pageEnd:9999}).then(response=>{
       this.ninePics = response.data;
       this.oriData = response.data;
-      console.log(" this.ninePics", this.ninePics);
     },error=>{
       console.log(error.message);
     });
@@ -100,7 +99,6 @@ methods:{
     }
   },
   routerTo(rout){
-    console.log("backs");
 this.$router.push({
             name:rout,
         })
@@ -128,7 +126,7 @@ created(){
   background-color: white;
   width: 100%;
   height: 100%;
-  z-index: 900;
+  z-index: 80;
   transition: 0.55s;
   font-size: 1.6vh;
   overflow-y: auto;

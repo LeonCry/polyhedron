@@ -61,8 +61,8 @@ export default {
     },
  mounted(){
     // 接收来自top组件的数据,使adminlogin组件显示
+    // eslint-disable-next-line no-unused-vars
     this.$bus.$on('tologin',(data)=>{
-      console.log(data);
       this.isshow = true;
     })
   },
@@ -79,7 +79,7 @@ export default {
   width: 100%;
   height: 100%;
   top: 0;
-  z-index: 9999;
+  z-index: 110;
   display: flex;
   font-size: 1.6vh;
   font-weight: bold;

@@ -13,13 +13,15 @@
       <!-- 下拉菜单 -->
       <transition name="dropT">
         <span v-show="isShow" class="dropdown">
-          <a href="">关于</a>
-          <a href="">联系</a>
-          <a href="">博客</a>
+          <a href="javascript:void(0)" @click="about">关于</a>
+          <a href="javascript:void(0)" @click="connect">联系</a>
+          <a href="http://www.leonblogs.cn/" target="_blank">博客</a>
           <a href="javascript:void(0)" @click="adminLogin">后台</a>
+          <!-- 鲁ICP备2021023307号-2 -->
         </span>
       </transition>
     </div>
+
     <!-- 天气 -->
     <!-- <div>
       <img id="rain" src="../assets/rain.svg" alt="天气" />
@@ -36,6 +38,7 @@ export default {
     return {
       isShow: false,
       backShow:false,
+      dialogVisible: false
     };
   },
   methods:{
@@ -53,13 +56,30 @@ export default {
       }, 100);
       this.$bus.$emit('menuShow',false);
       this.$bus.$emit('Approuter',-1);
+    },
+    connect(){
+      alert("bug反馈请提交:lbh_ldu@163.com \n 联系请致:1686201564@qq.com")
+    },
+    about(){
+      alert("console.log...");
+      console.log('b0iue0i56h39iha0siq1924uoisdjv');
     }
   },
   mounted(){
+      setTimeout(() => {
+              if(this.$route.path=='/'){
+        this.$bus.$emit('backShow',false);
+      }
+            else{
+        this.$bus.$emit('backShow',true);
+      }
+      }, 100);
+
+
      this.$bus.$on('backShow',(data)=>{
       this.backShow = data;
      });
-  }
+  },
 };
 </script>
 
@@ -71,7 +91,7 @@ export default {
   height: 40px;
   display: flex;
   transition: 0.5s;
-  z-index: 10000;
+  z-index: 90;
   flex-flow: row nowrap;
   background-color: rgba(0, 0, 0, 0);
 }
@@ -100,6 +120,7 @@ export default {
 }
 /* 菜单下拉框 */
 .dropdown {
+  margin-left: 5%;
   display: flex;
   position: absolute;
   flex-direction: column;
@@ -120,15 +141,16 @@ export default {
   cursor: pointer;
 }
 .mieedd{
-  flex: 22;
+  flex: 20;
   opacity: 0;
   cursor: default;
 }
 .droop{
-  flex: 1;
+  flex: 2;
+
 }
 .back{
-  flex: 1;
+  flex: 2;
 }
 .backbut{
   border: none;

@@ -61,7 +61,6 @@ export default {
   this.$bus.$emit('spaceLoading',true,"评论加载中..");
   this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
   this.allReply = response.data;
-  console.log(response.data);
   this.$bus.$emit('spaceLoading',false,"评论加载中..");
 },error=>{
 console.log(error.message);
@@ -92,9 +91,7 @@ console.log(error.message);
         this.$bus.$emit('spaceLoading',true,"发表回复中..");
         await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
         if(response.data.length!=0){
-            layer = response.data[0]['myFloor'];
-            console.log("layer:",layer);
-            
+            layer = response.data[0]['myFloor'];      
         }
           this.$bus.$emit('spaceLoading',false,"发表回复中..");
         },error=>{
@@ -122,8 +119,8 @@ console.log(error.message);
     async replyNotice(){
       let message = "A9wadv::NEW动态:"+this.user.userName+"回复了你的评论.";
          this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.commentProps.commentQQ,message:message}));
+        // eslint-disable-next-line no-unused-vars
         await  this.$axios.post("/api/addOneNotice",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.commentProps.commentQQ,noticeType:0,remarks:"回复了你的评论."+"Q-v4jvy-Q"+JSON.stringify(this.spaceProps),noticeTime:Date.now()}).then(response=>{
-        console.log("已添加动态:",response.data);
         this.mailNotice(this.commentProps.commentQQ,"[动态消息]",this.user.userName+"回复了你的评论.",this.commentProps.user.userEmail);
         },error=>{
              console.log(error.message);
@@ -140,7 +137,6 @@ console.log(error.message);
                 const uuser = this.allusers[index];
                 if(uuser.username==toQQ){
                     isOnline = true;
-                    console.log("对方在线,不发送邮件");
                 }
             }
             if(!isOnline){
@@ -148,7 +144,6 @@ console.log(error.message);
             await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
                 if(response.data.spaceNotice==1){
                     isNotice=true;
-                    console.log("设置:允许通知!");
                     }
             },error=>{
                 console.log(error.message); 
@@ -159,12 +154,9 @@ console.log(error.message);
              await this.$axios.post('/api/mailInFiveMs',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3}).then(response=>{
                 if(response.data==null){
                     isInFive = true;
-                    console.log("time:5分钟内!");
                 }
                 else if(response.data.noticeTime-Date.now()>=300000){
                     isInFive = true;
-                    console.log("5分钟相差:",response.data.noticeTime-Date.now());
-                    console.log("5分钟内!");
                 }
              },error=>{
                 console.log(error.message); 
@@ -172,13 +164,12 @@ console.log(error.message);
             }
             // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
             if(isInFive){
+             // eslint-disable-next-line no-unused-vars
              await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:"SYSTEM",gooder:msg,noGooder:sendMail},).then(response=>{
-                console.log("发送返回状态码:",response.data);
              },error=>{
                 console.log(error.message);
              });
              await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
-                console.log("addOneNotice添加成功!:",response.data);
              },error=>{console.log(error.message);});
              
                 

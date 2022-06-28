@@ -240,14 +240,15 @@ methods:{
     if(this.isCollection){
       this.thisCollections =  this.thisCollections + 1;
       this.$refs.save.style.backgroundColor = "rgb(63, 196, 121)";
+      // eslint-disable-next-line no-unused-vars
   await   this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,collectionNumbers: this.thisCollections}).then(response=>{
-        console.log("收藏+1",response.data);
+
         
       },error=>{
         console.log(error.message);
       });
+      // eslint-disable-next-line no-unused-vars
    await   this.$axios.post('/api/updatePicWith',{picWithQQ:this.user.userQQ,picCollections:this.collectionssOriData + this.allPics[this.currPicPage].picId.toString() + ','}).then(response=>{
-    console.log("add collections",response.data);
    },error=>{
     console.log(error.message);
    });
@@ -255,14 +256,13 @@ methods:{
     else{
       this.thisCollections =  this.thisCollections - 1;
     this.$refs.save.style.backgroundColor = "gray";
+    // eslint-disable-next-line no-unused-vars
     await  this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,collectionNumbers: this.thisCollections}).then(response=>{
-        console.log("收藏-1",response.data);
       },error=>{
         console.log(error.message);
       });
-      
+      // eslint-disable-next-line no-unused-vars
       await   this.$axios.post('/api/updatePicWith',{picWithQQ:this.user.userQQ,picCollections:this.collectionssOriData.replace(this.allPics[this.currPicPage].picId.toString() + ',','')}).then(response=>{
-    console.log("odd collections",response.data);
    },error=>{
     console.log(error.message);
    });
@@ -274,13 +274,13 @@ methods:{
      if(this.isLike){
        this.thisGoods =  this.thisGoods + 1;
       this.$refs.good.style.backgroundColor = "rgb(63, 196, 121)";
+      // eslint-disable-next-line no-unused-vars
     await  this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,goodNumbers:this.thisGoods}).then(response=>{
-        console.log("喜欢+1",response.data);
       },error=>{
         console.log(error.message);
       });
+      // eslint-disable-next-line no-unused-vars
          await   this.$axios.post('/api/updatePicWith',{picWithQQ:this.user.userQQ,picGoods:this.goodssOriData + this.allPics[this.currPicPage].picId.toString() + ','}).then(response=>{
-    console.log("add likes",response.data);
    },error=>{
     console.log(error.message);
    });
@@ -288,13 +288,13 @@ methods:{
     else{
       this.thisGoods =  this.thisGoods - 1;
       this.$refs.good.style.backgroundColor = "gray";
+      // eslint-disable-next-line no-unused-vars
      await this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,goodNumbers:this.thisGoods}).then(response=>{
-        console.log("喜欢-1",response.data);
       },error=>{
         console.log(error.message);
       });
+      // eslint-disable-next-line no-unused-vars
             await   this.$axios.post('/api/updatePicWith',{picWithQQ:this.user.userQQ,picGoods:this.goodssOriData.replace(this.allPics[this.currPicPage].picId.toString() + ',','')}).then(response=>{
-    console.log("odd likes",response.data);
    },error=>{
     console.log(error.message);
    });
@@ -307,13 +307,10 @@ methods:{
   },
   picWithCreated(){
     this.$axios.post('/api/selectPicWithByUserQQ',{picWithQQ:this.user.userQQ}).then(response=>{
-      console.log("Picwith:",response.data);
       this.collectionssOriData = response.data[0]['picCollections'];
       this.goodssOriData = response.data[0]['picGoods'];
       this.collectionss = response.data[0]['picCollections'].split(',');
       this.goodss = response.data[0]['picGoods'].split(',');
-      console.log("collectionss",this.collectionss);
-      console.log("goodss",this.goodss);
       this.picWithSelect(); 
     },error=>{
       console.log(error.message);
@@ -349,7 +346,6 @@ methods:{
   },
   pauseIt(){
     this.timeEnd = new Date().getTime();
-    console.log("pauseIt");
     this.$refs.playing.style.display = 'none';
     this.$refs.playing.style.Zindex = 1;
     this.$refs.pausing.style.display = 'inline';
@@ -361,7 +357,6 @@ methods:{
     clearInterval(this.setIntervalId);
     this.t = this.timeEnd-this.timeBegin;
     this.t = 10000 - this.t;
-    console.log("剩余时间:",this.t);
   },
   playIt(){
       setTimeout(() => {
@@ -372,13 +367,11 @@ methods:{
         this.currPicPage++;
       }
       this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
-      console.log("this.currpageChange++",this.currPicPage);
       this.selectComments();
       }, this.t-1000);
       setTimeout(() => {
         this.currpageChange();
       }, this.t);
-    console.log("playIt");
     this.isPausing = false;
     this.$refs.playing.style.display = 'inline';
     this.$refs.playing.style.Zindex = 2;
@@ -458,7 +451,6 @@ methods:{
   getPicsCreated(){
     this.$axios.post('/api/returnPics',{picId:0,pageStart:0,pageEnd:9999}).then(response=>{
       this.allPics = this.shuffle(response.data);
-      console.log("getAllResponse",this.allPics);
       this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
     },error=>{
       console.log(error.message);
@@ -504,7 +496,6 @@ methods:{
         this.currPicPage++;
       }
       this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
-      console.log("this.currpageChange",this.currPicPage);
       this.selectComments();
     }, 9000);
     }, 10000);
@@ -516,7 +507,6 @@ methods:{
         this.currPicPage++;
       }
       this.$refs.picture.style.backgroundImage = "url("+this.allPics[this.currPicPage].picScr+")";
-      console.log("this.currpageChange",this.currPicPage);
       this.selectComments();
     }, 9000);
   },
@@ -527,8 +517,8 @@ methods:{
       this.$message.error("不可输入空白内容!");
     }
     else{
+      // eslint-disable-next-line no-unused-vars
       this.$axios.post('/api/insertPicComment',{picCommentPicId:this.allPics[this.currPicPage].picId,picCommentQQ:this.user.userQQ,picCommentContent:this.inputText,picCommentTime:Date.now()}).then(response=>{
-        console.log("已发布",response.data);
         this.selectComments();
         this.$message({
           message: '已成功发表感言!',
@@ -550,7 +540,6 @@ methods:{
     });
     this.picWithSelect();
     this.$axios.post('/api/returnPicsById',{picId:this.allPics[this.currPicPage].picId}).then(response=>{
-      console.log("returnPicsById::",response.data);
     this.thisGoods = response.data.goodNumbers;
     this.thisCollections = response.data.collectionNumbers;
     },error=>{
@@ -597,6 +586,9 @@ created(){
       this.picWithCreated();
   }, 250);
 },
+beforeDestroy(){
+  this.pauseIt();
+}
 }
 </script>
 
@@ -606,7 +598,7 @@ created(){
   background-color: white;
   width: 100%;
   height: 100%;
-  z-index: 900;
+  z-index: 80;
   transition: 0.55s;
   font-size: 1.6vh;
   overflow: hidden;

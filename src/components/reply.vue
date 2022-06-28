@@ -81,8 +81,6 @@ data() {
         await this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
         if(response.data.length!=0){
             layer = response.data[0]['myFloor'];
-            console.log(response.data);
-            console.log("layer:",layer);
         }
           this.$bus.$emit('spaceLoading',false,"发表回复中..");
         },error=>{

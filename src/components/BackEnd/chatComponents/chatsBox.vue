@@ -68,7 +68,6 @@ export default {
                 var start = this.receiveChatsSum.length;
                 var end =  20;
                 this.$axios.post('/api/selectChats',{sendUserQQ:this.sendUserQQ,receiveUserQQ:this.receiveUserQQ,pageStart:start,pageEnd:end}).then(response=>{
-                console.log(response.data);
                 this.$bus.$emit('receiveChatBack',response.data);
                 // 停止加载
                 this.$bus.$emit('backRightLoading',false,"加载聊天记录中..");
@@ -102,9 +101,7 @@ export default {
             var end =  20;
                 this.$bus.$emit("backRightLoading", true, "加载中");
               await  this.$axios.post('/api/selectChats',{sendUserQQ:this.sendUserQQ,receiveUserQQ:this.receiveUserQQ,pageStart:start,pageEnd:end}).then(response=>{
-                    console.log(response.data);
                     this.$bus.$emit('receiveChatBack',response.data);
-                    console.log("loading chats.....",this.receiveChatsSum.length);
                 }),
                 error=>{
                     console.log(error.message);
@@ -113,14 +110,11 @@ export default {
         },
         // 查询聊天记录并定位
        async findOneChatst(id){
-           console.log("id:",id);
            let length = this.receiveChatsSum.length;
            let dda = 0;
             for (let index = 0; index < length; index++) {
-                const chat = this.receiveChatsSum[index+dda];
-                console.log("正在搜索: 第",index,"个,chatId为",chat.chatId,"长度为:",length);              
+                const chat = this.receiveChatsSum[index+dda];          
                 if(chat.chatId==id){
-                    console.log("finded!");
                     if(dda<0){
                         this.$bus.$emit('clickAgainBack');
                     }
@@ -136,7 +130,6 @@ export default {
                     await this.$axios.post('/api/selectChats',{sendUserQQ:this.baseUser.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(
                         response=>{
                         this.$bus.$emit('receiveChatBack',response.data);
-                        console.log("loading chats.....",length);
                 })
                 }
             }

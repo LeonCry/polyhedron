@@ -47,7 +47,6 @@ export default {
   mounted(){
     // 接收来自top组件或者adminlogin的数据,使adminlogin组件显示
     this.$bus.$on('tologin',(data)=>{
-      console.log(data);
       this.isAdmain = data;
     })
     // 接收socket消息

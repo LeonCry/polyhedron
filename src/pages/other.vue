@@ -17,7 +17,7 @@ name:'other',
     background-color: #2f3542;
     width: 100%;
     height: 100%;
-    z-index: 900;
+    z-index: 80;
     transition: 0.55s;
     font-size: 20vh;
     overflow: hidden;

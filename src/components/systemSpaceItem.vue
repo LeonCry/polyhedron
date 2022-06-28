@@ -11,7 +11,7 @@
               <!-- 名字 -->
               <div class="username">
                   <!-- 用户名 -->
-                  <span><span v-if="remakeName"> ({{remakeName}}) </span> {{notice.friendName}}<span style="color:pink">{{remarksReal}}</span></span>
+                  <span><span v-if="remakeName "> ({{remakeName}}) </span> <span v-if="notice.friendName!=null">{{notice.friendName}}</span><span style="color:pink">{{remarksReal}}</span></span>
                   <!-- 最后消息时间 -->
                   <span>{{new Date(parseInt(noticeprops.noticeTime))
                 .toLocaleString()
@@ -45,7 +45,7 @@ export default {
             isNormal:true,
             // 删除按钮出现
             consider:true,
-            notice:{friendName:' [已删除的好友] '},
+            notice:{friendName:' [已删除的好友] ',user:{}},
             remakeName:'',
             spaceUser:'',
             remarksReal:'',
@@ -74,8 +74,8 @@ export default {
             sysNoticeId: this.noticeprops.sysNoticeId,
           })
           .then(
+            // eslint-disable-next-line no-unused-vars
             (response) => {
-              console.log(response.data);
               this.isShow = false;
             },
             (error) => {
@@ -91,9 +91,11 @@ export default {
           .post("api/getOneFriends", { userQQ:this.user.userQQ,friendQQ: this.noticeprops.sendUserQQ})
           .then(
             (response) => {
+                if(response.data!=null){
               this.notice = response.data;
               this.spaceUser = response.data.user;
               this.remakeName = this.notice.friendRemarkName;
+                }
             },
             (error) => {
               console.log(error.message);
@@ -109,7 +111,6 @@ export default {
             let splited = this.noticeprops.remarks.split("Q-v4jvy-Q");
             this.remarksReal = splited[0];
             this.spaceItemReal = JSON.parse(splited[1]);
-            console.log(" this.spaceItemReal", this.spaceItemReal);
             
             if(this.spaceItemReal['spaceUserQQ']!=null){
                 this.isPublished = true;

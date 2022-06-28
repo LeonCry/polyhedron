@@ -51,12 +51,12 @@ export default {
        this.sendNoticeByWST("已与你解除好友关系.");
        setTimeout(() => {
     //    删除好友关系
+    // eslint-disable-next-line no-unused-vars
     this.$axios.post("/api/deleteFriend",{userQQ:this.user.userQQ,friendQQ:this.friend.friendQQ}).then(response=>{
-        console.log("deleteFriend",response.data);
         // 删除聊天记录
         this.$axios.post("/api/deleteChats",{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ}).then(
+            // eslint-disable-next-line no-unused-vars
             response=>{
-                console.log("deleteChats",response.data);
                 // 好友列表变化-消失
                 this.$bus.$emit("refreshLists",false);
                 // 最近聊天-消失

@@ -67,7 +67,6 @@ export default {
         },
         // 初始化系统消息通知数
         NoticeMessageInit(){
-            console.log("created");
             setTimeout(() => {
             if(localStorage.getItem("sysNoticesContent::" + this.user.userQQ)!=null){
                 this.noticeMessage = localStorage.getItem("sysNoticesContent::" + this.user.userQQ);

@@ -75,7 +75,7 @@ export default {
       //   判断是否鼠标按下的判定flag
       isMove: false,
       // 此组件Z轴高度 6 - 7
-      zIndex:6,
+      zIndex:106,
       spaceUser:'',
       spaceSum:[],
       allSpaceSum:[],
@@ -103,7 +103,6 @@ export default {
       this.poy = e.clientY;
       // 判定在按下
       this.isMove = true;
-      console.log(this.isMove);
     },
 
  // 判断滚动条是否滑动到了底部------(搁置,以后再说)
@@ -115,7 +114,7 @@ export default {
     changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',7,6,6);
+      this.$bus.$emit('changeZindex',107,106,106);
     },
     backReadyFun(){
       setTimeout(() => {
@@ -301,7 +300,6 @@ this.allSpaceSum = goodsSpace;
         this.pox = e.clientX;
         // 获得按下的y坐标
         this.poy = e.clientY;
-        console.log(this.poy);
       }
     }),
       //   实时监听--鼠标停止按下,则不再进行移动功能
@@ -313,7 +311,7 @@ this.allSpaceSum = goodsSpace;
             this.isShow = data1;
             this.isMySpace = data2;
             // 初次出现置顶
-            this.zIndex = 8;
+            this.zIndex = 108;
             // 如果点击的是我的空间
             this.$bus.$emit('spaceLoading',true,"加载动态..");
             if(this.isMySpace==true){
@@ -364,7 +362,7 @@ this.allSpaceSum = goodsSpace;
   height: 750px;
   top: 8%;
   left: 35%;
-  z-index: 6;
+  z-index: 106;
   background-color: #1a191b;
   border-radius: 15px;
   box-shadow: 0 0 25px 5px black;

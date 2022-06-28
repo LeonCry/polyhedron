@@ -75,7 +75,6 @@ export default {
                 const recentChat = this.recentChatUsers[index];
                 if(recentChat.sendUserQQ==data.friendQQ){
                     this.recentChatUsers.splice(index,1);
-                    console.log(this.recentChatUsers);
                 }
             }
         })

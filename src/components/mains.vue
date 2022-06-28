@@ -2,7 +2,14 @@
     <transition appear name="logoT">
   <div :class="{'logopullupcss':logopullup,'loginsuccesss':loginsuccess}">
       <img v-if="src" :src="require(`../assets/${src}`)" alt="logo"/>
+
+        <div class="bot"> 
+    <a style="color:gray;" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">鲁ICP备2021023307号-2</a>
+    <br>
+    <span style="color:gray;">Copyright ©2022.PolyhedronX All rights reserved.</span>
   </div>
+  </div>
+
   </transition>
 </template>
 
@@ -32,8 +39,8 @@ export default {
     },
     mounted(){
       // 收到来自兄弟组件的islogin信息,并改变logo位置
+      // eslint-disable-next-line no-unused-vars
       this.$bus.$on('loginxState',(islogin)=>{
-        console.log(islogin)
         this.logopullup = true;
       })
       setTimeout(() => {
@@ -70,6 +77,20 @@ div{
 .logoT-enter-to,.logoT-leave{
     opacity: 1;
 }
+.bot{
+  top: 380px;
+  width: 100%;
+  font-size: 1.4vh;
+  position: absolute;
+  opacity: 0.66;
+  text-align: center;
+}
+
+.bot span{
+ position: relative;
+ text-align: center;
+}
+
 
 .loginsuccesss{
   margin-top: 300px;

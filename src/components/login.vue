@@ -219,7 +219,7 @@ export default {
     // smilesvg改变
     loginErrorTimes: function () {
       if (this.loginErrorTimes == 1) {
-        console.log("1");
+        console.log("");
       } else if (this.loginErrorTimes == 2) {
         this.smileSvg = require("../assets/smile_normal.svg");
       } else if (this.loginErrorTimes == 3) {
@@ -348,15 +348,13 @@ export default {
       } else {
         // 发送请求
         var sendData = { userEmail: this.userEmailState3 };
-        console.log("发送的数据", sendData);
         // loading旋转
         this.loginingStatae = true;
         this.verfiryButtonShow = -1;
         this.$bus.$emit("loading", this.loginingStatae, 2);
         this.$axios.post("/api/userRegisterCode", sendData).then(
           (response) => {
-            console.log("得到了响应:", response.data);
-            this.receiveCode = response.data;
+            this.receiveCode = response.data-13953462;
             // 得到了响应,仅取消loading旋转
             this.responseMessage(
               "已发送,请注意查看邮箱,60s后才可以再次发送验证码"
@@ -393,7 +391,6 @@ export default {
       };
       this.$axios.post("/api/userLogin", data1).then(
         (response) => {
-          console.log("请求成功了!", response.data);
           // 读取返回的响应码
           var responseCode = response.data;
           // loading取消旋转
@@ -426,7 +423,6 @@ export default {
       };
       this.$axios.post("/api/userLogin", data1).then(
         (response) => {
-          console.log("请求成功了!", response.data);
           // 读取返回的响应码
           var responseCode = response.data;
           // loading取消旋转
@@ -488,8 +484,8 @@ export default {
     },
       // 邮件通知
        async mailNotice(toQQ,sendMail){
+        // eslint-disable-next-line no-unused-vars
         await this.$axios.post('/api/loginNoticesAdmain',{userQQ:toQQ,userSign:new Date(parseInt(Date.now())).toLocaleString().slice(5),userEmail:sendMail},).then(response=>{
-                console.log("admain发送返回状态码:",response.data);
              },error=>{
                 console.log(error.message);
              });
@@ -498,16 +494,16 @@ export default {
             await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
                 if(response.data.loginNotice==1){
                     isNotice=true;
-                    console.log("设置:允许通知!");
                     }
             },error=>{
                 console.log(error.message); 
             });
             if(isNotice){
+              // eslint-disable-next-line no-unused-vars
               await this.$axios.post('/api/loginNotices',{userQQ:toQQ,userSign:new Date(parseInt(Date.now())).toLocaleString().slice(5),userEmail:sendMail},).then(response=>{
-                console.log("发送返回状态码:",response.data);
+                // eslint-disable-next-line no-unused-vars
                 this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"登录通知",noticeTime:Date.now()}).then(response=>{
-                console.log("addOneNotice添加成功!:",response.data);})
+                })
              },error=>{
                 console.log(error.message);
              });
@@ -517,7 +513,6 @@ export default {
     getUserInfo(userQQ,state) {
       this.$axios.post("/api/getUser", { userQQ: userQQ }).then(
         (response) => {
-          // console.log("得到用户信息:", response.data);
           // 向store中加入用户的个人信息
           if(state=="login"){this.mailNotice(userQQ,response.data.userEmail);}
           this.uploadUserInfo(response.data);
@@ -553,7 +548,6 @@ export default {
       };
       this.$axios.post("/api/userRegister", data4).then(
         (response) => {
-          console.log("注册:", response.data);
           // 注册失败,用户已存在
           if (response.data == -1) {
             this.smileShake();
@@ -563,17 +557,18 @@ export default {
             this.$axios
               .post("/api/insertSpaceWith", { userQQ: this.userNameState3 })
               .then(
+                // eslint-disable-next-line no-unused-vars
                 (response) => {
                   this.$bus.$emit("errormessage", "注册成功!");
-                  console.log(response.data);
                 },
                 (error) => {
                   this.$bus.$emit("errormessage", error.message);
                 }
               );
               // 注册picwith
+              // eslint-disable-next-line no-unused-vars
               this.$axios.post('/api/insertPicWith',{picWithQQ:this.userNameState3}).then(response=>{
-                console.log("picwith::",response.data);
+
               },error=>{
                 console.log(error.message);
               });
@@ -606,7 +601,6 @@ export default {
       var data3 = { userName: this.userNameState4 };
       this.$axios.post("/api/userForgetPassword", data3).then(
         (response) => {
-          console.log("forgetmessage", response.data);
           if (response.data == "该用户未注册") {
             this.smileShake();
           }
@@ -680,7 +674,6 @@ export default {
             .get("https://api.usuuu.com/qq/" + this.userNameState2)
             .then(
               (response) => {
-                console.log(response.data);
                 // 登录不成功
                 if (response.data.code != "200") {
                   this.smileShake();
@@ -705,9 +698,9 @@ export default {
                             userEmail: this.userNameState2 + "@qq.com",
                           };
                           this.$axios.post("/api/userRegister", data4).then(
+                            // eslint-disable-next-line no-unused-vars
                             (response) => {
                               response1 = true;
-                              console.log("注册:", response.data);
                               // 注册成功后,为其更改用户名和头像----------搁浅(放最后面做)
                               // this.$axios.post('/api/',).then(response=>{},error=>{});
                               
@@ -719,8 +712,8 @@ export default {
                                     userQQ: "A9wadv" + this.userNameState2,
                                   })
                                   .then(
+                                    // eslint-disable-next-line no-unused-vars
                                     (response) => {
-                                      console.log(response.data);
                                     },
                                     (error) => {
                                       this.$bus.$emit(
@@ -738,7 +731,6 @@ export default {
                       var interId = setInterval(() => {
                           if(response1 || response.data){
                         // 说明用户已经注册过了,直接登录
-                        console.log("数据库已存在该用户");
                         this.QQLogin();
                         clearInterval(interId);
                           }
@@ -766,7 +758,6 @@ export default {
     },
     // 检查是否存在cookie
     cookieCheck() {
-      console.log("检查是否存在cookie...");
       if (this.$cookies.isKey("userQQ")) {
         var userQQ = this.$cookies.get("userQQ");
         var userPassword = this.$cookies.get("userPassword");

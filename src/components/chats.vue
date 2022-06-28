@@ -109,7 +109,7 @@ export default {
           isMove:false,
           moreappears:false,
       // 此组件Z轴高度 6 - 7
-      zIndex:6,
+      zIndex:106,
     //   表情栏是否展示
     isEmojiShow:false,
     // 收到的emoji
@@ -199,7 +199,7 @@ export default {
              this.exitChat();
                 this.isShow = data1;
                 // 初次出现,置顶
-                this.zIndex = 8;
+                this.zIndex = 108;
                 this.receiveChatsSum = [];
                 setTimeout(() => {
                     this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
@@ -241,7 +241,7 @@ export default {
         changeIndex(){
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
-      this.$bus.$emit('changeZindex',6,7,6);
+      this.$bus.$emit('changeZindex',106,107,106);
         },
         // 出现表情栏
         emojiShow(){
@@ -256,11 +256,9 @@ export default {
            setTimeout(() => {    
             // 如果为空
             if(this.$refs.typetext.innerHTML == '' || this.$refs.typetext.innerHTML=='<div><br></div><div><br></div>'){
-                console.log("空");
                 this.$refs.typetext.innerHTML = '';
             }
             else if (this.iskeyEnter){
-                console.log("是换行"); 
                 setTimeout(() => {
                     this.iskeyEnter = false;
                 }, 20);
@@ -325,7 +323,6 @@ export default {
                 var start = this.receiveChatsSum.length;
                 var end =  20;
                 this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
-                console.log(response.data);
                 this.$bus.$emit('receiveChat',response.data);
                 // 停止加载
                 this.$bus.$emit('chatLoading',false,"加载聊天记录中..");
@@ -358,9 +355,7 @@ export default {
             var start = this.receiveChatsSum.length;
             var end =  20;
               await  this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(response=>{
-                    console.log(response.data);
                     this.$bus.$emit('receiveChat',response.data);
-                    console.log("loading chats.....",this.receiveChatsSum.length);
                 }),
                 error=>{
                     console.log(error.message);
@@ -368,8 +363,8 @@ export default {
         },
         // 发送消息向数据库发送请求
        async sendMessageRequest(message){
+           // eslint-disable-next-line no-unused-vars
            await this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:message,chatTime:Date.now()}).then(response=>{
-                console.log("添加成功",response.data);
                 this.mailNotice(this.friend.friendQQ,"聊天消息",message,this.friend.user.userEmail);
             },error=>{
                 console.log(error.message);
@@ -385,7 +380,6 @@ export default {
                 const uuser = this.allusers[index];
                 if(uuser.username==toQQ){
                     isOnline = true;
-                    console.log("对方在线,不发送邮件");
                     
                 }
             }
@@ -394,7 +388,6 @@ export default {
             await this.$axios.post('/api/getUserSetting',{userQQ:toQQ}).then(response=>{
                 if(response.data.messageNotice==1){
                     isNotice=true;
-                    console.log("设置:允许通知!");
                     }
             },error=>{
                 console.log(error.message); 
@@ -405,12 +398,9 @@ export default {
              await this.$axios.post('/api/mailInFiveMs',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3}).then(response=>{
                 if(response.data==null){
                     isInFive = true;
-                    console.log("time:5分钟内!");
                 }
                 else if(response.data.noticeTime-Date.now()>=300000){
                     isInFive = true;
-                    console.log("5分钟相差:",response.data.noticeTime-Date.now());
-                    console.log("5分钟内!");
                 }
              },error=>{
                 console.log(error.message); 
@@ -418,13 +408,13 @@ export default {
             }
             // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
             if(isInFive){
+             // eslint-disable-next-line no-unused-vars
              await this.$axios.post('/api/mailSender',{publishQQ:toQQ,publishTime:new Date(parseInt(Date.now())).toLocaleString().slice(5),collector:messageType,sharer:this.user.userName,gooder:msg,noGooder:sendMail},).then(response=>{
-                console.log("发送返回状态码:",response.data);
              },error=>{
                 console.log(error.message);
              });
+             // eslint-disable-next-line no-unused-vars
              await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
-                console.log("addOneNotice添加成功!:",response.data);
              },error=>{console.log(error.message);});
              
                 
@@ -445,7 +435,6 @@ export default {
         //清除回车
         text = text.replace(/\[\d+\]|\n|\r/ig,"")
         // 插入
-        console.log("阻止默认粘贴");
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
         },
         // 接收来自videoFake的消息,存储到数据库中1
@@ -460,8 +449,8 @@ export default {
             this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:msg}));
             this.receiveChatsSum.push({chatContent:msg,chatTime:Date.now()});
             // 再向数据库中添加消息
+            // eslint-disable-next-line no-unused-vars
             this.$axios.post('/api/addOneChat',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,chatContent:msg,chatTime:Date.now()}).then(response=>{
-                console.log("添加成功",response.data);
             },error=>{
                 console.log(error.message);
             });
@@ -473,8 +462,6 @@ export default {
         },
         // 接收来自videoFake的消息,存储到数据库中2
         saveVideoMessage(data){
-            console.log("触发:---saveVideoMessage");
-            console.log("data.to:",data.to,"data.from",data.from);
             let msg = '  📞  ' + data.message;
             this.receiveChatsSum.push({chatContent:msg,chatTime:Date.now()});
             // 再向数据库中添加消息
@@ -492,14 +479,11 @@ export default {
         },
         // 查询聊天记录并定位
        async findOneChatst(id){
-           console.log("id:",id);
            let length = this.receiveChatsSum.length;
            let dda = 0;
             for (let index = 0; index < length; index++) {
                 const chat = this.receiveChatsSum[index+dda];
-                console.log("正在搜索: 第",index,"个,chatId为",chat.chatId,"长度为:",length);              
                 if(chat.chatId==id){
-                    console.log("finded!");
                     if(dda<0){
                         this.$bus.$emit('clickAgain');
                     }
@@ -515,7 +499,6 @@ export default {
                     await this.$axios.post('/api/selectChats',{sendUserQQ:this.user.userQQ,receiveUserQQ:this.friend.friendQQ,pageStart:start,pageEnd:end}).then(
                         response=>{
                         this.$bus.$emit('receiveChat',response.data);
-                        console.log("loading chats.....",length);
                 })
                 }
             }
@@ -589,11 +572,10 @@ export default {
                 }
                 // 如果接收到的是吹一吹,则触发吹一吹函数
                 else if(data.text=="A9wadv=吹一吹"){
-                    console.log("触发了:吹一吹");
                     this.windowFly();
                 }
                 else if(data.text.substring(0,6)=="A9wadv"){
-                    console.log("我选择不做任何事"); 
+                    console.log(""); 
                 }
                 else{
                 // 构建合法的Json
@@ -644,7 +626,7 @@ export default {
     height: 650px;
     top: 12%;
     left: 25%;
-    z-index: 6;
+    z-index: 106;
     background-color: #1A191B;
     box-shadow: 0 0 25px 5px black;
     display: flex;
