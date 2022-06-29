@@ -10,7 +10,7 @@
       }"
     >
       <!-- 头像 -->
-      <img v-if="notice.userHead" :src="require(`../assets/Heads/${notice.userHead}`)" alt="头像" />
+      <img v-if="notice.userHead" :src="require(`../../../HeadsAndBacks/Heads/${notice.userHead}`)" alt="头像" />
       <!-- 网名,个签内容物 -->
       <div class="content">
         <!-- 名字和签名 -->

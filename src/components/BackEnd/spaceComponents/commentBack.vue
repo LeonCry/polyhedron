@@ -3,7 +3,7 @@
   <div class="commentsbox">
     <!-- 头像名字评论时间回复按钮 -->
     <div class="myhead">
-      <img v-if="comment" :src="require(`../../../assets/Heads/${comment.user.userHead}`)" alt="头像" />
+      <img v-if="comment" :src="require(`../../../../../HeadsAndBacks/Heads/${comment.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span>{{comment.user.userName}}<span>#{{comment.commentFloor}}楼</span></span>

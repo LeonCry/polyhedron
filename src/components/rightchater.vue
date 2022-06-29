@@ -12,7 +12,7 @@
     <div ref="chatcontent" class="chatcontent">
         <div class="shareBox" v-if="isShare">
           <div>
-            <img v-if="spaceData.user.userHead" :src="require(`../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
+            <img v-if="spaceData.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${spaceData.user.userHead}`)" alt="头像">
             <div class="cc">
             <span>
               <p></p>
@@ -32,19 +32,19 @@
         </div>
     </div></div>
     <!-- 头像 -->
-    <img  v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
+    <img  v-if="this.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.user.userHead}`)" alt="头像">
   </div>
   
   <!-- 左侧聊天 -->
     <div v-if="chat.sendUserQQ==friend.friendQQ" class="leftchaterbox" :class="{highLightShow:isHighLightShow}">
       <!-- 头像 -->
-      <img class="leftimg"  v-if="friend.user.userHead" :src="require(`../assets/Heads/${friend.user.userHead}`)" alt="头像">
+      <img class="leftimg"  v-if="friend.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${friend.user.userHead}`)" alt="头像">
       <!-- 消息box -->
     <div>
     <div ref="chatcontent" class="chatcontent">
                 <div class="shareBox" v-if="isShare">
           <div>
-            <img v-if="spaceData.user.userHead" :src="require(`../assets/Heads/${spaceData.user.userHead}`)" alt="头像">
+            <img v-if="spaceData.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${spaceData.user.userHead}`)" alt="头像">
             <div class="cc">
             <span>
               <p></p>

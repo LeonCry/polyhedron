@@ -2,7 +2,7 @@
   <div class="chatSearchResultBox">
       <!-- 头像 -->
       <div class="heads">
-           <img v-if="resultProps.userHead" :src="require(`../assets/Heads/${resultProps.userHead}`)" alt="头像">
+           <img v-if="resultProps.userHead" :src="require(`../../../HeadsAndBacks/Heads/${resultProps.userHead}`)" alt="头像">
       </div>
     <!-- 名称\时间与聊天记录 -->
     <div class="rightMore">

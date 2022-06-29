@@ -4,11 +4,11 @@
   <div class="selfbox">
       <!-- 背景 -->
       <div class="myback">
-          <img v-if="this.user.userBack" :src="require(`../assets/Backs/${this.user.userBack}`)" alt="背景">
+          <img v-if="this.user.userBack" :src="require(`../../../HeadsAndBacks/Backs/${this.user.userBack}`)" alt="背景">
       </div>
       <!-- 头像网名 -->
       <div class="myhead">
-          <img v-if="this.user.userHead" :src="require(`../assets/Heads/${this.user.userHead}`)" alt="头像">
+          <img v-if="this.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.user.userHead}`)" alt="头像">
           <br>
           <!-- 网名 -->
           <span>[ {{user.userName}} ]</span>

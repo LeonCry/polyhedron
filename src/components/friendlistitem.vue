@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="this.friendProp.user.userHead" :src="require(`../assets/Heads/${this.friendProp.user.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
+      <img v-if="this.friendProp.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.friendProp.user.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->

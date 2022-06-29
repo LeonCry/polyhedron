@@ -12,7 +12,7 @@
         </div>
   </div>
   <div class="heads">
-          <img v-if="this.userHead" :src="require(`../assets/Heads/${this.userHead}`)" alt="头像">
+          <img v-if="this.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.userHead}`)" alt="头像">
   </div>
   </div>
   </transition>

@@ -22,7 +22,7 @@
         </div>
         <!-- 头像网名 -->
         <div class="myhead">
-          <img :src="require(`../assets/Heads/${spaceUser.userHead}`)" alt="头像" />
+          <img :src="require(`../../../HeadsAndBacks/Heads/${spaceUser.userHead}`)" alt="头像" />
           <br />
           <!-- 网名 -->
           <span>{{spaceUser.userName}}</span>
@@ -338,7 +338,7 @@ this.allSpaceSum = goodsSpace;
               console.log(error.message);
             });
             }
-            this.backgroundImg = {'background':"url(" + require(`../assets/Backs/${this.spaceUser.userBack}`) + ") no-repeat center / cover"};
+            this.backgroundImg = {'background':"url(" + require(`../../../HeadsAndBacks/Backs/${this.spaceUser.userBack}`) + ") no-repeat center / cover"};
             this.backReadyFun();
         });
         // 接收来自其他窗口的数据,进行高度改变

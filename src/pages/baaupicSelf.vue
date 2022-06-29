@@ -196,10 +196,10 @@ created(){
     background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2bmypnwj21hc0u00yx.jpg");
   }
   .el-carousel__item:nth-child(3) {
-    background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3g29hn3ltj21hd0u0gsm.jpg");
+    background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7aydm7pj21hc0u0gty.jpg");
   }
   
   .el-carousel__item:nth-child(4) {
-    background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2bmypnwj21hc0u00yx.jpg");
+    background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7dt4y7vj21900u079n.jpg");
   }
 </style>

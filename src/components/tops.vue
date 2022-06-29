@@ -13,9 +13,9 @@
       <!-- 下拉菜单 -->
       <transition name="dropT">
         <span v-show="isShow" class="dropdown">
-          <a href="javascript:void(0)" @click="about">关于</a>
           <a href="javascript:void(0)" @click="connect">联系</a>
           <a href="http://www.leonblogs.cn/" target="_blank">博客</a>
+          <a href="https://github.com/LeonCry" target="_blank" @click="about">GitHub</a>
           <a href="javascript:void(0)" @click="adminLogin">后台</a>
           <!-- 鲁ICP备2021023307号-2 -->
         </span>

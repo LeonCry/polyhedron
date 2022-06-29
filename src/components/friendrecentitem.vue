@@ -3,7 +3,7 @@
 <transition name="frienditemT" appear>
   <div v-if="isShow" class="frienditem"  @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="userInfos.userHead" :src="require(`../assets/Heads/${userInfos.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
+      <img v-if="userInfos.userHead" :src="require(`../../../HeadsAndBacks/Heads/${userInfos.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -107,13 +107,17 @@ export default {
         // 诞生-查询其用户信息
         requestForUserInfo(friendUserQQ){
             this.$axios.post('/api/getUser',{userQQ:friendUserQQ}).then(response=>{
+                if(response.data == null){
+                    this.userInfos = '';
+                }
+                else{
                 this.userInfos = response.data;
                 this.$axios.post('/api/getOneFriends',{userQQ:this.user.userQQ,friendQQ:this.userInfos.userQQ}).then(response=>{
                 this.friend = response.data;
             },error=>{
                 console.log(error.message);
             });
-            
+                }
             },error=>{
                 console.log(error.message);
             });

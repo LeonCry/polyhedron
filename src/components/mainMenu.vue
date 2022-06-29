@@ -41,7 +41,7 @@ data(){
             title:'文件夹',
             info:'在文件夹中,你可以下载我制作的程序,以及我会上传一些做过的网页/App的源码,均可以下载供学习和使用.',
             to:'fileAndApp',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g1lha88wj21900u0q6d.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7e68b12j21900u0q6w.jpg',
         },
         // 相册集
         picture:{
@@ -49,7 +49,7 @@ data(){
             title:'照片集',
             info:'在相册集中,我会不定期上传拍摄的精美照片,你可以查看/收藏/下载/分享这些图片,很乐意这些照片可以让你心情愉悦.',
             to:'baaupic',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g29hn3ltj21hd0u0gsm.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7aydm7pj21hc0u0gty.jpg',
         },
          // 活着
         game:{
@@ -57,7 +57,7 @@ data(){
             title:'游戏:活着',
             info:'在游戏:活着中,你将扮演一名因世界灾难活下来的幸存者,在末世中搜寻食物与资源,努力活下去,但同时也要小心,这个世界不止你一个幸存者...',
             to:'gameLife',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2ju9hhgj21il0u0tao.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7kclxoij21mr0u0wi7.jpg',
         },
          // shangpin
         shop:{
@@ -65,7 +65,7 @@ data(){
             title:'商品兑换',
             info:'在商品兑换中,你可以将你在游戏:活着活着其他渠道获得的货币用来兑换真实世界中的商品.',
             to:'shopping',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2gmcfldj21900u0ti8.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7zb5eghj21hc0u042y.jpg',
         },
          // 视频
         video:{
@@ -81,7 +81,7 @@ data(){
             title:'计算器:剩余时间',
             info:'在计算器:剩余时间中,你可以根据你输入的年龄等相关信息计算你剩下的时间..用来...',
             to:'cacaulate',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2lmev36j216f0u0n07.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7v3xt4dj20y20hnq7n.jpg',
         },
         // 其他
         other:{
@@ -89,7 +89,7 @@ data(){
             title:'开发中..',
             info:'开发中....',
             to:'other',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2nmx5tuj21hb0u047z.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7xk6ds4j21hc0u0799.jpg',
         },
         imgsrc:'',
         clearTime : '',
