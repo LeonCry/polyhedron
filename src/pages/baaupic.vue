@@ -1,5 +1,6 @@
 <template>
   <div class="beauBox">
+    <back-button roots="/"></back-button>
     <div ref="allpass" class="allpassbe">RELOADING..</div>
     <div class="topBox">
       <div class="picture" ref="picture">
@@ -202,8 +203,9 @@
 <script>
 import PictureComment from '@/components/pictureApp/pictureComment.vue'
 import { mapState } from 'vuex';
+import BackButton from '@/components/backButton.vue';
 export default {
-  components: { PictureComment },
+  components: { PictureComment, BackButton },
 // eslint-disable-next-line vue/multi-word-component-names
 name:'baaupic',
 data(){

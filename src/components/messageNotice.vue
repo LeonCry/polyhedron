@@ -1,13 +1,16 @@
 <template>
   <div v-show="isShow" class="messageNoticebox">
-    <!-- 音效初始化 -->
-    <img src="../assets/message.svg" alt="消息通知" />
-    <div><br/>{{message}}</div>
+    <div><img class="divimg" src="../assets/message.svg" alt="消息通知" /></div>
+    <div></div>
+    <div>
+    <div class="message"><span style="color:royalblue"><i class="el-icon-loading"></i>{{message}} </span></div>
     <audio
       ref="audio"
       src="../assets/audio/notice.wav"
       style="display: none"
     ></audio>
+
+    </div>
 
   </div>
 </template>
@@ -66,33 +69,49 @@ export default {
 <style scoped>
 .messageNoticebox {
   position: absolute;
-  width: 60px;
-  height: 25px;
-  border-radius: 50px;
+  width: 300px;
+  height: 100px;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   z-index: 100;
   bottom: 65px;
   right: 0;
   transition: 0.55s;
+  bottom: 0;
+
 }
-.messageNoticebox img {
-  transition: 0.55s;
-  animation: shake-vertical 3s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite
-    both;
+.messageNoticebox:div:nth-of-type(1){
+  width: 100%;
+  flex: 8;
 }
-.messageNoticebox div {
+.messageNoticebox:div:nth-of-type(2){
+  width: 100%;
+  height: 30px;
+  flex: 6;
+}
+.messageNoticebox:div:nth-of-type(3){
+  width: 100%;
+  flex: 2;
+}
+.divimg {
   position: relative;
-  width: 10px;
-  height: 25px;
-  margin-left: 5px;
-  text-align: center;
-  /* background-color: rgb(247, 76, 76); */
-  font-size: 1.6vh;
-  color: pink;
-  font-weight: bolder;
-  border-radius: 50px;
+  left: 242px;
   transition: 0.55s;
+  animation: shake-vertical 3s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
+}
+
+.message{
+  width: 15%;
+  right: 2.5%;
+  left: 228px;
+  bottom: 2px;
+  font-weight: bolder;
+  border-radius: 10px;
+  padding: 2.5px;
+  text-align: center;
+  border: 2px solid black;
+  position: absolute;
+  background-color: white;
 }
 
 

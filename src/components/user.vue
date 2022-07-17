@@ -1,6 +1,6 @@
 <template>
   <div class="userbox">
-      <message-notice class="message"></message-notice>
+      <message-notice></message-notice>
       <transition name="userappearT" appear>
          <!-- 用户头像 -->  
       <div v-show="isShow" class="user" @click="optionAppear">

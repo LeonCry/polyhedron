@@ -135,7 +135,7 @@ mounted(){
         this.$bus.$emit('videoMessage',"A9wadv正在拨打...");
         this.$refs.video.play();
         if(this.isShow){
-            console.log("");
+            console.log("A");
         }
         else{
         this.isShow = true;

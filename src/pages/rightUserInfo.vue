@@ -27,7 +27,7 @@
       label="头像"
       width="80">
       <template slot-scope="scope">
-      <el-image lazy :preview-src-list='[require(`../../../HeadsAndBacks/Heads/${scope.row.userHead}`)]' :src="require(`../../../HeadsAndBacks/Heads/${scope.row.userHead}`)" ></el-image>
+      <el-image lazy :preview-src-list='[(`${publicPath}/HeadsAndBacks/Heads/${scope.row.userHead}`)]' :src="(`${publicPath}/HeadsAndBacks/Heads/${scope.row.userHead}`)" ></el-image>
         </template>
     </el-table-column>
     <el-table-column
@@ -36,7 +36,7 @@
       label="背景"
       width="150">
       <template slot-scope="scope">
-      <el-image lazy :preview-src-list='[require(`../../../HeadsAndBacks/Backs/${scope.row.userBack}`)]' :src="require(`../../../HeadsAndBacks/Backs/${scope.row.userBack}`)" ></el-image>
+      <el-image lazy :preview-src-list='[(`${publicPath}/HeadsAndBacks/Backs/${scope.row.userBack}`)]' :src="(`${publicPath}/HeadsAndBacks/Backs/${scope.row.userBack}`)" ></el-image>
         </template>
     </el-table-column>
     <el-table-column
@@ -208,6 +208,7 @@ data(){
     userInfos:[],
     friendData:[],
     userSetting:[],
+    publicPath: process.env.BASE_URL,
   }
 },
 computed:{

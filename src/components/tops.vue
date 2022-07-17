@@ -1,21 +1,24 @@
 <template> 
 <transition appear name="iconsT">
-  <div class="siderbar">
+  <div :class="{siderbar:isTen,roundbar:!isTen}" >
     <div class="back" v-show="backShow">
-      <button class="backbut" @click="backs"> ◀BACK </button>
+      
     </div>
     <div class="mieedd">
-
+      <span v-if="spanShow"></span><span v-if="spanShow"></span><span v-if="spanShow"></span><span v-if="spanShow"></span><span v-if="spanShow"></span>
+      <span v-if="spanShow" class="indx">{{cont1}}</span>
+      <span v-if="spanShow" class="runs">{{cont2}}</span>
     </div>
     <!-- 菜单 -->
-    <div class="droop">
-      <img src="../assets/menu.svg" alt="菜单" @click="isShow = !isShow"/>
+    <div class="droop" @click="isShow = !isShow">
+      <span class="linear" v-show="isShow"></span>
+      <img src="../assets/menu.svg" alt="菜单"/>
       <!-- 下拉菜单 -->
       <transition name="dropT">
         <span v-show="isShow" class="dropdown">
-          <a href="javascript:void(0)" @click="connect">联系</a>
+          <a href="http://www.leonblogs.cn/Assay.php?pageinput=45" target="_blank">指南</a>
           <a href="http://www.leonblogs.cn/" target="_blank">博客</a>
-          <a href="https://github.com/LeonCry" target="_blank" @click="about">GitHub</a>
+          <a href="https://github.com/LeonCry" target="_blank">GitHub</a>
           <a href="javascript:void(0)" @click="adminLogin">后台</a>
           <!-- 鲁ICP备2021023307号-2 -->
         </span>
@@ -36,9 +39,13 @@ export default {
   name: "tops",
   data() {
     return {
+      isTen:true,
       isShow: false,
       backShow:false,
-      dialogVisible: false
+      dialogVisible: false,
+      spanShow:true,
+      cont1:'PolyhedronX网站指南来啦!',
+      cont2:' ▶   ▶   ▶  ',
     };
   },
   methods:{
@@ -47,23 +54,15 @@ export default {
       // 向adminlogin组件传达数据,展示管理员登录界面
       this.$bus.$emit('tologin',true);
     },
-    backs(){
-      // router用来操作对象,route用来获取信息
+    toBlogZN(){
+      // 前5秒 -- 一直白色展示
       setTimeout(() => {
-              if(this.$route.path=='/'){
-        this.$bus.$emit('backShow',false);
-      }
-      }, 100);
-      this.$bus.$emit('menuShow',false);
-      this.$bus.$emit('Approuter',-1);
+        this.spanShow = false;
+      }, 9000);
+      setTimeout(() => {
+        this.isTen = false;
+      }, 9500);
     },
-    connect(){
-      alert("bug反馈请提交:lbh_ldu@163.com \n 联系请致:1686201564@qq.com")
-    },
-    about(){
-      alert("console.log...");
-      console.log('b0iue0i56h39iha0siq1924uoisdjv');
-    }
   },
   mounted(){
       setTimeout(() => {
@@ -75,10 +74,20 @@ export default {
       }
       }, 100);
 
-
+     // eslint-disable-next-line no-unused-vars
      this.$bus.$on('backShow',(data)=>{
-      this.backShow = data;
+      this.backShow = false;
      });
+  },
+
+  created(){
+    this.toBlogZN();
+    setTimeout(() => {
+      this.isShow = true;
+    }, 10000);
+    setTimeout(() => {
+      this.isShow = false;
+    }, 13500);
   },
 };
 </script>
@@ -92,62 +101,156 @@ export default {
   display: flex;
   transition: 0.5s;
   z-index: 90;
+  right: 0;
+  flex-flow: row nowrap;
+  background-color: rgba(0, 0, 0, 0);
+}
+.roundbar{
+  width: 60px;
+  position: fixed;
+  top: 10px;
+  height: 45px;
+  display: flex;
+  transition: 0.5s;
+  z-index: 90;
+  right: 15px;
+  border-radius:10px;
+  text-align: center;
   flex-flow: row nowrap;
   background-color: rgba(0, 0, 0, 0);
 }
 .siderbar:hover{
   background-color: white;
 }
+.linear{
+  position: absolute;
+  transition: 0.2s;
+  width: 60px;
+  height: 2px;
+  right: 50px;
+  top: 12.5px;
+  background-color: black;
+}
+.linear::after{
+  content: '▼';
+  transition: 0.2s;
+  position: absolute;
+  font-size: 1.6vh;
+  color: black;
+  top: -1px;
+  right: 48px;
+}
 
 .siderbar div {
+  width: 52px;
+  margin-top: 10px;
+  height: 27px;
+  text-align: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 1.5s;
+  animation: bk 10s both;
+}
+.siderbar div:nth-of-type(3){
+  z-index: 3;
+}
+.siderbar:hover div:nth-of-type(3){
+  transition: 0.33s;
+  transition: 1.5s;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
+.siderbar div:nth-of-type(3):hover{
+  background-color: white;
+  border-radius: 10px;
+}
+
+.roundbar div {
+  position: absolute;
   width: 50px;
   margin-top: 10px;
   height: 25px;
   text-align: center;
-  margin-left: 5px;
-  margin-right: 10px;
   align-items: center;
   cursor: pointer;
-  transition: 0.5s;
+  transition: 1.5s;
+  animation: bk 10s both;
 }
-.siderbar:hover div{
-  background-color: rgba(0, 0, 0, 0.5);
+.roundbar div:nth-of-type(3){
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(0, 0, 0, 0.25);
+  /* animation: 4s bac-black linear  infinite; */
+  left: 5px;
+  z-index: 3;
+  transition: 0.33s;
+}
+.roundbar:hover div:nth-of-type(3){
+  transition: 0.33s;
+  background-color: rgba(0, 0, 0, 0.44);
   border-radius: 5px;
 }
-.siderbar div:hover{
+.roundbar div:nth-of-type(3):hover{
+  border: 1px solid white;
   background-color: black;
   border-radius: 10px;
 }
 /* 菜单下拉框 */
 .dropdown {
-  margin-left: 5%;
+  z-index: 2;
+  right: 55px;
+  width: 100px;
   display: flex;
   position: absolute;
+  background-color: black;
+  border-radius: 10px;
   flex-direction: column;
-  border-right: 2px solid white;
+  border: 2px solid white;
+  animation: wobble-hor-top 2s both infinite;
 }
 .dropdown a {
   color: white;
+  text-decoration:none;
+  outline:none;
   position: relative;
   margin-bottom: 10px;
-  transition: 0.5s;
+  transition: 0.33s;
    z-index: 1001;
   margin-top: 5px;
 }
 .dropdown a:hover {
-  color: black;
+  color: deepskyblue;
   right: 5px;
-  border-right: 5px solid rgba(0, 0, 0, 0);
+  border-right: 5px dotted deepskyblue;
   cursor: pointer;
 }
 .mieedd{
   flex: 20;
-  opacity: 0;
+  opacity: 1;
+  text-align: right;
+  display: flex;
+  flex-flow: row nowrap;
   cursor: default;
+}
+
+.mieedd span{
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  text-align: right;
+  color: white;
+  background-color: black;
+}
+.indx{
+  z-index: 2;
+}
+.runs{
+  left: -100px;
+  animation: tx 3s linear infinite;
 }
 .droop{
   flex: 2;
-
+  
 }
 .back{
   flex: 2;
@@ -176,17 +279,85 @@ export default {
   opacity: 1;
 }
 /* sidebar动画 */
-.iconsT-enter,
-.iconsT-leave-to {
-  opacity: 0;
+
+.iconsT-enter-active{
+        animation: wt 10s both;
+    }
+
+@keyframes wt {
+  0%{
+            background-color: rgba(0, 0, 0, 0);
+    }
+  10%,90% {
+            background-color: white;
+  }
+  100% {
+            background-color: rgba(0, 0, 0, 0);
+  }
 }
-.iconsT-enter-active,
-.iconsT-leave-active {
-  transition: 3s linear;
+
+@keyframes bk {
+  0%{
+            background-color: rgba(0, 0, 0, 0);
+            border-radius: 0px;
+    }
+  10%,90% {
+            background-color: black;
+            border-radius: 0px;
+  }
+  100% {
+            border-radius: 5px;
+  }
 }
-.iconsT-enter-to,
-.iconsT-leave {
-  opacity: 1;
+@keyframes tx {
+  0%{
+    left:-15%;
+    }
+
+  100% {
+    left:15%;
+  }
+}
+
+@keyframes bac-black {
+  0%{
+    background-color: rgba(0, 0, 0, 0);
+  }
+  100%{
+    background-color: black;
+  }
+}
+@keyframes wobble-hor-top {
+  0%,100%{
+    -webkit-transform:  rotate(0);
+            transform:  rotate(0);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+  }
+  10% {
+    -webkit-transform:  rotate(5deg);
+            transform: rotate(5deg);
+  }
+  20% {
+    -webkit-transform:  rotate(-5deg);
+            transform: rotate(-5deg);
+  }
+  30% {
+    -webkit-transform:  rotate(3.2deg);
+            transform: rotate(3.2deg);
+  }
+  40% {
+    -webkit-transform:  rotate(-3.2deg);
+            transform: rotate(-3.2deg);
+  }
+  50% {
+    -webkit-transform:  rotate(1.5deg);
+            transform:  rotate(1.5deg);
+  }
+  60%{
+        -webkit-transform:  rotate(-1.5deg);
+            transform:  rotate(-1.5deg);
+  }
 }
 
 </style>

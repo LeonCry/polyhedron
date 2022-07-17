@@ -12,7 +12,7 @@
         </div>
   </div>
   <div class="heads">
-          <img v-if="this.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.userHead}`)" alt="头像">
+          <img v-if="this.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${this.userHead}`)" alt="头像">
   </div>
   </div>
   </transition>
@@ -33,6 +33,7 @@ data(){
         userHead:'',
         // 发消息者
         friend:'',
+        publicPath: process.env.BASE_URL,
     }
 },
 computed:{

@@ -3,7 +3,7 @@
 <transition name="frienditemT" appear>
   <div v-if="isShow" class="frienditem"  @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="userInfos.userHead" :src="require(`../../../HeadsAndBacks/Heads/${userInfos.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
+      <img v-if="userInfos.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${userInfos.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -58,6 +58,7 @@ export default {
             // 备注名
             remakeName:'',
             isOnline:false,
+            publicPath: process.env.BASE_URL,
         }
     },
     computed:{

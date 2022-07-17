@@ -32,7 +32,7 @@
             </div>
             <!-- 用户名 -->
             <div>
-              <span>用户名</span>
+              <span>昵 称</span>
               <input type="text" v-model="userName" maxlength="24" @blur="verifryUserName"/>
             </div>
             <!-- 用户密码 -->

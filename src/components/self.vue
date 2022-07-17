@@ -4,11 +4,11 @@
   <div class="selfbox">
       <!-- 背景 -->
       <div class="myback">
-          <img v-if="this.user.userBack" :src="require(`../../../HeadsAndBacks/Backs/${this.user.userBack}`)" alt="背景">
+          <img v-if="this.user.userBack" :src="(`${publicPath}/HeadsAndBacks/Backs/${this.user.userBack}`)" alt="背景">
       </div>
       <!-- 头像网名 -->
       <div class="myhead">
-          <img v-if="this.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.user.userHead}`)" alt="头像">
+          <img v-if="this.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${this.user.userHead}`)" alt="头像">
           <br>
           <!-- 网名 -->
           <span>[ {{user.userName}} ]</span>
@@ -33,6 +33,7 @@ export default {
             // 该组件是否显示
             isShow:false,
             ifShow:false,
+             publicPath: process.env.BASE_URL,
         }
     },
     computed:{

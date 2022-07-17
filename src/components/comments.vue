@@ -3,7 +3,7 @@
   <div class="commentsbox">
     <!-- 头像名字评论时间回复按钮 -->
     <div class="myhead">
-      <img v-if="comment" :src="require(`../../../HeadsAndBacks/Heads/${comment.user.userHead}`)" alt="头像" />
+      <img v-if="comment" :src="(`${publicPath}/HeadsAndBacks/Heads/${comment.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span><span v-show="remakeName">({{remakeName}}) </span>{{comment.user.userName}}<span>#{{comment.commentFloor}}楼</span></span>
@@ -55,6 +55,7 @@ export default {
         // 所有评论
         allReply:[],
         remakeName:'',
+        publicPath: process.env.BASE_URL,
     };
   },
   created(){

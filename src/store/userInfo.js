@@ -23,7 +23,7 @@ export default{
             axios.post("/api/updateUserInfo",value).then(
                 response=>{
                     if(response==-1){
-                        console.log("");
+                        console.log("A");
                     }
                     // 
                     
@@ -42,7 +42,7 @@ export default{
             axios.post("/api/updateUserSettingInfo",value).then(
                 response=>{
                     if(response==-1){
-                        console.log("");
+                        console.log("A");
                     }
                     // 
                     else {

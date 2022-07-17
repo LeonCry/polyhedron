@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="friend.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${friend.user.userHead}`)" alt="">
+      <img v-if="friend.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${friend.user.userHead}`)" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -39,6 +39,7 @@ export default {
             // 空间展示
             isSpaceShow:false,
             friend:this.friendProps,
+            publicPath: process.env.BASE_URL,
         }
     },
         

@@ -575,7 +575,7 @@ export default {
                     this.windowFly();
                 }
                 else if(data.text.substring(0,6)=="A9wadv"){
-                    console.log(""); 
+                    console.log("A"); 
                 }
                 else{
                 // 构建合法的Json

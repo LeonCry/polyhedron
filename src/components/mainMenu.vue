@@ -28,9 +28,10 @@
 </template>
 
 <script>
+import BackButton from './backButton.vue';
 import cardItem from './cardItem.vue'
 export default {
-  components: { cardItem },
+  components: { cardItem, BackButton },
 name:'mainMenu',
 data(){
     return{

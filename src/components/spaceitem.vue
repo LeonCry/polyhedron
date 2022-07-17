@@ -3,7 +3,7 @@
   <div v-if="space" class="spaceitembox">
     <!-- 头像网名 -->
     <div class="myhead">
-      <img v-if="space.user.userHead" :src="require('../../../HeadsAndBacks/Heads/'+space.user.userHead)" alt="头像"/>
+      <img v-if="space.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/`+space.user.userHead)" alt="头像"/>
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span><span style="color:pink" v-show="remakeName">({{remakeName}}) </span>{{space.user.userName}}</span>
@@ -96,6 +96,7 @@ export default {
           commentRflesh:true,
           remakeName:'',
           isSharePeopleShow:false,
+          publicPath: process.env.BASE_URL,
       }
   },
   computed:{

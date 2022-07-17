@@ -3,7 +3,7 @@
   <div class="replybox">
     <!-- 头像名字评论时间回复按钮 -->
     <div class="myhead">
-      <img v-if="replys.user.userHead" :src="require(`../../../../../HeadsAndBacks/Heads/${replys.user.userHead}`)" alt="头像" />
+      <img v-if="replys.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${replys.user.userHead}`)" alt="头像" />
       <!-- 网名和发表时间 -->
       <div class="usernametime">
         <span style="color:seagreen">{{replys.user.userName}}<span style="color:seagreen">#{{replys.myFloor}}层</span></span>
@@ -35,6 +35,7 @@ data() {
         // 评论对象
         comment:this.commentProps,
         remakeName:'',
+        publicPath: process.env.BASE_URL,
     }
   },
   created(){

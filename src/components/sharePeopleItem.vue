@@ -4,7 +4,7 @@
         <div>
   <div v-show="isShow" class="frienditem">
       <!-- 头像 -->
-      <img v-if="getUser.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${getUser.user.userHead}`)" alt="">
+      <img v-if="getUser.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${getUser.user.userHead}`)" alt="">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -47,6 +47,7 @@ export default {
             // 是否添加留言展示
             isAddMessageShow:false,
             isSelect:false,
+            publicPath: process.env.BASE_URL,
         }
     },
     computed:{

@@ -177,7 +177,8 @@ created(){
     position: absolute;
     z-index: 3;
     left: 25px;
-    bottom: 25px;
+    top: 25px;
+    transition: 0.55s;
     opacity: 0.5;
 }
 .backs:hover{

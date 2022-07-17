@@ -3,7 +3,7 @@
     <transition name="frienditemT" appear>
   <div v-show="isShow" class="frienditem" @dblclick="chatboxAppear">
       <!-- 头像 -->
-      <img v-if="this.friendProp.user.userHead" :src="require(`../../../HeadsAndBacks/Heads/${this.friendProp.user.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
+      <img v-if="this.friendProp.user.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${this.friendProp.user.userHead}`)" alt="头像" :class="{online:isOnline,offline:!isOnline}">
       <!-- 网名,个签内容物 -->
       <div class="content">
           <!-- 名字和签名 -->
@@ -48,6 +48,7 @@ export default {
             isChatting:false,
             // 是否在线
             isOnline:false,
+            publicPath: process.env.BASE_URL,
         }
     },
     computed:{
@@ -147,7 +148,6 @@ export default {
         // 接收APP组件消息,以展示未读消息
         this.$bus.$on('MessageNums',(data)=>{                 
             if(data.chatContent.substring(0,11)!="A9wadv::NEW"){
-            console.log("data.chatContent.substring(0,11):",data.chatContent.substring(0,11));
             if(data.sendUserQQ==this.friendProp.user.userQQ){
             // 向messageShowCube组件发送数据,以显示新消息通知
             this.$bus.$emit("messageShowCube",{friend:this.friendProp,messageData:data});

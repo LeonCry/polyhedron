@@ -386,7 +386,7 @@ methods:{
     else{
       // eslint-disable-next-line no-unused-vars
       this.$axios.post('/api/InsertPic',this.picInfo).then(response=>{
-        this.resetPicInfo();
+        this.clearAlot();
         this.$bus.$emit('backNotice',true,"新添加一张图片成功!");
         this.pageChange(this.currentPage);
       },error=>{
@@ -408,7 +408,14 @@ methods:{
     this.picInfo.location = '';
     this.picInfo.weather = '';
     this.picInfo.picTime = '';
+    this.picInfo.cameraSetting = '';
   },
+//特定情况删除
+  clearAlot(){
+    this.picInfo.picScr = '';
+    this.picInfo.picName = '';
+  },
+
   copySrc(src){
 	let oInput = document.createElement("input");
 	oInput.value = src;

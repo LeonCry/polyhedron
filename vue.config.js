@@ -2,7 +2,7 @@
 module.exports = {
   transpileDependencies: true,
   lintOnSave:false,
-
+  publicPath:'./',
   // 开启服务代理
   devServer: {
     proxy: {
@@ -14,13 +14,13 @@ module.exports = {
           '^/api':''
         }
       },
-        "/socket": {
-          target: 'ws://localhost:8088',
-          // ws: true,
-          changeOrigin: true,
-          pathRewrite:{
-            '^/socket':''
-          },
+      '/socket': {
+        target: 'ws://120.48.41.143:8088',//后端目标接口地址
+        changeOrigin: true,//是否允许跨域
+        pathRewrite: {
+          '^/socket': '',//重写,
+        },
+        ws: true //开启ws, 如果是http代理此处可以不用设置
       },
       "/QQicon": {
         target: 'http://q2.qlogo.cn',
@@ -46,7 +46,17 @@ module.exports = {
           '^/location':''
         },
       },
+      "/bilibili": {
+        target: 'https://api.bilibili.com',
+        // ws: true,
+        changeOrigin: true,
+        pathRewrite:{
+          '^/bilibili':''
+        },
+      },
+
     }
-  }
+  },
+
 
 }

@@ -197,6 +197,7 @@ export default {
       userPasswordState3: "",
       userEmailState3: "",
       userCodeState3: "",
+      publicPath: process.env.BASE_URL,
     };
   },
   watch: {
@@ -219,7 +220,7 @@ export default {
     // smilesvg改变
     loginErrorTimes: function () {
       if (this.loginErrorTimes == 1) {
-        console.log("");
+        console.log("A");
       } else if (this.loginErrorTimes == 2) {
         this.smileSvg = require("../assets/smile_normal.svg");
       } else if (this.loginErrorTimes == 3) {
@@ -802,7 +803,8 @@ export default {
           socket = null;
         }
         // 开启一个websocket服务
-        socket = new WebSocket("ws://localhost:8088/imserver/" + userQQ);
+        // localhost:8088 may need to change : 120.48.41.143:8088
+        socket = new WebSocket("ws://120.48.41.143:8088/imserver/" + userQQ);
         socket.onopen = function () {
           console.log("websocket已打开..");
         };
