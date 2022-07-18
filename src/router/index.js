@@ -13,6 +13,7 @@ import cacaulate from "../pages/cacaulate.vue"
 import other from "../pages/other.vue"
 import rightPics from "../pages/rightPics.vue"
 import baaupicSelf from "../pages/baaupicSelf.vue"
+import PXSpace from "../pages/PXSpace.vue"
 // 安装插件
 Vue.use(VueRouter)
 
@@ -31,6 +32,7 @@ const routes = [
     {name:"cacaulate",path:"/cacaulate",components:{pres:cacaulate}},
     {name:"other",path:"/other",components:{pres:other}},
     {name:"baaupicSelf",path:"/baaupicSelf",components:{pres:baaupicSelf},},
+    {name:"PXSpace",path:"/PXSpace",components:{pres:PXSpace},},
 ]
 
 // 配置路由和组件之间的关系

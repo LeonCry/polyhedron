@@ -16,7 +16,7 @@
         <div class="line2">
             <card-item :cardContent="game"></card-item>
             <card-item :cardContent="caculate"></card-item>
-            <card-item :cardContent="other"></card-item>
+            <card-item :cardContent="PXSpace"></card-item>
             <card-item :cardContent="other"></card-item>
 
         </div>
@@ -28,10 +28,9 @@
 </template>
 
 <script>
-import BackButton from './backButton.vue';
 import cardItem from './cardItem.vue'
 export default {
-  components: { cardItem, BackButton },
+  components: { cardItem },
 name:'mainMenu',
 data(){
     return{
@@ -40,7 +39,7 @@ data(){
         file:{
             oneFont:'文',
             title:'文件夹',
-            info:'在文件夹中,你可以下载我制作的程序,以及我会上传一些做过的网页/App的源码,均可以下载供学习和使用.',
+            info:'在文件夹中,你可以下载我制作的程序,做过的网页/App的源码,均可以下载供学习和使用.',
             to:'fileAndApp',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7e68b12j21900u0q6w.jpg',
         },
@@ -48,7 +47,7 @@ data(){
         picture:{
             oneFont:'照',
             title:'照片集',
-            info:'在相册集中,我会不定期上传拍摄的精美照片,你可以查看/收藏/下载/分享这些图片,很乐意这些照片可以让你心情愉悦.',
+            info:'在相册集中,我会不定期上传拍摄的精美照片,你可以查看/收藏/下载/分享/使用这些图片,并且没有版权问题.如果这些照片可以帮到你或使你心情愉悦,便是对我最大的赞赏.',
             to:'baaupic',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7aydm7pj21hc0u0gty.jpg',
         },
@@ -64,7 +63,7 @@ data(){
         shop:{
             oneFont:'商',
             title:'商品兑换',
-            info:'在商品兑换中,你可以将你在游戏:活着活着其他渠道获得的货币用来兑换真实世界中的商品.',
+            info:'在商品兑换中,我会不定期上架一些商品,你可以将你在游戏:活着中或其他渠道获得的虚拟货币用来兑换真实世界中的商品.',
             to:'shopping',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7zb5eghj21hc0u042y.jpg',
         },
@@ -72,25 +71,33 @@ data(){
         video:{
             oneFont:'视',
             title:'视频集',
-            info:'在视频集中,我会不定期上传一些我拍摄或制作的视频或摄影,你可以查看/收藏/分享这些视频.',
+            info:'在视频集中,视频主要来自于Bilibili中我上传的视频或摄影,你可以查看或分享这些视频.希望大家多多关注,点赞+投币.',
             to:'videos',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3g2bmypnwj21hc0u00yx.jpg',
         },
                  // 计算器:剩余时间
         caculate:{
-            oneFont:'算',
-            title:'计算器:剩余时间',
-            info:'在计算器:剩余时间中,你可以根据你输入的年龄等相关信息计算你剩下的时间..用来...',
+            oneFont:'年',
+            title:'似水流年',
+            info:'在似水流年中,你可以得到你剩下的时间..用来...',
             to:'cacaulate',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7v3xt4dj20y20hnq7n.jpg',
         },
         // 其他
+        PXSpace:{
+            oneFont:'PX',
+            title:'PX广场',
+            info:'在PX广场中,你将遇见在PolyhedronX中在线且同在PX广场的其他人,你们可以互相聊天,查看对方最近动态,亦或许一起听音乐,玩游戏..更多好玩的等待着你们..',
+            to:'PXSpace',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4bbkqb822j225m0u04gi.jpg',
+        },
+                // 其他
         other:{
             oneFont:'等',
-            title:'开发中..',
-            info:'开发中....',
+            title:'开发中',
+            info:'开发中...',
             to:'other',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7xk6ds4j21hc0u0799.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4bbomf2c1j21900u0ju9.jpg',
         },
         imgsrc:'',
         clearTime : '',
