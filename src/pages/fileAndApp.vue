@@ -2,20 +2,13 @@
   <div class="otherBox">
     <back-button :roots="'/'"></back-button>
     <div class="title">
-      <i ref="computer" class="el-icon-monitor computer" ><i class="el-icon-document-copy" :class="{iAnimation:isAntimation}"></i></i>
+      <i ref="computer" class="el-icon-monitor computer" ><br><i class="el-icon-document-copy" :class="{iAnimation:isAntimation}"></i></i>
       <el-button @click="toLeft" class="butsl" type="primary"><i style="font-size:3vh" class="el-icon-d-arrow-left"></i></el-button>
       <span>Files And Apps</span>
       <el-button @click="toRight" class="butsr" type="primary"><i style="font-size:3vh" class="el-icon-d-arrow-right"></i></el-button>
     </div>
     <div class="files" ref="files">
-      <file-item class="file"></file-item>
-      <file-item class="file"></file-item>
-      <file-item class="file"></file-item>
-      <file-item class="file" id="xxx"></file-item>
-      <file-item class="file"></file-item>
-      <file-item class="file"></file-item>
-      <file-item class="file"></file-item>
-      <file-item class="file"></file-item>
+      <file-item class="file" v-for="file of fileData" :key="file.fileId" :fileProp="file" :id="'file'+file.fileId"></file-item>
     </div>
 
   </div>
@@ -37,6 +30,7 @@ data(){
     clicksR:1,
     clicksL:0,
     isAntimation:false,
+    fileData:[],
   }
 },
 methods:{
@@ -63,31 +57,68 @@ methods:{
       console.log("到头了.");
     }
   },
+// 初始化获得所有files
+getAllFiles(){
+  this.$axios.post('/api/selectAllFiles',).then(response=>{
+    this.fileData = response.data;
+  },error=>{
+    console.log(error.message);
+  });
+  }
+
 },
 mounted(){
   this.$bus.$on('AnimationActions',(id,color)=>{
     var ele = document.getElementById(id).getBoundingClientRect();
     var left = ele.left;
-    console.log(left);
-    this.$refs.computer.style.left = left + 100 + 'px';
+    this.$refs.computer.style.left = left + 80 + 'px';
     this.$refs.computer.style.opacity = 1;
     setTimeout(() => {
     this.$refs.computer.style.height = '100%';
     this.$refs.computer.style.backgroundColor = color;
     this.isAntimation = true;
-    }, 1000);
+    }, 1500);
+  })
+
+  this.$bus.$on('thereNeedDownLoad',(id,color)=>{
+    var ele = document.getElementById(id).getBoundingClientRect();
+    var left = ele.left;
+    this.$refs.computer.style.left = left + 80 + 'px';
+    this.$refs.computer.style.opacity = 1;
     setTimeout(() => {
+    this.$refs.computer.style.height = '100%';
+    this.$refs.computer.style.backgroundColor = color;
+    this.isAntimation = true;
+    }, 1500);
+  })
+
+    this.$bus.$on('finishDownLoading',()=>{
+      setTimeout(() => {
       this.$refs.computer.style.opacity = 0;
       this.$refs.computer.style.height = '10%';
       this.$refs.computer.style.backgroundColor = 'royalblue';
       this.isAntimation = false;
-    }, 7000);
+      }, 100);
+    });
 
 
-    
+},
 
-  })
+
+created(){
+  this.getAllFiles();
+
+  // 每隔3秒查看是否还有正在下载的任务
+  setInterval(() => {
+    if(this.$refs.computer.style.opacity==0){
+      this.$bus.$emit('checkNeedDownLoad');
+    }
+  }, 3000);
 }
+
+
+
+
 }
 </script>
 
@@ -141,7 +172,7 @@ mounted(){
 }
 .computer{
   position: absolute;
-  width: 50px;
+  width: 80px;
   height: 20%;
   transition: 1s;
   background-color: royalblue;
@@ -150,13 +181,22 @@ mounted(){
   font-weight: bolder;
   border-radius: 10px;
   padding: 5px;
+  box-shadow: 0 0 15px white;
   left: 0;
   top: 0;
   opacity: 0;
 }
 .iAnimation{
   position: relative;
-  animation: i-Animation 1s both ease-in-out infinite;
+  width: 90px;
+  height: 50px;
+  border-radius: 15px;
+  text-align: center;
+  line-height: 200%;
+  right: 5px;
+  background-color: royalblue;
+  box-shadow: 0 0 20px royalblue;
+  animation: i-Animation 3s both ease-in-out infinite;
 }
 
 @keyframes create-frames {
@@ -175,15 +215,31 @@ mounted(){
 @keyframes i-Animation {
   0%{
     top: 0;
+    opacity: 0;
+  }
+  5%{
+    top: 0;
+    opacity: 0;
+  }
+  10%{
+    top: 10%;
+    opacity: 1;
   }
   50%{
-    top: 50%;
+    top: 65%;
+    opacity: 1;
   }
-  95%{
+  80%{
     top: 100%;
+    opacity: 1;
+  }
+  99%{
+    top: 100%;
+    opacity: 0;
   }
   100%{
     top: 100%;
+    opacity: 0;
   }
 }
 

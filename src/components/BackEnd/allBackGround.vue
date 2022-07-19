@@ -9,18 +9,18 @@
           </div>
   </div>
   <back-notice></back-notice>
-    <el-row>
-         <el-col :span="4" class="on-left">
+    <div class="main">
+         <div class="on-left">
             <back-left></back-left>
-         </el-col>
-         <el-col :span="1">
+         </div>
+         <div class="on-mid">
             <div class="test"></div>
-         </el-col>
-         <el-col :span="19" class="on-right">
+         </div>
+         <div class="on-right">
             <router-view name="backs"></router-view>
-         </el-col>
+         </div>
          <back-right-loading></back-right-loading>
-    </el-row>
+    </div>
 </div>
 </transition>
 </template>
@@ -53,7 +53,8 @@ mounted(){
 
 <style scoped>
 .test{
-    height: 750px;
+    position: relative;
+    height: 100%;
 }
 
 
@@ -74,7 +75,7 @@ mounted(){
 .toper{
         position: relative;
         width: 100%;
-        height: 55px;
+        height: 6%;
         display: flex;
         flex-flow: row nowrap;
         border-bottom: #6f7379a4 3px solid;
@@ -84,6 +85,13 @@ mounted(){
         background-attachment: fixed;
         animation: backtrans 20s infinite;
 }  
+.main{
+    position: relative;
+    height: 94%;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+}
 /* 用户名字 */
 .toper > span{
     line-height: 55px;
@@ -111,15 +119,25 @@ mounted(){
 }
 .on-left{
     position: relative;
-    height: 770px;
+    height: 100%;
+    flex: 4;
     overflow-y: auto;
     background-color: #313A46;
+    
+}
+.on-mid{
+    position: relative;
+    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0);
     
 }
 .on-right{
     position: relative;
     right: 35px;
-    height: 770px;
+    height: 100%;
+    flex: 19;
     overflow-y: hidden;
     background-color: rgba(0, 0, 0, 0);
 

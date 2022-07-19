@@ -54,6 +54,14 @@ module.exports = {
           '^/bilibili':''
         },
       },
+      "/ces": {
+        target: ' https://chromedriver.storage.googleapis.com',
+        // ws: true,
+        changeOrigin: true,
+        pathRewrite:{
+          '^/ces':''
+        },
+      },
 
     }
   },

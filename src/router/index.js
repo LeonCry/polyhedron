@@ -14,6 +14,7 @@ import other from "../pages/other.vue"
 import rightPics from "../pages/rightPics.vue"
 import baaupicSelf from "../pages/baaupicSelf.vue"
 import PXSpace from "../pages/PXSpace.vue"
+import rightFiles from "../pages/rightFiles.vue"
 // 安装插件
 Vue.use(VueRouter)
 
@@ -24,6 +25,7 @@ const routes = [
     {name:"userChats",path:"/userChats",components:{backs:rightChat}},
     {name:"userSpaces",path:"/userSpaces",components:{backs:rightSpaces}},
     {name:"rightPics",path:"/rightPics",components:{backs:rightPics}},
+    {name:"rightFiles",path:"/rightFiles",components:{backs:rightFiles},},
     {name:"fileAndApp",path:"/fileAndApp",components:{pres:fileAndApp}},
     {name:"baaupic",path:"/baaupic",components:{pres:baaupic}},
     {name:"gameLife",path:"/gameLife",components:{pres:gameLife}},

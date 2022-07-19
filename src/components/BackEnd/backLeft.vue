@@ -35,7 +35,7 @@
       </el-submenu>
       <br>
       <el-menu-item index="2">
-        <i class="el-icon-s-goods"></i>
+        <i class="el-icon-s-goods" @click="routerTo('shops')"></i>
         <span slot="title">兑换品</span>
       </el-menu-item>
       <br>
@@ -44,7 +44,7 @@
         <span slot="title">相册集</span>
       </el-menu-item>
       <br>
-      <el-menu-item index="4">
+      <el-menu-item index="4" @click="routerTo('rightFiles')">
         <i class="el-icon-upload"></i>
         <span slot="title">文件夹</span>
       </el-menu-item>
