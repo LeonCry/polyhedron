@@ -14,7 +14,7 @@
     <div class="timeAndNums" ref="timeAndNums">
         <span class="intro">{{this.fileProp.fileIntro}}</span>
         <br>
-        <span class="down">下载次数:{{downloadNums}} <br> 更新时间:{{new Date(parseInt(this.fileProp.uploadTime)).toLocaleString().split(" ")[0]}}</span>
+        <span class="down">下载次数:{{downloadNums}} <br>文件大小:{{fileProp.fileShow}}MB<br> 更新时间:{{new Date(parseInt(this.fileProp.uploadTime)).toLocaleString().split(" ")[0]}}</span>
         <br><br><br>
         <el-button class="downbut" @click="downLoad"><span v-if="!isDownloading">{{write}}</span><span v-if="isDownloading" id="downPercent" ref="downPercent">下载进度:{{percent}}%</span><i class="el-icon-upload downicon" :class="{iShark:LdownTrue}"></i></el-button>
     </div>
@@ -33,7 +33,7 @@ export default {
     data(){
         return{
             typeNum:-1,
-            // 分别icon为:[word/pdf/excel],[压缩文件],[exe文件],[多媒体文件],[其他文件]
+            // 分别icon为:[Word文件/PDF文件/Excel文件],[压缩文件],[exe文件],[多媒体文件],[其他文件]
             fileTypeIcon:['el-icon-document','el-icon-folder','el-icon-mobile','el-icon-film','el-icon-tickets'],
             downTrue:false,
             write:'点击此处下载',
@@ -265,7 +265,7 @@ export default {
     margin-top: 110px;
     width: 160px;
     left: 33px;
-    max-height: 50px;
+    max-height: 80px;
     overflow-y: auto;
     color: black;
     font-weight: bold;
@@ -279,7 +279,7 @@ export default {
 }
 .downbut{
     position: absolute;
-    margin-top: 115px;
+    margin-top: 135px;
     width: 200px;
     left: 23px;
     height: 50px;

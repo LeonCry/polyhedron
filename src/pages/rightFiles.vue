@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column prop="filePath" label="文件地址" width="150">
         </el-table-column>
-        <el-table-column prop="fileShow" label="文件展示" width="100">
+        <el-table-column prop="fileShow" label="文件大小" width="100">
         </el-table-column>
         <el-table-column prop="downLoadP" label="下载人员" width="150">
         </el-table-column>
@@ -79,7 +79,7 @@
             <el-input v-model="creatFiles.fileName"></el-input>
           </el-form-item>
           <el-form-item label="文件类型">
-            <el-input v-model="creatFiles.fileType"></el-input>
+            <el-input v-model="creatFiles.fileType" placeholder="[Word/PDF/Excel文件],[压缩文件],[exe文件],[多媒体文件]"></el-input>
           </el-form-item>
           <el-form-item label="文件介绍">
             <el-input v-model="creatFiles.fileIntro"></el-input>
@@ -87,8 +87,8 @@
           <el-form-item label="下载人数">
             <el-input v-model="creatFiles.downloadNums"></el-input>
           </el-form-item>
-          <el-form-item label="文件展示">
-            <el-input v-model="creatFiles.fileShow"></el-input>
+          <el-form-item label="文件大小">
+            <el-input v-model="creatFiles.fileShow" disabled></el-input>
           </el-form-item>
           <el-form-item label="上传时间">
             <el-date-picker
@@ -116,7 +116,7 @@
                 >选取文件</el-button
               >
               <div slot="tip" class="el-upload__tip">
-                上传文件大小不可超过100M
+                上传文件大小不可超过500M
               </div>
             </el-upload>
           </el-form-item>
@@ -155,6 +155,8 @@ export default {
   methods: {
 
     handleChange(file){
+            console.log(file);
+            this.creatFiles.fileShow = (file.size/1024/1024).toFixed(2);
             this.filePath = file.response;
 	},
 

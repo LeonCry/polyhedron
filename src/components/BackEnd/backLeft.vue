@@ -35,7 +35,7 @@
       </el-submenu>
       <br>
       <el-menu-item index="2">
-        <i class="el-icon-s-goods" @click="routerTo('shops')"></i>
+        <i class="el-icon-s-goods" @click="routerTo('rightShop')"></i>
         <span slot="title">兑换品</span>
       </el-menu-item>
       <br>

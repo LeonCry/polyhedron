@@ -57,15 +57,16 @@ data(){
             title:'游戏:活着',
             info:'在游戏:活着中,你将扮演一名因世界灾难活下来的幸存者,在末世中搜寻食物与资源,努力活下去,但同时也要小心,这个世界不止你一个幸存者...',
             to:'gameLife',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7kclxoij21mr0u0wi7.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4ddkpkbl9j21h80u00z3.jpg',
+            // https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7kclxoij21mr0u0wi7.jpg
         },
          // shangpin
         shop:{
-            oneFont:'商',
-            title:'商品兑换',
-            info:'在商品兑换中,我会不定期上架一些商品,你可以将你在游戏:活着中或其他渠道获得的虚拟货币用来兑换真实世界中的商品.',
+            oneFont:'购',
+            title:'南北市场',
+            info:'在南北市场中,你可以买东西,我会不定期上架一些商品,你可以将你在游戏:活着中或其他渠道获得的虚拟货币用来兑换真实世界中的商品.',
             to:'shopping',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7zb5eghj21hc0u042y.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4ddltt5itj21lb0u0gpp.jpg',
         },
          // 视频
         video:{
@@ -81,7 +82,7 @@ data(){
             title:'似水流年',
             info:'在似水流年中,你可以得到你剩下的时间..用来...',
             to:'cacaulate',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7v3xt4dj20y20hnq7n.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4ddpnbc1bj21hc0u040f.jpg',
         },
         // 其他
         PXSpace:{
@@ -97,7 +98,7 @@ data(){
             title:'开发中',
             info:'开发中...',
             to:'other',
-            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4bbomf2c1j21900u0ju9.jpg',
+            bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4dduqv9u7j21ou0u0t9n.jpg',
         },
         imgsrc:'',
         clearTime : '',
