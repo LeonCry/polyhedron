@@ -1,11 +1,17 @@
 <template>
   <div class="hasBought">
-    这里是已购商品..
+    <has-bought-item></has-bought-item>
+    <has-bought-item></has-bought-item>
+    <has-bought-item></has-bought-item>
+    <has-bought-item></has-bought-item>
+    <has-bought-item></has-bought-item>
   </div>
 </template>
 
 <script>
+import hasBoughtItem from '@/components/shopper/hasBoughtItem.vue'
 export default {
+  components: { hasBoughtItem },
 name:'hasBought',
 }
 </script>

@@ -36,7 +36,7 @@ data(){
 methods:{
   toLeft(){
     if(this.leftClicks<this.clicksL){
-      this.left = this.left + 260;
+      this.left = this.left + 270;
       this.$refs.files.style.left = this.left + 'px';
       this.leftClicks++;
       this.rightClicks--;
@@ -47,7 +47,7 @@ methods:{
   },
   toRight(){
     if(this.rightClicks<this.clicksR){
-    this.left = this.left - 260;
+    this.left = this.left - 270;
     this.$refs.files.style.left = this.left + 'px';
     this.rightClicks++;
     this.clicksL++;
@@ -61,6 +61,7 @@ methods:{
 getAllFiles(){
   this.$axios.post('/api/selectAllFiles',).then(response=>{
     this.fileData = response.data;
+    this.clicksR = this.fileData.length-1;
   },error=>{
     console.log(error.message);
   });
@@ -154,7 +155,7 @@ created(){
   text-align: center;
   font-size: 10vh;
   overflow: hidden;
-  font-weight: bolder;
+  font-weight: 100;
   font-family: 'Courier New', Courier, monospace;
   color: royalblue;
   text-shadow: 0 0 25px black;

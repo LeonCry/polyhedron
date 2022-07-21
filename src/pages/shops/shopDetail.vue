@@ -10,20 +10,20 @@
          这是一件印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤
          这是一件印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤印有POLYHEDRON字样的T恤
          </span>
-
     </div>
     <div class="bought">
         <div class="carousel">
         <el-carousel :interval="5000"  arrow="hover" height="500px">
           <el-carousel-item v-for="item in Allpic" :key="item">
-            <el-image class="elimage" :fit="cover"  :key="item+'x'" :src="item"  :preview-src-list="Allpic" ></el-image>
+            <el-image class="elimage"  :key="item+'x'" :src="item"  :preview-src-list="Allpic" ></el-image>
           </el-carousel-item>
         </el-carousel>
         <div class="connect">
             <span style="font-weight:350"><i class="el-icon-info"></i>购买商品前请先填好以下信息:</span>
             <span><i class="el-icon-map-location"></i> 收件地址: <input class="address" v-model="address" placeholder="请输入收件地址(必填)"> </span>
-            <span><i class="el-icon-edit-outline"></i> 收 件 人: <input class="address" v-model="buyName" placeholder="请输入收件人姓名(必填)"> </span>
-            <span><i class="el-icon-mobile-phone"></i> 收件电话: <input class="address" v-model="buyPhone" placeholder="请输入收件人电话(必填)"> </span>
+            <span><i class="el-icon-user"></i> 收 件 人: <input class="address" v-model="buyName" placeholder="请输入收件人姓名(必填)"> </span>
+            <span><i class="el-icon-mobile-phone"></i> 收件电话: <input maxlength="11" class="address" v-model="buyPhone" placeholder="请输入收件人电话(必填)"> </span>
+            <span><i class="el-icon-edit"></i> 商品备注: <input  class="address" v-model="beizhu" placeholder="(选填)"></span>
         </div>
         </div>
         <div class="option">
@@ -38,6 +38,7 @@
           <span>商品限购: 1件 / 剩余:12件</span>
           <span>本站销量: 1件</span>
           <span>支持快递: 中通,圆通,申通等免运费,顺丰2元加急</span>
+          <span>发货地区: 北京</span>
 
           <div class="keyinputs">
             <span>选择尺码:     
@@ -77,12 +78,32 @@
                </span>
           </div>
 
-          <el-button class="buybutton"><i class="el-icon-sold-out"></i> 立即购买</el-button>
+          <el-button @click="dialogVisible = true" class="buybutton"><i class="el-icon-sold-out"></i> 立即购买</el-button>
         </div>
     </div>
     <div class="details">
       <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h4dpmq2r95j20l3acw1kx.jpg" alt="">
     </div>
+    <el-dialog
+    class="confirmForm"
+  title="确认购买吗?"
+  :visible.sync="dialogVisible"
+  append-to-body
+  width="30%">
+  <span>这将从您的余额中扣除<span style="color:orangered;text-weight:500;font-size:2vh"> P999 </span>且不支持退款.</span>
+  <br><br>
+  <span>购买后余额: </span>
+  <span style="color:orangered;text-weight:500;font-size:2vh"> P9999 <i class="el-icon-right"></i> P999</span>
+  <br><br>
+  <el-progress v-show="isProcess" type="circle" :percentage="percentage" :status="confirmStatus" width="60"></el-progress>
+  <span v-show="isConfirmNotice"><br><br>恭喜,您已成功完成购买!</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="confirmBuy">确 定</el-button>
+  </span>
+</el-dialog>
+
+
   </div>
 </template>
 
@@ -92,6 +113,11 @@ name:'shopDetail',
 data(){
   return{
     Allpic:['https://tva1.sinaimg.cn/large/e6c9d24ely1h4dhhzmwabj20ed0eyjrt.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h4dhincg1zj20mo0hb3zt.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h4dcomteefj21900u0dj0.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h4dd75bdx1j21900u07ao.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h4bbomf2c1j21900u0ju9.jpg'],
+    dialogVisible:false,
+    isProcess:false,
+    isConfirmNotice:false,
+    confirmStatus:'',
+    percentage:0,
     address:'',
     opt1:'S',
     opt2:'红',
@@ -100,10 +126,34 @@ data(){
     buyNum:1,
     buyName:'',
     buyPhone:'',
-
+    beizhu:'',
   }
 },
+watch:{
+ // 限制数字
+    buyPhone: function () {
+      this.buyPhone = this.buyPhone.replace(/[^0-9]/g, "");
+    },
+},
 methods:{
+  // 确认购买
+  confirmBuy(){
+    this.isProcess = true;
+    setTimeout(() => {
+      this.percentage = 25;
+    }, 500);
+    setTimeout(() => {
+      this.percentage = 73;
+    }, 1000);
+    setTimeout(() => {
+      this.percentage = 100;
+      this.confirmStatus = "success";
+      this.isConfirmNotice = true;
+    }, 1500);
+    setTimeout(() => {
+      this.dialogVisible = false;
+    }, 3000);
+  }
 }
 
 }
@@ -139,6 +189,7 @@ methods:{
   padding-bottom: 10px;
   border-radius: 15px;
   padding-top: 0; 
+  border: 3px dotted whitesmoke;
   background-color: rgba(65, 105, 225, 0.05);
 }
 .www{
@@ -148,7 +199,7 @@ methods:{
 .option{
   margin-left: 1.5%;
   width: 63.5%;
-  height: 800px;
+  height: 820px;
   padding-bottom: 10px;
   border-radius: 20px;
   padding-top: 10px; 
@@ -275,7 +326,7 @@ methods:{
 }
 .details{
   position: relative;
-  top: 60px;
+  top: 100px;
   width: 90%;
   left: 4%;
   padding: 10px;
@@ -284,7 +335,9 @@ methods:{
   text-align: center;
   background-color: rgba(0, 0, 0, 0.05);
 }
-
+.confirmForm{
+  text-align: center;
+}
 
 
 

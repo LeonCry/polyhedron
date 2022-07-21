@@ -1,5 +1,6 @@
 <template>
   <div class="allback">
+    <video v-if="videoN!=-1" class="videos" ref="videos" :src="require(`./assets/videos/${videoArray[videoN]}`)" autoplay muted loop></video>
     <tops></tops>
      <all-back-ground></all-back-ground>
      <router-view name="pres"></router-view>
@@ -39,6 +40,9 @@ export default {
     return{
       // 判断是否管理员登录
       isAdmain : false,
+      videoArray:['trees.mp4','trees2.mp4','floors.mp4','floors2.mp4'],
+      videoN:-1,
+
     }
   },
   computed:{
@@ -80,6 +84,7 @@ export default {
   },
     
   created(){
+    this.videoN = Math.round(Math.random()*3);
     // 总消息初始化
     setTimeout(() => {
        this.$bus.$emit('messageNoticeDefalut');
@@ -135,4 +140,23 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+
+.videos{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  object-fit: fill;
+  z-index: -1;
+  animation: 4s blurs linear both;
+}
+@keyframes blurs {
+  0%{
+      filter: blur(0);
+  }
+  100%{
+      filter: blur(4px);
+  }
+}
+
+
 </style>

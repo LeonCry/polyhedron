@@ -42,7 +42,7 @@
               <button ref="creatbut" @click="routerTo('nbMall')" class="butt1"><i class="el-icon-office-building"></i> 南北市场</button>
               <button @click="routerTo('hasBought')" class="butt1"><i class="el-icon-shopping-cart-full"></i> 已购商品</button>
               <button @click="routerTo('shopTraining')" class="butt1"><i class="el-icon-truck"></i> 正在运输</button>
-              <button @click="routerTo('shopHistory')" class="butt1"><i class="el-icon-wallet"></i> 消费历史</button>
+              <button @click="routerTo('shopHistory')" class="butt1"><i class="el-icon-wallet"></i> 收支明细</button>
               <button @click="routerTo('browseHistory')" class="butt1"><i class="el-icon-copy-document"></i> 浏览历史</button>
             </div>
         </div>
@@ -85,7 +85,7 @@ methods:{
             this.title = "正在运输";
             break;
           case ('shopHistory'):
-            this.title = "消费历史";
+            this.title = "收支明细";
             break;
           case ('browseHistory'):
             this.title = "浏览历史";

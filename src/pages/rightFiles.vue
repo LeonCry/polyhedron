@@ -14,15 +14,14 @@
         :data="fileData"
         style="width: 100%"
         max-height="600"
-        show-overflow-tooltip
       >
-        <el-table-column fixed prop="fileId" label="文件ID" width="100">
+        <el-table-column fixed prop="fileId" label="文件ID" width="100" >
         </el-table-column>
         <el-table-column fixed prop="fileName" label="文件名" width="200">
         </el-table-column>
         <el-table-column prop="fileType" label="文件类型" width="100">
         </el-table-column>
-        <el-table-column prop="fileIntro" label="文件介绍" width="200">
+        <el-table-column prop="fileIntro" label="文件介绍" width="200" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="uploadTime" label="上传时间" width="150">
       <template slot-scope="scope">
@@ -35,9 +34,9 @@
         </el-table-column>
         <el-table-column prop="filePath" label="文件地址" width="150">
         </el-table-column>
-        <el-table-column prop="fileShow" label="文件大小" width="100">
+        <el-table-column prop="fileShow" label="文件大小(MB)" width="150">
         </el-table-column>
-        <el-table-column prop="downLoadP" label="下载人员" width="150">
+        <el-table-column prop="downLoadP" label="下载人员" width="150" show-overflow-tooltip>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="200">
           <template slot-scope="scope">

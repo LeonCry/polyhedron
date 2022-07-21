@@ -58,10 +58,10 @@ export default {
       // 前5秒 -- 一直白色展示
       setTimeout(() => {
         this.spanShow = false;
-      }, 9000);
+      }, 5000);
       setTimeout(() => {
         this.isTen = false;
-      }, 9500);
+      }, 5500);
     },
   },
   mounted(){
@@ -84,10 +84,10 @@ export default {
     this.toBlogZN();
     setTimeout(() => {
       this.isShow = true;
-    }, 10000);
+    }, 6000);
     setTimeout(() => {
       this.isShow = false;
-    }, 13500);
+    }, 9500);
   },
 };
 </script>
@@ -149,7 +149,7 @@ export default {
   align-items: center;
   cursor: pointer;
   transition: 1.5s;
-  animation: bk 10s both;
+  animation: bk 6.5s both;
 }
 .siderbar div:nth-of-type(3){
   z-index: 3;
@@ -174,7 +174,7 @@ export default {
   align-items: center;
   cursor: pointer;
   transition: 1.5s;
-  animation: bk 10s both;
+  animation: bk 6.5s both;
 }
 .roundbar div:nth-of-type(3){
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -238,15 +238,16 @@ export default {
   height: 100%;
   width: 100%;
   text-align: right;
+  /* text-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 255, 255, 1);   */
   color: white;
-  background-color: black;
+  /* background-color: black; */
 }
 .indx{
   z-index: 2;
 }
 .runs{
   left: -100px;
-  animation: tx 3s linear infinite;
+  animation: tx 2s ease-in-out infinite;
 }
 .droop{
   flex: 2;
@@ -311,7 +312,7 @@ export default {
 }
 @keyframes tx {
   0%{
-    left:-15%;
+    left:-10%;
     }
 
   100% {

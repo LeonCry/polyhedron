@@ -104,7 +104,7 @@
           <transition-group name="optionsT" appear>
             <button key="1" @click="isoption = !isoption">·+·</button>
             <div v-show="isPrompt" key="2" class="promt">更多登录选项</div>
-            <button key="3" v-show="isoption" @click="QQquickLogin" disabled>
+            <button key="3" v-show="false" @click="QQquickLogin" disabled>
               QQ快速登录(暂停使用)
             </button>
             <button key="4" v-show="isoption" @click="fogetPassword">

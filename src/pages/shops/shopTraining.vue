@@ -1,11 +1,17 @@
 <template>
   <div class="shopTraining">
-    这里是正在运输..
+    <train-item></train-item>
+    <train-item></train-item>
+    <train-item></train-item>
+    <train-item></train-item>
+    <train-item></train-item>
   </div>
 </template>
 
 <script>
+import trainItem from '@/components/shopper/trainItem.vue'
 export default {
+  components: { trainItem },
 name:'shopTraining',
 }
 </script>

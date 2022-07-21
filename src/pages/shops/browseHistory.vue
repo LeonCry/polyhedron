@@ -1,11 +1,20 @@
 <template>
   <div class="browseHistory">
-    这里是浏览历史..
+    <history-item></history-item>
+    <history-item></history-item>
+    <history-item></history-item>
+    <history-item></history-item>
+    <history-item></history-item>
+    <history-item></history-item>
+    <history-item></history-item>
   </div>
 </template>
 
 <script>
+import historyItem from "@/components/shopper/historyItem.vue"
+
 export default {
+components: { historyItem },
 name:'browseHistory',
 }
 </script>

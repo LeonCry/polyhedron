@@ -33,6 +33,7 @@ const routes = [
     {name:"userSpaces",path:"/userSpaces",components:{backs:rightSpaces}},
     {name:"rightPics",path:"/rightPics",components:{backs:rightPics}},
     {name:"rightFiles",path:"/rightFiles",components:{backs:rightFiles},},
+    {name:"rightShop",path:"/rightShop",components:{backs:rightShop},},
     {name:"fileAndApp",path:"/fileAndApp",components:{pres:fileAndApp}},
     {name:"baaupic",path:"/baaupic",components:{pres:baaupic}},
     {name:"gameLife",path:"/gameLife",components:{pres:gameLife}},
@@ -41,7 +42,6 @@ const routes = [
     {name:"other",path:"/other",components:{pres:other}},
     {name:"baaupicSelf",path:"/baaupicSelf",components:{pres:baaupicSelf},},
     {name:"PXSpace",path:"/PXSpace",components:{pres:PXSpace},},
-    {name:"rightShop",path:"/rightShop",components:{backs:rightShop},},
     {
         name:"shopping",
         path:"/shopping",

@@ -36,7 +36,7 @@ methods:{
 <style scoped>
 .sopItemBox{
     position: relative;
-    width: 445px;
+    width: 435px;
     margin: 10px;
     height: 310px;
     display: flex;
