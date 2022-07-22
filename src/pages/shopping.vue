@@ -10,7 +10,7 @@
       </div>
     </div>
     <div></div>
-    <div class="mainShop">
+    <div class="mainShop" ref="mainShop">
         <div class="midd"></div>
         <div class="shops">
           <br>
@@ -66,6 +66,7 @@ data(){
     publicPath: process.env.BASE_URL,
     title:'南北市场',
     isBack:false,
+    width:0,
   }
 },
 methods:{
@@ -102,6 +103,7 @@ mounted(){
 created(){
   setTimeout(() => {
     this.$refs.creatbut.click();
+    this.$refs.mainShop.style.width = window.screen.width;
   }, 1000);
 }
 }

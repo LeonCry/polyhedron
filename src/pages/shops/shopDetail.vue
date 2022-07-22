@@ -20,10 +20,10 @@
         </el-carousel>
         <div class="connect">
             <span style="font-weight:350"><i class="el-icon-info"></i>购买商品前请先填好以下信息:</span>
-            <span><i class="el-icon-map-location"></i> 收件地址: <input class="address" v-model="address" placeholder="请输入收件地址(必填)"> </span>
-            <span><i class="el-icon-user"></i> 收 件 人: <input class="address" v-model="buyName" placeholder="请输入收件人姓名(必填)"> </span>
+            <span><i class="el-icon-map-location"></i> 收件地址: <input class="address" v-model="address" placeholder="请输入收件地址(必填)" maxlength="100"> </span>
+            <span><i class="el-icon-user"></i> 收 件 人: <input class="address" v-model="buyName" placeholder="请输入收件人姓名(必填)" maxlength="100"> </span>
             <span><i class="el-icon-mobile-phone"></i> 收件电话: <input maxlength="11" class="address" v-model="buyPhone" placeholder="请输入收件人电话(必填)"> </span>
-            <span><i class="el-icon-edit"></i> 商品备注: <input  class="address" v-model="beizhu" placeholder="(选填)"></span>
+            <span><i class="el-icon-edit"></i> 商品备注: <input  class="address" v-model="beizhu" placeholder="(选填)" maxlength="500"></span>
         </div>
         </div>
         <div class="option">

@@ -40,7 +40,7 @@ export default {
         this.src = this.srcArray[x];
       }, 12000);
       let _this = this;
-      document.onkeydown = function (e) {
+      document.onkeydown = function () {
         let key = window.event.keyCode;
         if (key === 88){
           _this.xNum = _this.xNum + 1;

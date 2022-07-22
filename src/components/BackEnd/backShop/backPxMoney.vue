@@ -32,6 +32,14 @@
       width="150">
     </el-table-column>
     <el-table-column
+      prop="province"
+      sortable
+      align="center"
+      label="收支类型"
+      show-overflow-tooltip
+      width="150">
+    </el-table-column>
+    <el-table-column
       prop="city"
       sortable
       align="center"
@@ -50,7 +58,7 @@
       label="详细信息"
       show-overflow-tooltip
       align="center"
-      width="350">
+      width="250">
     </el-table-column>
      <el-table-column
       prop="zip"
