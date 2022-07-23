@@ -1,18 +1,42 @@
 <template>
   <div class="shopTraining">
-    <train-item></train-item>
-    <train-item></train-item>
-    <train-item></train-item>
-    <train-item></train-item>
-    <train-item></train-item>
+    <train-item v-for="order of receiveData" :key="order.orderId" :orderProp="order"></train-item>
   </div>
 </template>
 
 <script>
 import trainItem from '@/components/shopper/trainItem.vue'
+import { mapState } from 'vuex';
 export default {
   components: { trainItem },
 name:'shopTraining',
+computed:{
+    ...mapState('userInfo',['user']),
+},
+data(){
+  return {
+    receiveData:[],
+  }
+},
+methods:{
+      returnAllData(){
+      this.receiveData = [];
+      this.$axios.post('/api/returnShopOrderByName',{buyUser:this.user.userQQ}).then(response=>{
+        for (let index = 0; index < response.data.length; index++) {
+          const element = response.data[index];
+          if(element.orderStatus=='正在运输'){
+            this.receiveData.push(element);
+          }
+        }
+        console.log(this.receiveData);
+      },error=>{
+        console.log(error.message);
+      });
+    }
+},
+created(){
+  this.returnAllData();
+}
 }
 </script>
 

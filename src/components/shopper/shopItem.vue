@@ -1,16 +1,16 @@
 <template>
   <div class="sopItemBox">
         <div class="imgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h4dhhzmwabj20ed0eyjrt.jpg" alt="商品图片">
+            <img :src="shop.picSrc1" alt="商品图片">
         </div>
         <div class="info">
             <br>
-            <span style="font-size:1.7vh;text-align:center">印有LOGO的T恤</span>
-            <span >印有POLYHEDRON字样的T恤</span>
-            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:left;">&nbsp P9999
-                <span style="font-size:2vh;color:orangered;position: absolute;text-align:left;" >&nbsp P999.9</span></span>
-            <span style="text-align:center;">限购:1件 / 剩余:12件</span>
-            <span style="font-size:1.5vh;text-align:center;">限时优惠中..</span>
+            <span style="font-size:1.7vh;text-align:center">{{shop.shopName}}</span>
+            <span >{{shop.shopIntro}}</span>
+            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:left;">&nbsp P{{shop.shopPrice}}
+                <span v-if="shop.shopPrice!=shop.discountPrice" style="font-size:2vh;color:orangered;position: absolute;text-align:left;" >&nbsp P{{shop.discountPrice}}</span></span>
+            <span style="text-align:center;">限购:{{shop.buyLimit}}件 / 剩余:{{shop.shopNums}}件</span>
+            <span style="font-size:1.5vh;text-align:center;">{{shop.discountInfo}}</span>
             <button @click="routerTo('shopDetail')" class="butt1"><i class="el-icon-s-goods"></i> 查看详情</button>
             
         </div>
@@ -18,18 +18,41 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 name:'shopItem',
+props:['shopProp'],
+computed:{
+    ...mapState('userInfo',['user']),
+},
+data() {
+    return {
+        shop:this.shopProp,
+    }
+},
 
 methods:{
     routerTo(rout){
         this.$router.push({
             name:rout,
+            query:{
+                shop:this.shopProp,
+                browseUser:this.user.userQQ,
+            }
         });
         this.$bus.$emit('changeTitle','商品详情');
 
 },
+},
+
+created(){
+    if(this.shopProp.shopIntro.length>20){
+        this.shop = this.shopProp;
+        this.shop.shopIntro = this.shop.shopIntro.slice(0,20) + '...';
+    }
 }
+
+
 }
 </script>
 

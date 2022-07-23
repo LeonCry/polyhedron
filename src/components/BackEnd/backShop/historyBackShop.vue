@@ -72,6 +72,11 @@
 <script>
 export default {
 name:'historyBackShop',
+data(){
+  return{
+    receiveData:[],
+  }
+}
 }
 </script>
 

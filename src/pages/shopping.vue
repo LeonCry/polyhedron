@@ -29,7 +29,7 @@
                 <br><br>
                 <span>{{this.user.userName}}</span>
                 <br><br>
-                <span>我的PX币:{{this.user.userMoney}} <i style="cursor: pointer;" class="el-icon-question"></i> </span>
+                <span>我的PX币:{{userMoney}} <i style="cursor: pointer;" class="el-icon-question"></i> </span>
                  <br><br>
                 <span>已花费: 0 PX币</span>
                  <br><br>
@@ -67,6 +67,7 @@ data(){
     title:'南北市场',
     isBack:false,
     width:0,
+    userMoney:-1,
   }
 },
 methods:{
@@ -93,14 +94,33 @@ methods:{
             break;
         }
 },
+
+    // 用户余额获取
+  getUserMoney(){
+    this.$axios.post('/api/getUser',{userQQ:this.user.userQQ}).then(response=>{
+      this.userMoney = response.data.userMoney;
+    },error=>{
+      console.log(error.message);
+    });
+  },
+
+
+
+
 },
 mounted(){
   this.$bus.$on('changeTitle',data=>{
     this.isBack = true;
     this.title = data;
   });
+  this.$bus.$on('updateMoney',()=>{
+    this.getUserMoney();
+  });
 },
 created(){
+  this.getUserMoney();
+
+
   setTimeout(() => {
     this.$refs.creatbut.click();
     this.$refs.mainShop.style.width = window.screen.width;

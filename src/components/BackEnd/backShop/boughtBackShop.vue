@@ -9,7 +9,7 @@
     height="600">
     <el-table-column
       fixed
-      prop="date"
+      prop="orderId"
       align="center"
       label="购买ID"
       width="100">
@@ -17,14 +17,14 @@
     <el-table-column
       fixed
       sortable
-      prop="name"
+      prop="buyShopName"
       align="center"
       label="购买商品"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="province"
+      prop="buyUser"
       sortable
       align="center"
       label="购买者"
@@ -32,34 +32,34 @@
       width="150">
     </el-table-column>
     <el-table-column
-      prop="city"
+      prop="buyNum"
       align="center"
       label="购买个数"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyPrice"
       label="购买价格"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="receiveName"
       align="center"
       label="收件人"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="receivePhone"
       label="收件电话"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="receiveAddress"
       label="收件地址"
       align="center"
       show-overflow-tooltip
@@ -67,97 +67,97 @@
     </el-table-column>
      <el-table-column
       prop="zip"
-      label="购买备注"
+      label="receiveRemarks"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="buyTime"
       label="购买时间"
       align="center"
       show-overflow-tooltip
       width="150">
+      <template slot-scope="scope">
+            <span>
+              {{
+                new Date(parseInt(scope.row.buyTime)).toLocaleString()
+              }}</span
+            >
+          </template>
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamName1"
       label="参数名-1"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamValue1"
       label="参数值-1"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamName2"
       label="参数名-2"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamValue2"
       label="参数值-2"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamName3"
       label="参数名-3"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamValue3"
       label="参数值-3"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamName4"
       label="参数名-4"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyParamValue4"
       label="参数值-4"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
-     <el-table-column
-      prop="zip"
-      label="订单编号"
-      align="center"
-      show-overflow-tooltip
-      width="120">
-    </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="trainNumber"
       label="发货快递"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="trainNumber"
       label="快递单号"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="orderStatus"
       label="订单状态"
       align="center"
       sortable
@@ -171,8 +171,8 @@
       width="180">
       <template slot-scope="scope">
         <el-button
-        @click="isEdit = true"
-          type="text"
+        @click="editOrder(scope.row)"
+          type="primary"
           size="small">
           更新订单
         </el-button>
@@ -181,7 +181,7 @@
   </el-table>
 
     <el-drawer
-        title="更新订单"
+        :title="title"
         append-to-body
         size="40%"
         :visible.sync="isEdit"
@@ -190,18 +190,18 @@
             <el-form label-position="right" label-width="80px" :model="creatData"  class="inputs">
                 <br><br>
                 <el-form-item label="发货快递">
-                <el-input v-model="creatData.name" placeholder="发货快递..."></el-input>
+                <el-input v-model="creatData.orderTrain" placeholder="发货快递..."></el-input>
                 </el-form-item>
                 <br><br>
                 <el-form-item label="快递单号">
-                <el-input v-model="creatData.region" placeholder="快递单号.."></el-input>
+                <el-input v-model="creatData.trainNumber" placeholder="快递单号.."></el-input>
                 </el-form-item>
                 <br><br>
                 <el-form-item label="订单状态">
-                <el-input v-model="creatData.type" placeholder="订单状态.."></el-input>
+                <el-input v-model="creatData.orderStatus" placeholder="[已下单] [正在运输] [收件人已签收]"></el-input>
                 </el-form-item>
                 <br><br><br><br>
-                <el-button type="success" style="margin-left:40%">更新订单</el-button>
+                <el-button type="success" style="margin-left:40%" @click="updateOrder">更新订单</el-button>
                 <br><br><br><br>
 
                 
@@ -219,11 +219,48 @@ export default {
 name:'boughtBackShop',
 data(){
     return{
-        receiveData:'',
+        receiveData:[],
         isEdit:false,
         creatData:'',
+        title:'',
     }
 },
+methods:{
+  // 初始化收集所有订单信息
+  getOrderData(){
+    this.$axios.post('/api/returnAllShopOrder').then(response=>{
+      this.receiveData = response.data;
+      console.log(response.data);
+    },error=>{
+      console.log(error.message);
+    });
+  },
+  // 更新订单
+  editOrder(data){
+    this.title = "为 '"+data.buyShopName+"' 更新订单信息:"
+    this.isEdit = true;
+    this.creatData = data;
+  },
+  // 确认更新订单
+  updateOrder(){
+    this.$axios.post('/api/updateAShopOrder',this.creatData).then(response=>{
+      console.log(response.data);
+      this.$message({
+          message: '操作成功!',
+          type: 'success'
+        });
+      setTimeout(() => {
+        this.isEdit = false;
+      }, 500);
+    },error=>{
+      console.log(error.message);
+    });
+  },
+},
+created(){
+  this.getOrderData();
+}
+
 }
 </script>
 

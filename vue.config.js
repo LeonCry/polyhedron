@@ -61,10 +61,17 @@ module.exports = {
         pathRewrite:{
           '^/ces':''
         },
+        
       },
-
+      "/train": {
+        target: 'http://api.kuaidi.com',
+        // ws: true,
+        changeOrigin: true,
+        pathRewrite:{
+          '^/train':''
+        },
+      },
     }
   },
-
 
 }

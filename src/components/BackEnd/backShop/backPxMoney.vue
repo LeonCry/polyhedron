@@ -90,7 +90,7 @@ export default {
 name:'backPxMoney',
 data(){
     return{
-        receiveData:'',
+        receiveData:[],
     }
 }
 }

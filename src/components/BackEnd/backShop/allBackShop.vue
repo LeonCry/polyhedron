@@ -10,204 +10,204 @@
     height="550">
     <el-table-column
       fixed
-      prop="date"
+      prop="shopId"
       label="商品ID"
       align="center"
       width="100">
     </el-table-column>
     <el-table-column
-      prop="name"
+      prop="shopName"
       label="商品名称"
       align="center"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="province"
+      prop="shopIntro"
       align="center"
       label="商品描述"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="city"
+      prop="shopPrice"
       align="center"
       label="商品价格"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="address"
+      prop="discountPrice"
       align="center"
       label="优惠价格"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="discountInfo"
       label="优惠信息"
       align="center"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="buyLimit"
       align="center"
       label="限制购买"
       width="100">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="shopNums"
       label="商品个数"
       align="center"
       width="100">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="picSrc1"
       label="图片-1"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="picSrc2"
       label="图片-2"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="picSrc3"
       align="center"
       label="图片-3"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="picSrc4"
       label="图片-4"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="picSrc5"
       align="center"
       label="图片-5"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="picSrc6"
       label="图片-6"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="shopFrom"
       label="商品来源"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="shoper"
       label="售卖店铺"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="shoperName"
       align="center"
       label="售卖名称"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="shoperWebsite"
       label="商品网址"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="supportTrain"
       label="支持快递"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="expressRegion"
       align="center"
       label="发货地区"
       show-overflow-tooltip
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="allSales"
       align="center"
       label="本站销量"
       width="100">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="paramName1"
       label="参数名-1"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramValue1"
       align="center"
       label="参数值-1"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramName2"
       label="参数名-2"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramValue2"
       label="参数值-2"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramName3"
       label="参数名-3"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramValue3"
       label="参数值-3"
       align="center"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramName4"
       align="center"
       label="参数名-4"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="paramValue4"
       align="center"
       label="参数值-4"
       show-overflow-tooltip
       width="120">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="detailInfo"
       align="center"
       label="详细信息"
       show-overflow-tooltip
@@ -221,13 +221,18 @@
       width="180">
       <template slot-scope="scope">
         <el-button
-          type="text"
-          size="small">
+          type="primary"
+          size="small"
+          @click="editData(scope.row)"
+          >
           修改
         </el-button>
+
         <el-button
           type="danger"
-          size="small">
+          size="small"
+           @click="delData(scope.row.shopId)"
+          >
           删除
         </el-button>
       </template>
@@ -239,7 +244,7 @@
 
 
     <el-drawer
-        title="添加新的商品"
+        :title="title"
         append-to-body
         size="40%"
         :visible.sync="drawer"
@@ -484,7 +489,9 @@ data(){
         inputValue3: '',
         inputVisible4:false,
         inputValue4: '',
-        receiveData:'',
+        receiveData:[],
+        title:"新增产品",
+        isEdit:false,
     }
 },
 methods: {
@@ -496,19 +503,111 @@ methods: {
     this.creatData.paramValue2 = this.creatData.paramValue2.toString();
     this.creatData.paramValue3 = this.creatData.paramValue3.toString();
     this.creatData.paramValue4 = this.creatData.paramValue4.toString();
+    var url = '';
+    // 判断
+    if(this.isEdit){
+      url = '/api/updateAShopping';
+    }
+    else{
+      url = '/api/addAShopping';
+    }
     // 上传
-    this.$axios.post('/api/addAShopping',this.creatData).then(response=>{
+    this.$axios.post(url,this.creatData).then(response=>{
+      console.log("url",url,response.data);
+      this.clearCreateData();
+      this.getData();
+      this.$message({
+          message: '操作成功!',
+          type: 'success'
+        });
+      this.title = "新增产品";
+      this.isEdit = false;
+      this.drawer = false;
+
+    },error=>{
+      console.log(error.message);
+    });
+  },
+  // 删除商品
+  delData(Id){
+    this.$axios.post('/api/delAShopping',{shopId:Id}).then(response=>{
+      console.log(response.data);
+      this.getData();
+      this.$message({
+          message: '操作成功!',
+          type: 'success'
+        });
+    },error=>{
+      console.log(error.message);
+    });
+  },
+
+  // 修改产品
+  editData(data){
+    this.isEdit = true;
+    this.drawer = true;
+    this.title = "编辑产品";
+    this.creatData = data;
+    if(this.creatData.paramValue1!=''){
+      this.creatData.paramValue1 = this.creatData.paramValue1.split(',');
+    }
+    if(this.creatData.paramValue2!=''){
+      this.creatData.paramValue2 = this.creatData.paramValue2.split(',');
+    }
+    if(this.creatData.paramValue3!=''){
+      this.creatData.paramValue3 = this.creatData.paramValue3.split(',');
+    }
+    if(this.creatData.paramValue4!=''){
+      this.creatData.paramValue4 = this.creatData.paramValue4.split(',');
+    }
+  },
+
+
+
+// 初始化接收参数
+  getData(){
+    this.$axios.post('/api/returnAllShopping').then(response=>{
+      this.receiveData = response.data;
       console.log(response.data);
     },error=>{
       console.log(error.message);
     });
   },
 
-
-
-
-
-
+  // createData 清除
+  clearCreateData(){
+    this.creatData = {
+          shopName:'',
+          shopIntro:'',
+          shopPrice:'',
+          discountPrice:'',
+          discountInfo:'',
+          buyLimit:'',
+          shopNums:'',
+          picSrc1:'',
+          picSrc2:'',
+          picSrc3:'',
+          picSrc4:'',
+          picSrc5:'',
+          picSrc6:'',
+          shopFrom:'',
+          shoper:'',
+          shoperName:'',
+          shoperWebsite:'',
+          supportTrain:'',
+          expressRegion:'',
+          allSales:'',
+          paramName1:'',
+          paramValue1:[],
+          paramName2:'',
+          paramValue2:[],
+          paramName3:'',
+          paramValue3:[],
+          paramName4:'',
+          paramValue4:[],
+          shopNdetailInfoame:'',
+        };
+  },
 
 
 
@@ -518,6 +617,9 @@ methods: {
         this.$confirm('关闭将不会保存任何信息,确认关闭?')
           .then(()=> {
             done();
+             this.title = "新增产品";
+             this.isEdit = false;
+             this.clearCreateData();
           })
           .catch(()=> {});
       },
@@ -569,7 +671,16 @@ methods: {
         this.inputValue3 = '';
         this.inputValue4 = '';
       }
+    },
+    created(){
+      // 初始化接收参数
+      this.getData();
     }
+
+
+
+
+
 }
 </script>
 

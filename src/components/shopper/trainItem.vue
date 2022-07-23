@@ -1,30 +1,30 @@
 <template>
   <div class="sopItemBox">
         <div class="imgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h4dhhzmwabj20ed0eyjrt.jpg" alt="商品图片">
+           <img v-if="orderProp.shopping.picSrc1" :src="orderProp.shopping.picSrc1" alt="商品图片">
             <div class="infos">
-                <span>收件人:阿萨德</span>
+                <span>收件人:{{orderProp.receiveName}}</span>
                 <br><br>
-                <span>联系方式:15554454068</span>
+                <span>联系方式:{{orderProp.receivePhone}}</span>
                 <br><br>
-                <span>邮寄地址:山东省济宁市嘉祥县马村镇</span>
+                <span>邮寄地址:{{orderProp.receiveAddress}}</span>
                 <br><br>
-                <span>交易时间: <br> 2022.6.3 15:33:21</span>
+                <span>交易时间: <br> {{new Date(parseInt(orderProp.buyTime)).toLocaleString()}}</span>
                 <br><br>
-                <span>订单编号:65465484213</span>
+                <span>订单编号:{{'74921531'+orderProp.orderId}}</span>
                 <br><br>
                  <button @click="routerTo('shopDetail')" class="butt1"><i class="el-icon-s-goods"></i> 商品详情</button>
             </div>
         </div>
         <div class="info">
             <br>
-            <span style="font-size:1.7vh;text-align:center">印有LOGO的T恤 <br><br>
-             <span>快递编号:64564654654654654</span>
+            <span style="font-size:1.7vh;text-align:center">{{orderProp.buyShopName}} <br><br>
+             <span>快递编号:{{orderProp.trainNumber}}</span>
              <br><br>
-             <span style="text-align:center;">消费: <a style="font-size:2vh;color:orangered;">P999.9</a></span>
+             <span style="text-align:center;">消费: <a style="font-size:2vh;color:orangered;">P{{orderProp.buyPrice}}</a></span>
               </span>
               <br><br>
-            <span style="text-align:left;font-size:1.7vh">物流详情:</span>  
+            <span style="text-align:left;font-size:1.7vh">物流详情</span>  
             <br><br>
             <div v-if="trainData" class="train"> 
                 <span>当前状态:{{trainData.status}}</span>
@@ -37,8 +37,14 @@
 </template>
 
 <script>
+import trainCode from "../../common/trainsCode";
+import { mapState } from 'vuex';
 export default {
 name:'trainItem',
+props:['orderProp'],
+computed:{
+    ...mapState('userInfo',['user']),
+},
 
 data(){
     return{
@@ -70,15 +76,52 @@ methods:{
     routerTo(rout){
         this.$router.push({
             name:rout,
+            shop:this.orderProp.shopping,
+            browseUser:this.user.userQQ,
         });
         this.$bus.$emit('changeTitle','商品详情');
 
 },
 },
 created(){
-    setTimeout(() => {
-        console.log(this.trainData);
-    }, 1000);
+    // 查询物流:
+    this.$axios.get('/train/openapi.html?id=[]&com='+trainCode.get(this.orderProp.orderTrain)+'&nu='+this.orderProp.trainNumber+'&show=0&muti=0&order=desc').then(response=>{
+        this.trainData = response.data;
+                switch(response.data.status){
+          case (0):
+            this.trainData.status = "物流单号暂无结果";
+            break;
+          case (3):
+            this.trainData.status = "正在运输..";
+            break;
+          case (4):
+            this.trainData.status = "揽件";
+            break;
+          case (5):
+            this.trainData.status = "快递邮寄过程中出现问题";
+            break;
+          case (6):
+            this.trainData.status = "收件人已签收";
+            this.$axios.post('/api/updateAShopOrder',{orderId:this.orderProp.orderId,orderStatus:'收件人已签收'}).then(response=>{
+                console.log(response.data);
+            },error=>{
+                console.log(error.message);
+            });
+            break;
+          case (7):
+            this.trainData.status = "退签";
+            break;
+          case (8):
+            this.trainData.status = "派件";
+            break;
+          case (9):
+            this.trainData.status = "退回";
+            break;
+        }
+    },error=>{
+        console.log(error.message);
+    });
+
 }
 }
 </script>
