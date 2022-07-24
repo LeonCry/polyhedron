@@ -9,7 +9,7 @@
     height="600">
     <el-table-column
       fixed
-      prop="date"
+      prop="pxId"
       label="收支ID"
       align="center"
       width="100">
@@ -17,14 +17,14 @@
     <el-table-column
       fixed
       sortable
-      prop="name"
+      prop="pxUser"
       align="center"
       label="用户名称"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="province"
+      prop="pxOr"
       sortable
       align="center"
       label="收入or支出"
@@ -32,7 +32,7 @@
       width="150">
     </el-table-column>
     <el-table-column
-      prop="province"
+      prop="pxType"
       sortable
       align="center"
       label="收支类型"
@@ -40,39 +40,39 @@
       width="150">
     </el-table-column>
     <el-table-column
-      prop="city"
+      prop="pxPrice"
       sortable
       align="center"
       label="收支金额"
       width="150">
     </el-table-column>
-    <el-table-column
-      prop="zip"
-      label="收支项目"
-      align="center"
-      show-overflow-tooltip
-      width="150">
-    </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="pxInfo"
       label="详细信息"
       show-overflow-tooltip
       align="center"
-      width="250">
+      width="350">
     </el-table-column>
      <el-table-column
-      prop="zip"
+      prop="pxTime"
       label="收支时间"
       align="center"
       show-overflow-tooltip
-      width="150">
+      width="200">
+      <template slot-scope="scope">
+            <span>
+              {{
+                new Date(parseInt(scope.row.pxTime)).toLocaleString()
+              }}</span
+            >
+          </template>
     </el-table-column>
     <el-table-column
       fixed="right"
       label="操作"
       align="center"
       width="180">
-      <template slot-scope="scope">
+      <template>
         <el-button
           type="danger"
           size="small">
@@ -92,6 +92,13 @@ data(){
     return{
         receiveData:[],
     }
+},
+created(){
+    this.$axios.post('/api/returnAllDetails').then(response=>{
+    this.receiveData = response.data;
+  },error=>{
+    console.log(error.message);
+  });
 }
 }
 </script>

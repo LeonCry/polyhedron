@@ -3,7 +3,7 @@
   <div class="shopBox">
     <back-button :roots="'/'"></back-button>
     <div>
-      <div class="title"> 
+      <div class="title" ref="poly"> 
       <span>欢迎来到 南北市场</span>
       <br>
       <span>WELCOME TO NB-MA<span class="animationS">L</span>L</span>
@@ -15,7 +15,7 @@
         <div class="shops">
           <br>
           <transition name="backT">
-          <el-button v-show="isBack" class="back" @click="routerTo('nbMall')">返回</el-button>
+          <el-button v-show="isBack" class="back" @click="back">返回</el-button>
           </transition>
           <span>{{title}}</span>
           <br><br>
@@ -33,15 +33,15 @@
                  <br><br>
                 <span>已花费: 0 PX币</span>
                  <br><br>
-                <span>已购买: 0 件商品</span>
+                <span>已购买: {{hasBoughtNum}} 件商品</span>
                  <br><br>
-                <span>待收货: 0 件商品</span>
+                <span>待收货: {{waitRece}} 件商品</span>
               </div>
             </div>
             <div class="Buts">
               <button ref="creatbut" @click="routerTo('nbMall')" class="butt1"><i class="el-icon-office-building"></i> 南北市场</button>
               <button @click="routerTo('hasBought')" class="butt1"><i class="el-icon-shopping-cart-full"></i> 已购商品</button>
-              <button @click="routerTo('shopTraining')" class="butt1"><i class="el-icon-truck"></i> 正在运输</button>
+              <button @click="routerTo('shopTraining')" class="butt1"><i class="el-icon-truck"></i> 正在运输 {{trainingNum}}</button>
               <button @click="routerTo('shopHistory')" class="butt1"><i class="el-icon-wallet"></i> 收支明细</button>
               <button @click="routerTo('browseHistory')" class="butt1"><i class="el-icon-copy-document"></i> 浏览历史</button>
             </div>
@@ -67,10 +67,40 @@ data(){
     title:'南北市场',
     isBack:false,
     width:0,
+    hasBoughtNum:0,
+    waitRece:0,
+    xNum:0,
+    trainingNum:0,
     userMoney:-1,
   }
 },
 methods:{
+
+    back(){
+      this.isBack = false;
+      this.$router.back();
+      setTimeout(() => {
+        var path = this.$route.path;
+        switch(path){
+          case ('/shopping/nbMall'):
+            this.title = "南北市场";
+            break;
+          case ('/shopping/hasBought'):
+            this.title = "已购商品";
+            break;
+          case ('/shopping/shopTraining'):
+            this.title = "正在运输";
+            break;
+          case ('/shopping/shopHistory'):
+            this.title = "收支明细";
+            break;
+          case ('/shopping/browseHistory'):
+            this.title = "浏览历史";
+            break;
+        }
+      }, 100);
+    },
+
     routerTo(rout){
         this.$router.push({
             name:rout,
@@ -103,10 +133,25 @@ methods:{
       console.log(error.message);
     });
   },
-
-
-
-
+    // 已购买和待收货个数
+  getHasBought(){
+    this.waitRece = 0;
+    this.trainingNum = 0;
+      this.$axios.post('/api/returnShopOrderByName',{buyUser:this.user.userQQ}).then(response=>{
+        this.hasBoughtNum = response.data.length;
+        for (let index = 0; index < response.data.length; index++) {
+          const element = response.data[index];
+          if(element.orderStatus!='收件人已签收'){
+            this.waitRece++;
+          }
+          if(element.orderStatus=='正在运输'){
+            this.trainingNum++;
+          }
+        }
+      },error=>{
+        console.log(error.message);
+      });
+  }
 },
 mounted(){
   this.$bus.$on('changeTitle',data=>{
@@ -115,12 +160,40 @@ mounted(){
   });
   this.$bus.$on('updateMoney',()=>{
     this.getUserMoney();
+    this.getHasBought();
   });
+  setTimeout(() => {
+    this.getUserMoney();
+    this.getHasBought();
+  }, 1000);
 },
 created(){
-  this.getUserMoney();
-
-
+  // this.getUserMoney();
+  // this.getHasBought();
+var loginR = '';
+      this.$axios.post('/api/returnDetailsByNameAndTypeAndItem',{pxUser:this.user.userQQ,pxType:'点击 L*66',pxItem:'点击 L*66'}).then(response=>{
+          loginR = response.data[0];
+        // 如果item没有被看过
+        if(loginR==undefined){
+          let _this = this;
+      document.onkeydown = function () {
+        let key = window.event.keyCode;
+        if (key === 76){
+          _this.xNum = _this.xNum + 1;
+          _this.$refs.poly.style.color = "black";
+          setTimeout(() => {
+          _this.$refs.poly.style.color = "white";
+          }, 330);
+          if(_this.xNum>66){
+            _this.$addPxDetail(_this.user.userQQ,1,'点击 L*66',250,'点击 L*66',"触发了彩蛋,获得PX币+250");
+            _this.xNum = 0;
+          }
+      }
+  }
+ }
+        },error=>{
+          console.log(error.message);
+        });
   setTimeout(() => {
     this.$refs.creatbut.click();
     this.$refs.mainShop.style.width = window.screen.width;
@@ -313,15 +386,14 @@ created(){
               2px 2px 8px rgba(0, 0, 0, 0.15);
 }
 .butt1:hover {
-  padding: 20px 80px;
-  letter-spacing: 8px;
+  padding: 18px 65px;
+  letter-spacing: 6px;
   cursor: pointer;
   box-shadow: inset -2px -2px 8px rgba(255, 255, 255, 1),
               inset -2px -2px 12px rgba(255, 255, 255, 0.5),
               inset 2px 2px 4px rgba(255, 255, 255, 0.1),
               inset 2px 2px 8px rgba(0, 0, 0, 0.15);
 }
-
 
 .back{
   position: absolute;
@@ -345,6 +417,7 @@ created(){
 .title{
   position: relative;
   top: 25%;
+  transition: 0.3s;
   animation: text-flicker-in-glow 4s linear both;
 }
 .animationS{

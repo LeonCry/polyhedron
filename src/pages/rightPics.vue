@@ -256,7 +256,7 @@
     height="600">
     <el-table-column
       fixed
-      :header-align="center"
+      header-align="center"
       prop="picWithId"
       label="ID"
       width="300">
@@ -265,19 +265,19 @@
       prop="picWithQQ"
       label="用户名"
       sortable
-      :header-align="center"
+      header-align="center"
       width="400">
     </el-table-column>
     <el-table-column
       prop="picCollections"
       label="收藏照片ID"
-      :header-align="center"
+      header-align="center"
       width="400">
     </el-table-column>
     <el-table-column
       prop="picGoods"
       label="点赞照片ID"
-      :header-align="center"
+      header-align="center"
       width="400">
     </el-table-column>
   </el-table>
@@ -292,7 +292,7 @@
     height="600">
     <el-table-column
       fixed
-      :header-align="center"
+      header-align="center"
       prop="picCommentId"
       label="ID"
       width="200">
@@ -301,27 +301,27 @@
       prop="picCommentPicId"
       label="评论照片ID"
       sortable
-      :header-align="center"
+      header-align="center"
       width="300">
     </el-table-column>
     <el-table-column
       prop="picCommentQQ"
       label="评论者"
       sortable
-      :header-align="center"
+      header-align="center"
       width="300">
     </el-table-column>
     <el-table-column
       prop="picCommentContent"
       label="评论内容"
-      :header-align="center"
+      header-align="center"
       width="400">
     </el-table-column>
     <el-table-column
       prop="picCommentTime"
       label="评论时间"
       sortable
-      :header-align="center"
+      header-align="center"
       width="300">
       <template slot-scope="scope">
       <span> {{new Date(parseInt(scope.row.picCommentTime))

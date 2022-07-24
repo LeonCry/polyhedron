@@ -9,8 +9,8 @@ export default{
         // 全局保存该用户的信息,并保存到cookie
         uploadUserInfo(context,value){
             // 设置cookie
-            VueCookies.set("userQQ",value.userQQ,60*60*2);
-            VueCookies.set("userPassword",value.userPassword,60*60*2);
+            VueCookies.set("userQQ",value.userQQ,60*60*24);
+            VueCookies.set("userPassword",value.userPassword,60*60*24);
             context.commit('SAVEUSER',value);
         },
          // 全局保存该用户的设置信息

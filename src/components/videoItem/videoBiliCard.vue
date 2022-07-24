@@ -31,7 +31,7 @@
 
         <br>
         <br>
-        <a :href="'https://www.bilibili.com/video/'+BVno" target="_blank">观看 -> bilibili </a>
+        <a @click="watchVideo" :href="'https://www.bilibili.com/video/'+BVno" target="_blank">观看 -> bilibili </a>
         <br>
 
 
@@ -41,9 +41,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 name:'videoBiliCard',
 props:['BVno','scavel'],
+computed:{
+  ...mapState('userInfo',['user']),
+},
 data(){
     return{
         bilibiliData:'',
@@ -52,7 +56,9 @@ data(){
     }
 },
 methods:{
- 
+ watchVideo(){
+  this.$addPxDetail(this.user.userQQ,1,'视频观看',25,this.bilibiliData.data.title,"在视频集中观看 '"+this.bilibiliData.data.title+"' 的视频,获得PX币+50");
+ }
 },
 
 mounted(){

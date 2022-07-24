@@ -21,7 +21,6 @@ methods:{
   getData(){
     this.$axios.post('/api/returnAllShopping').then(response=>{
       this.receiveShops = response.data;
-      console.log(response.data);
     },error=>{
       console.log(error.message);
     });

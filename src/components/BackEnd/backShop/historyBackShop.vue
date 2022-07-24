@@ -8,7 +8,7 @@
     height="600">
     <el-table-column
       fixed
-      prop="date"
+      prop="browseId"
       label="浏览ID"
       align="center"
       width="150">
@@ -16,14 +16,14 @@
     <el-table-column
       fixed
       sortable
-      prop="name"
+      prop="browseUser"
       align="center"
       label="用户名称"
       show-overflow-tooltip
       width="250">
     </el-table-column>
     <el-table-column
-      prop="province"
+      prop="browseShop"
       sortable
       align="center"
       label="浏览商品"
@@ -31,7 +31,7 @@
       width="200">
     </el-table-column>
     <el-table-column
-      prop="city"
+      prop="browseShopId"
       sortable
       align="center"
       label="浏览商品ID"
@@ -39,25 +39,32 @@
     </el-table-column>
     <el-table-column
       prop="zip"
-      label="浏览次数"
+      label="browseNums"
       align="center"
       show-overflow-tooltip
       width="150">
     </el-table-column>
     <el-table-column
-      prop="zip"
+      prop="browseTimes"
       label="浏览时间"
       sortable
       align="center"
       show-overflow-tooltip
       width="300">
+      <template slot-scope="scope">
+            <span>
+              {{
+                new Date(parseInt(scope.row.browseTimes)).toLocaleString()
+              }}</span
+            >
+          </template>
     </el-table-column>
     <el-table-column
       fixed="right"
       label="操作"
       align="center"
       width="200">
-      <template slot-scope="scope">
+      <template>
         <el-button
           type="danger"
           size="small">
@@ -76,7 +83,17 @@ data(){
   return{
     receiveData:[],
   }
+},
+
+
+created(){
+  this.$axios.post('/api/returnAllBrowseHistory',).then(response=>{
+    this.receiveData = response.data;
+  },error=>{
+    console.log(error.message);
+  });
 }
+
 }
 </script>
 

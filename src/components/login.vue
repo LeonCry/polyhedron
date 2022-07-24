@@ -781,6 +781,8 @@ export default {
                 this.webSocketIntilization(userQQ);
                 // spaceWith初始化
                 this.findSpaceWith(userQQ);
+                // 每日登录领取奖励
+                this.$addPxDetail(userQQ,1,'用户登录',100,'用户登录','每日登录奖励领取 PX币+100');
               }
             },
             (error) => {

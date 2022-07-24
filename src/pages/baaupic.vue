@@ -276,6 +276,8 @@ methods:{
      if(this.isLike){
        this.thisGoods =  this.thisGoods + 1;
       this.$refs.good.style.backgroundColor = "rgb(63, 196, 121)";
+      // 收入奖励
+      this.$addPxDetail(this.user.userQQ,1,'照片点赞',25,this.allPics[this.currPicPage].picId,"在照片集中点赞了 '"+this.allPics[this.currPicPage].picName+"' 的照片,收入PX币:25");
       // eslint-disable-next-line no-unused-vars
     await  this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,goodNumbers:this.thisGoods}).then(response=>{
       },error=>{
@@ -290,6 +292,8 @@ methods:{
     else{
       this.thisGoods =  this.thisGoods - 1;
       this.$refs.good.style.backgroundColor = "gray";
+      // 减去奖励
+      this.$addPxDetail(this.user.userQQ,0,'照片取消点赞',25,this.allPics[this.currPicPage].picId,"在照片集中取消了点赞 '"+this.allPics[this.currPicPage].picName+"' 的照片,支出PX币:25");
       // eslint-disable-next-line no-unused-vars
      await this.$axios.post('/api/updatePic',{picId:this.allPics[this.currPicPage].picId,goodNumbers:this.thisGoods}).then(response=>{
       },error=>{

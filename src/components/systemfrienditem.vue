@@ -206,8 +206,8 @@ export default {
             isDelete: 1,
           })
           .then(
+            // eslint-disable-next-line no-unused-vars
             (response) => {
-              console.log(response.data);
               this.isShow = false;
             },
             (error) => {

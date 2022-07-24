@@ -28,7 +28,6 @@ methods:{
             this.receiveData.push(element);
           }
         }
-        console.log(this.receiveData);
       },error=>{
         console.log(error.message);
       });

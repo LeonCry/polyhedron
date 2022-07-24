@@ -76,8 +76,10 @@ methods:{
     routerTo(rout){
         this.$router.push({
             name:rout,
-            shop:this.orderProp.shopping,
-            browseUser:this.user.userQQ,
+            query:{
+              shop:this.orderProp.shopping,
+              browseUser:this.user.userQQ,
+            }
         });
         this.$bus.$emit('changeTitle','商品详情');
 
@@ -102,8 +104,8 @@ created(){
             break;
           case (6):
             this.trainData.status = "收件人已签收";
+            // eslint-disable-next-line no-unused-vars
             this.$axios.post('/api/updateAShopOrder',{orderId:this.orderProp.orderId,orderStatus:'收件人已签收'}).then(response=>{
-                console.log(response.data);
             },error=>{
                 console.log(error.message);
             });

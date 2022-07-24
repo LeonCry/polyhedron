@@ -1,23 +1,14 @@
 <template>
   <div class="shopHistory">
     <div class="block">
-  <el-timeline>
-    <el-timeline-item timestamp="2018/4/12" placement="top" size="large" type="success">
+  <el-timeline :reverse="true">
+    <el-timeline-item v-for="data of allReceiveData" :key="data.pxId" :timestamp="new Date(parseInt(data.pxTime)).toLocaleString().split(' ')[0]" placement="top" size="large" :type="data.pxOr==0 ? 'danger':'success'">
       <el-card class="radius">
-        <h4>更新 Github 模板</h4>
-        <p>王小虎 提交于 2018/4/12 20:46</p>
-      </el-card>
-    </el-timeline-item>
-    <el-timeline-item timestamp="2018/4/3" placement="top" size="large" type="success">
-      <el-card class="radius">
-        <h4>更新 Github 模板</h4>
-        <p>王小虎 提交于 2018/4/3 20:46</p>
-      </el-card>
-    </el-timeline-item>
-    <el-timeline-item timestamp="2018/4/2" placement="top" size="large" type="danger">
-      <el-card class="radius">
-        <h4>更新 Github 模板</h4>
-        <p>王小虎 提交于 2018/4/2 20:46</p>
+        <h4 style="font-weight:500">{{data.pxType}} <i class="el-icon-caret-right"></i> <span style="color:#F56C6C" v-if="data.pxOr==0">支出: <i class="el-icon-coin"></i>P{{data.pxPrice}}</span><span style="color:#67C23A" v-if="data.pxOr==1"> 收入: <i class="el-icon-coin"></i>P{{data.pxPrice}}</span></h4>
+        <br>
+        <p>{{data.pxInfo}}</p>
+        <br>
+        <span style="position: relative;right:0;width:100%;border-bottom:1px dotted black">{{new Date(parseInt(data.pxTime)).toLocaleString()}}</span>
       </el-card>
     </el-timeline-item>
   </el-timeline>
@@ -26,8 +17,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 name:'shopHistory',
+computed:{
+    ...mapState('userInfo',['user']),
+},
+data(){
+  return{
+    allReceiveData:[],
+  }
+},
+
+created(){
+  this.$axios.post('/api/returnDetailsByName',{pxUser:this.user.userQQ}).then(response=>{
+    this.allReceiveData = response.data;
+  },error=>{
+    console.log(error.message);
+  });
+}
+
 }
 </script>
 

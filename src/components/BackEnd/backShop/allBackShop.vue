@@ -512,8 +512,8 @@ methods: {
       url = '/api/addAShopping';
     }
     // 上传
+    // eslint-disable-next-line no-unused-vars
     this.$axios.post(url,this.creatData).then(response=>{
-      console.log("url",url,response.data);
       this.clearCreateData();
       this.getData();
       this.$message({
@@ -530,8 +530,8 @@ methods: {
   },
   // 删除商品
   delData(Id){
+    // eslint-disable-next-line no-unused-vars
     this.$axios.post('/api/delAShopping',{shopId:Id}).then(response=>{
-      console.log(response.data);
       this.getData();
       this.$message({
           message: '操作成功!',
@@ -568,7 +568,6 @@ methods: {
   getData(){
     this.$axios.post('/api/returnAllShopping').then(response=>{
       this.receiveData = response.data;
-      console.log(response.data);
     },error=>{
       console.log(error.message);
     });

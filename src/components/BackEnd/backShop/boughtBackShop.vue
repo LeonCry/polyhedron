@@ -230,7 +230,6 @@ methods:{
   getOrderData(){
     this.$axios.post('/api/returnAllShopOrder').then(response=>{
       this.receiveData = response.data;
-      console.log(response.data);
     },error=>{
       console.log(error.message);
     });
@@ -243,8 +242,8 @@ methods:{
   },
   // 确认更新订单
   updateOrder(){
+    // eslint-disable-next-line no-unused-vars
     this.$axios.post('/api/updateAShopOrder',this.creatData).then(response=>{
-      console.log(response.data);
       this.$message({
           message: '操作成功!',
           type: 'success'

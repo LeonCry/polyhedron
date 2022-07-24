@@ -154,7 +154,6 @@ export default {
   methods: {
 
     handleChange(file){
-            console.log(file);
             this.creatFiles.fileShow = (file.size/1024/1024).toFixed(2);
             this.filePath = file.response;
 	},
@@ -174,7 +173,6 @@ export default {
             this.filePath = this.creatFiles.filePath;
         }
         var checkResult = this.confirmCheck();
-        console.log(checkResult);
         if(checkResult){
             // 说明是修改
             if(this.creatFiles.filePath!=null){
@@ -190,11 +188,11 @@ export default {
             }
             // 说明是新建
             else{
+              // eslint-disable-next-line no-unused-vars
                 this.$axios.post('/api/insertFile',{fileName:this.creatFiles.fileName,fileType:this.creatFiles.fileType ,fileIntro: this.creatFiles.fileIntro,uploadTime: this.creatFiles.uploadTime,downloadNums: this.creatFiles.downloadNums,filePath:this.filePath ,fileShow:this.creatFiles.fileShow,}).then(response=>{
                 this.clearInputs();
                 this.$bus.$emit('backNotice',true,"文件上传成功!");
                 this.fileCreatedFun();
-                console.log(response.data);
             },error=>{
                 console.log(error.message);
             });
@@ -240,8 +238,8 @@ export default {
 
     // 删除文件
     delFile(id){
+      // eslint-disable-next-line no-unused-vars
         this.$axios.post('/api/deleteFile',{fileId:id}).then(response=>{
-            console.log(response.data);
             this.$bus.$emit('backNotice',true,"文件已删除!");
              this.fileCreatedFun();
         },error=>{
@@ -251,7 +249,6 @@ export default {
     changeFile(fileData){
         this.creatFiles = fileData;
         this.drawer = true;
-        console.log(this.creatFiles);
         this.fileList = [{name:this.creatFiles.filePath,status:'success'}];
 
     }

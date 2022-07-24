@@ -1,9 +1,9 @@
 <template>
     <transition appear name="logoT">
   <div :class="{'logopullupcss':logopullup,'loginsuccesss':loginsuccess}">
-      <img v-if="false"  :src="require(`../assets/${src}`)" alt="logo"/>
+      <!-- <img v-if="false"  :src="require(`../assets/${src}`)" alt="logo"/> -->
         <div class="polybox">
-        <span class="poly">P O L Y H E D R O N <span class="anx">X</span></span>
+        <span ref="poly" class="poly">P O L Y H E D R O N <span class="anx">X</span></span>
         </div>
         <div class="bot"> 
     <a style="color:gray;" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">鲁ICP备2021023307号-2</a>
@@ -23,9 +23,9 @@ export default {
     data(){
       return{
         logopullup:false,
-        src:'LOGOX.svg',
-        srcArray:['LOGOX.svg','LOGOY.svg'],
-        srcCount:0,
+        // src:'LOGOX.svg',
+        // srcArray:['LOGOX.svg','LOGOY.svg'],
+        // srcCount:0,
         xNum:0,
         loginsuccess:false,
       }
@@ -34,23 +34,36 @@ export default {
       ...mapState('userInfo',['user']),
     },
     created(){
-      setInterval(() => {
-        let x = 0;
-        if(this.srcCount++%2==0){x=0}else{x=1}
-        this.src = this.srcArray[x];
-      }, 12000);
-      let _this = this;
+      var loginR = '';
+      this.$axios.post('/api/returnDetailsByNameAndTypeAndItem',{pxUser:this.user.userQQ,pxType:'点击 X*66',pxItem:'点击 X*66'}).then(response=>{
+          loginR = response.data[0];
+        // 如果item没有被看过
+        if(loginR==undefined){
+          let _this = this;
       document.onkeydown = function () {
         let key = window.event.keyCode;
         if (key === 88){
           _this.xNum = _this.xNum + 1;
-          console.log(_this.xNum);
+          _this.$refs.poly.style.color = "black";
+          setTimeout(() => {
+          _this.$refs.poly.style.color = "white";
+          }, 330);
           if(_this.xNum>66){
-            alert("恭喜您获得了 P500!");
+            _this.$addPxDetail(_this.user.userQQ,1,'点击 X*66',250,'点击 X*66',"触发了彩蛋,获得PX币+250");
             _this.xNum = 0;
           }
       }
   }
+ }
+        },error=>{
+          console.log(error.message);
+        });
+      // setInterval(() => {
+      //   let x = 0;
+      //   if(this.srcCount++%2==0){x=0}else{x=1}
+      //   this.src = this.srcArray[x];
+      // }, 12000);
+      
     },
     mounted(){
       // 收到来自兄弟组件的islogin信息,并改变logo位置
@@ -88,7 +101,7 @@ div{
 }
 .poly{
   position: relative;
-
+  transition: 0.33s;
   width: 100%;
   font-size: 15vh;
   overflow: hidden;

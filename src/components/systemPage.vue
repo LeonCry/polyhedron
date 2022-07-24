@@ -126,7 +126,6 @@ export default {
         .post("/api/selectByReceiver", { receiveUserQQ: this.user.userQQ })
         .then(
           (response) => {
-            console.log(response.data);
             // 进行空间动态和收到的好友请求区分
             response.data.forEach((element) => {
               if (element.noticeType == 0) {

@@ -49,7 +49,6 @@ export default {
   created(){
   this.$axios.post('/api/selectReplyBySpaceIdAndTargetQQ',{replySpaceId:this.comment.commentSpaceId,replyCommentFloor:this.comment.commentFloor,pageStart:0,pageEnd:9999}).then(response=>{
   this.allReply = response.data;
-  console.log(response.data);
 },error=>{
 console.log(error.message);
 });

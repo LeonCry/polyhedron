@@ -245,16 +245,17 @@ methods:{
                 trainNumber:'暂无信息',
                 orderStatus:'已下单',
               }
+              // eslint-disable-next-line no-unused-vars
               this.$axios.post('/api/addAShopOrder',data).then(response=>{
-                console.log(response.data);
                 var money = this.userMoney - this.shop.discountPrice*this.createData.buyNum;
+                // eslint-disable-next-line no-unused-vars
                 this.$axios.post('/api/updateUserInfo',{userQQ:this.user.userQQ,userMoney:money}).then(response=>{
-                  console.log(response.data);
                   // 更新金钱
                   this.$bus.$emit('updateMoney');
                   // 更新商品信息
+                  // eslint-disable-next-line no-unused-vars
                   this.$axios.post('/api/updateAShopping',{shopId:this.shop.shopId,shopNums:this.shop.shopNums-this.createData.buyNum,allSales:this.shop.allSales + this.createData.buyNum}).then(response=>{
-                    console.log(response.data);
+                    this.$addPxDetail(this.user.userQQ,'支出','购买商品',this.shop.discountPrice*this.createData.buyNum,this.shop.shopName,"在南北市场中购买了"+this.createData.buyNum+"件 '"+this.shop.shopName+"' 的商品,消费了PX币:"+this.shop.discountPrice*this.createData.buyNum);
                   },error=>{
                     console.log(error.message);
                   });
@@ -281,6 +282,9 @@ methods:{
       this.dialogVisible = false;
       this.isConfirmNotice = false;
   },
+
+
+
     // 用户余额获取
 async getUserMoney(){
   await  this.$axios.post('/api/getUser',{userQQ:this.user.userQQ}).then(response=>{

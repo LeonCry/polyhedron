@@ -7,8 +7,8 @@
             <br>
             <span style="font-size:1.7vh;text-align:center">{{shop.shopName}}</span>
             <span >{{shop.shopIntro}}</span>
-            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:left;">&nbsp P{{shop.shopPrice}}
-                <span v-if="shop.shopPrice!=shop.discountPrice" style="font-size:2vh;color:orangered;position: absolute;text-align:left;" >&nbsp P{{shop.discountPrice}}</span></span>
+            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:center;">P{{shop.shopPrice}}</span>
+            <span v-if="shop.shopPrice!=shop.discountPrice" style="font-size:2vh;color:orangered;text-align:center;" >P{{shop.discountPrice}}</span>
             <span style="text-align:center;">限购:{{shop.buyLimit}}件 / 剩余:{{shop.shopNums}}件</span>
             <span style="font-size:1.5vh;text-align:center;">{{shop.discountInfo}}</span>
             <button @click="routerTo('shopDetail')" class="butt1"><i class="el-icon-s-goods"></i> 查看详情</button>
@@ -41,7 +41,47 @@ methods:{
             }
         });
         this.$bus.$emit('changeTitle','商品详情');
-
+        let _thisShopId = this.shop.shopId;
+        // 添加浏览明细-先查询是否有该商品的浏览历史
+        this.$axios.post('/api/returnBrowseHistoryByName',{browseUser:this.user.userQQ}).then(response=>{
+            if(response.data.length==0){
+                // 则添加浏览历史
+                var data = {browseUser:this.user.userQQ,browseShop:this.shop.shopName,browseShopId:this.shop.shopId,browseNums:1,browseTimes:Date.now()};
+                // eslint-disable-next-line no-unused-vars
+                this.$axios.post('/api/addABrowseHistory',data).then(response=>{
+                },error=>{
+                    console.log(error.message);
+                });
+            }
+            else{
+                var hasUpdate = false;
+                for (let i = 0; i < response.data.length; i++) {
+                    const element = response.data[i];
+                    if(element.shopping.shopId==_thisShopId){
+                        // 则更新时间和浏览次数
+                        var data2 = {browseId:element.browseId,browseNums:element.browseNums+1,browseTimes:Date.now()};
+                        // eslint-disable-next-line no-unused-vars
+                        this.$axios.post('/api/updateABrowseHistory',data2).then(response=>{
+                        },error=>{
+                        console.log(error.message);
+                        });
+                        hasUpdate = true;
+                        break;
+                    }
+                }
+                if(!hasUpdate){
+                    // 则添加浏览历史
+                        var data3 = {browseUser:this.user.userQQ,browseShop:this.shop.shopName,browseShopId:this.shop.shopId,browseNums:1,browseTimes:Date.now()};
+                        // eslint-disable-next-line no-unused-vars
+                        this.$axios.post('/api/addABrowseHistory',data3).then(response=>{
+                        },error=>{
+                                console.log(error.message);
+                        });
+                }
+            }
+        },error=>{
+            console.log(error.message);
+        });
 },
 },
 

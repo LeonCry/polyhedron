@@ -1,16 +1,16 @@
 <template>
   <div class="sopItemBox">
         <div class="imgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h4dhhzmwabj20ed0eyjrt.jpg" alt="商品图片">
+            <img v-if="browse.shopping.picSrc1" :src="browse.shopping.picSrc1" alt="商品图片">
         </div>
         <div class="info">
             <br>
-            <span style="font-size:1.7vh;text-align:center">印有LOGO的T恤</span>
-            <span >印有POLYHEDRON字样的T恤</span>
-            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:left;">&nbsp P9999
-                <span style="font-size:2vh;color:orangered;position: absolute;text-align:left;" >&nbsp P999.9</span></span>
+            <span style="font-size:1.7vh;text-align:center">{{browse.shopping.shopName}}</span>
+            <span style="text-align:center" >浏览次数:{{browse.browseNums}}</span>
+            <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:center;">P{{browse.shopping.shopPrice}}</span>
+            <span style="font-size:2vh;color:orangered;text-align:center;" >P{{browse.shopping.discountPrice}}</span>
             <span style="text-align:center;font-weight:500;color:black;font-size:1.8vh">浏览时间:</span>
-            <span style="font-size:1.5vh;text-align:center;font-weight:500;color:black">2022.12.12 <br> 13:25:00</span>
+            <span style="font-size:1.5vh;text-align:center;font-weight:500;color:black">{{times[0]}} <br> {{times[1]}}</span>
             <button @click="routerTo('shopDetail')" class="butt1"><i class="el-icon-s-goods"></i> 查看详情</button>
             
         </div>
@@ -18,13 +18,27 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
 name:'historyItem',
-
+props:['browseProp'],
+computed:{
+    ...mapState('userInfo',['user']),
+},
+data(){
+    return{
+        browse:this.browseProp,
+        times:new Date(parseInt(this.browseProp.browseTimes)).toLocaleString().split(' '),
+    }
+},
 methods:{
     routerTo(rout){
         this.$router.push({
             name:rout,
+            query:{
+                shop:this.browse.shopping,
+                browseUser:this.user.userQQ,
+            }
         });
         this.$bus.$emit('changeTitle','商品详情');
 

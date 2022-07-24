@@ -65,6 +65,8 @@ export default {
             this.downTrue = true;  
             this.LdownTrue = true;
             }, 1000);
+            // 下载奖励
+            this.$addPxDetail(this.user.userQQ,1,'下载文件',50,this.fileProp.fileName,"在文件夹中下载 '"+this.fileProp.fileName+"' 的文件,获得奖励PX+50");
             setTimeout(() => {
                 this.downTrue = false;
                 this.realDownLoad();
@@ -97,10 +99,10 @@ export default {
                 // this.$refs.down.style.height = this.percent + '%';
                 console.log(_this.percent);
                 }}
+                // eslint-disable-next-line no-unused-vars
                 ).then(response=>{
                     setTimeout(() => {
                         _this.$refs.timeAndNums.style.opacity = 0;
-                        console.log("下载完成!");
                         _this.$refs.fileBox.style.height = '50%';
                         _this.percent = 0;
                         _this.write = '点击此处下载';

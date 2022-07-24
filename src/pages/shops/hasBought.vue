@@ -23,7 +23,6 @@ methods:{
     returnAllData(){
       this.$axios.post('/api/returnShopOrderByName',{buyUser:this.user.userQQ}).then(response=>{
         this.receiveData = response.data;
-        console.log(response.data);
       },error=>{
         console.log(error.message);
       });
