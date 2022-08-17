@@ -20,7 +20,6 @@
             <span >购买用户: {{orderProp.buyUser}}</span>
             <span>购买了 {{orderProp.buyNum}} 件</span>
             <span>商品来源:{{orderProp.shopping.shopFrom}}</span>
-            <span>发货快递:{{orderProp.orderTrain}}</span>
             <span>快递编号: <br>{{orderProp.trainNumber}}</span>
             <span>购买参数: <br>
             {{orderProp.buyParamName1}}<span v-show="orderProp.buyParamName1!=''">:</span>{{orderProp.buyParamValue1}}
@@ -169,5 +168,49 @@ methods:{
               inset 2px 2px 4px rgba(255, 255, 255, 0.1),
               inset 2px 2px 8px rgba(0, 0, 0, 0.15);
 }
-
+@media only screen and (orientation: portrait) {
+.sopItemBox{
+    position: relative;
+    width: 95%;
+    margin: 10px;
+    height: auto;
+    display: flex;
+    flex-flow: row nowrap;
+    transition: 0.25s;
+    border-radius: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: -2px -2px 8px rgba(255, 255, 255, 1),
+              -2px -2px 12px rgba(255, 255, 255, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+    .butt1{
+  font-weight: 350;
+  position: relative;
+  padding: 0;
+  width: 100px;
+  right: 120px;
+  border: none;
+  margin-bottom: 20px;
+  color: black;
+  font-size: 1.8vh;
+  transition: 0.55s;
+  border-radius: 60px;
+  box-shadow: -2px -2px 8px rgba(255, 255, 255, 1),
+              -2px -2px 12px rgba(255, 255, 255, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+.butt1:hover {
+  padding: 15px 28px;
+  letter-spacing: 2px;
+  padding: 0;
+  width: 100px;
+  cursor: pointer;
+  box-shadow: inset -2px -2px 8px rgba(255, 255, 255, 1),
+              inset -2px -2px 12px rgba(255, 255, 255, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              inset 2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+}
 </style>

@@ -65,4 +65,18 @@ export default {
     height: 430px;
     margin-top: 10px;
 }
+
+@media only screen and (orientation: portrait) {
+    .mainbody{
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-x:hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 180%;
+    margin-top: 10px;
+}
+}
+
 </style>

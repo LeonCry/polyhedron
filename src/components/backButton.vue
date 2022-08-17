@@ -13,9 +13,14 @@ data(){
 props:['roots'],
 methods:{
     routerTo(rout){
+        if(this.backRoot==-1){
+            this.$router.go(-1);
+        }
+        else{
 this.$router.push({
             name:rout,
         })
+        }
 },
 }
 }

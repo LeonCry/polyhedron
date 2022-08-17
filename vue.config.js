@@ -64,7 +64,7 @@ module.exports = {
         
       },
       "/train": {
-        target: 'http://api.kuaidi.com',
+        target: 'https://api.binstd.com',
         // ws: true,
         changeOrigin: true,
         pathRewrite:{

@@ -378,4 +378,87 @@ span{
     opacity: 1;
   }
 }
+
+@media only screen and (orientation: portrait) {
+/* 单个好友 */
+.frienditem{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    transition: 0.55s;
+    height: 60px;
+    font-size: 1.6vh;
+    color: rgba(255, 255, 255, 0.7)
+}
+/* 个人空间 */
+.starspace{
+    position: relative;
+    width: 20%;
+    flex: 0;
+    opacity: 0;
+    height: 20px;
+    transition: 0.55s;
+    margin-top: 25px;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    border-left: 2px solid white;
+}
+/* 个人空间hover时img的变化 */
+.starspace > img{
+    transition: 1s;
+}
+.starspace:hover > img{
+    transform: rotateZ(720deg);
+    border-radius: 50%;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0 15px yellow;
+}
+/* 网名,个签内容物 */
+.content{
+    position: relative;
+    width:65%;
+    display: flex;
+    flex-flow: row nowrap;
+    height: 55px;
+}
+/* 更改名字和签名的长度 */
+.content:hover .nameandsign{
+    flex: 1;
+}
+/* 更改个人空间 */
+.content:hover .starspace{
+    margin-left: 20%;
+    cursor: pointer;
+    flex: 0;
+    width: 10%;
+    opacity: 1;
+}
+/* 名字和签名 */
+.nameandsign{
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-flow: column nowrap;
+    transition: 0.55s;
+    margin-left: 10px;
+    height: 55px;
+}
+.signs{
+    position: relative;
+    margin-top: 10px;
+    display: flex;
+    width: 120%;
+    height: 20px;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+}
+
+
 </style>

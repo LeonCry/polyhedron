@@ -1,7 +1,7 @@
 <template>
   <div class="baaupicSelfBox">
     <div class="clcc">
-    <el-carousel indicator-position="outside"  :interval="4000" height="700px">
+    <el-carousel indicator-position="outside"  :interval="4000" height="700px" class="disnone">
     <el-carousel-item v-for="item in 4" :key="item" >
     </el-carousel-item>
   </el-carousel>
@@ -19,7 +19,7 @@
 <br>
 <div class="mains">
 <el-image
-      style="width: 600px; height: 400px;margin:10px"
+      class="image"
       :src="pics.picScr"
       lazy
       :preview-src-list="[pics.picScr]"
@@ -33,7 +33,7 @@
 
     </div>
 
-<el-button type="success" round class="backs" @click="routerTo('baaupic')"><i class="el-icon-caret-left"></i> 返回</el-button>
+<el-button type="success" round class="backs" @click="routerTo(backurl)"><i class="el-icon-caret-left"></i> 返回</el-button>
 
   </div>
 </template>
@@ -50,6 +50,7 @@ data(){
         collectionss:[],
         goodess:[],
         oriData:[],
+        backurl:'baaupic',
     }
 },
 computed:{
@@ -107,6 +108,11 @@ this.$router.push({
 },
 
 created(){
+   // 手机端
+    if(window.innerWidth<window.innerHeight){
+        this.backurl = '/';
+    }
+
     this.getPicsCreated();
     setTimeout(() => {
     this.$axios.post('/api/selectPicWithByUserQQ',{picWithQQ:this.user.userQQ}).then(response=>{
@@ -140,6 +146,11 @@ created(){
     width: 100%;
     height: 1000px;
     overflow-y: auto;
+}
+.image{
+  width: 600px; 
+  height: 400px;
+  margin:10px;
 }
 .title{
     position: absolute;
@@ -202,5 +213,37 @@ created(){
   
   .el-carousel__item:nth-child(4) {
     background-image: url("https://tva1.sinaimg.cn/large/e6c9d24ely1h3p7dt4y7vj21900u079n.jpg");
+  }
+
+
+  @media only screen and (orientation: portrait) {
+    .disnone{
+      display: none;
+    }
+    .buts{
+    width: 100%;
+    height:50px;
+    font-size: 1.2vh;
+    font-weight: bolder;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: palegoldenrod;
+}
+.title{
+  display: none;
+}
+.backs{
+    position: absolute;
+    z-index: 3;
+    left: 0px;
+    top: 0px;
+    transition: 0.55s;
+    opacity: 0.5;
+}
+.image{
+  width: 30%;
+  height: auto;
+  margin:10px;
+}
+
   }
 </style>

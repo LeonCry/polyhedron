@@ -166,4 +166,24 @@ button:hover{
   }
 }
 
+
+@media only screen and (orientation: portrait) {
+    .selfbox{
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-x:hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 180%;
+    margin-top: 10px;
+}
+    /* 背景 */
+.myback{
+    position: relative;
+    width: 100%;
+    height: 30%;
+}
+}
+
 </style>

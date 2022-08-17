@@ -184,7 +184,7 @@ export default {
       serviceDetail: false,
       serviceDetailDrop: 0,
       // 此组件Z轴高度 6 - 7
-      zIndex:106,
+      zIndex:113,
       // 用户信息相关数据
       userQQ:'',
       userName:'',
@@ -501,6 +501,9 @@ export default {
 
     //   鼠标按下,开始移动
     moveBegin(e) {
+      if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
       // 获得按下的x坐标
       this.pox = e.clientX;
       // 获得按下的y坐标
@@ -516,6 +519,9 @@ export default {
       this.$bus.$emit('settingappear',this.isShow);
     },
     changeIndex(){
+      if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',106,106,107);
@@ -556,6 +562,11 @@ export default {
     this.$bus.$off("settingappear");
     this.$bus.$off("changeZindex");
   },
+  created(){
+      if(window.innerWidth<window.innerHeight){
+        this.settingLocation = {top: 10 + "px", left: 0,zIndex:113};
+      }
+  }
 
 };
 </script>
@@ -794,6 +805,74 @@ input:focus {
   animation: slide-in-blurred-bottom 0.2s cubic-bezier(0.23, 1, 0.32, 1) both
     reverse;
 }
+@media only screen and (orientation: portrait) {
+  .settingbox {
+  position: absolute;
+  width: 100%;
+  height: 180%;
+  top: 10px;
+  left: 0;
+  z-index: 113;
+  background-color: #1a191b;
+  border-radius: 15px;
+  box-shadow: 0 0 25px 5px black;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 1.8vh;
+  color: white;
+}
+/* 抬头 */
+.toper {
+  position: relative;
+  width: 100%;
+  height: 55px;
+  border-radius: 25px 25px 0 0;
+  display: flex;
+  transition: 0.55s;
+  flex-flow: row nowrap;
+  background-color: rgba(47, 53, 66, 0.25);
+}
+/* 所有设置 */
+.allsetting {
+  position: relative;
+  width: 100%;
+  max-height: 40%;
+  display: flex;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-flow: column nowrap;
+}
+/* 保存div */
+.savediv {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  margin-top: 50%;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  bottom: 0;
+  top: 30%;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+/* 保存 */
+.save {
+  position: relative;
+  align-self: center;
+  width: 100px;
+  height: 100%;
+  cursor: pointer;
+  background-color: rgba(99, 110, 114, 0.2);
+  color: pink;
+  border-radius: 15px;
+  transition: 0.55s;
+  border: 0;
+  margin-left: 38%;
+}
+}
+
+
 /* 该组件--聊天框进入退出动画 */
 @keyframes swing-in-top-fwd {
   0% {
@@ -831,5 +910,6 @@ input:focus {
     filter: blur(0);
     opacity: 1;
   }
+
 }
 </style>

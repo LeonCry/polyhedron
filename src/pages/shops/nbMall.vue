@@ -43,4 +43,15 @@ created(){
   display: flex;
   flex-flow: row wrap;
 }
+@media only screen and (orientation: portrait) {
+  .realShops{
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-flow: column wrap;
+}
+}
 </style>

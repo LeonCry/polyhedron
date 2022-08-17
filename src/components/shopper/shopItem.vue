@@ -6,7 +6,7 @@
         <div class="info">
             <br>
             <span style="font-size:1.7vh;text-align:center">{{shop.shopName}}</span>
-            <span >{{shop.shopIntro}}</span>
+            <span >{{shopIntr}}</span>
             <span style="font-size:2vh;color:orangered;text-decoration: line-through;text-align:center;">P{{shop.shopPrice}}</span>
             <span v-if="shop.shopPrice!=shop.discountPrice" style="font-size:2vh;color:orangered;text-align:center;" >P{{shop.discountPrice}}</span>
             <span style="text-align:center;">限购:{{shop.buyLimit}}件 / 剩余:{{shop.shopNums}}件</span>
@@ -28,6 +28,7 @@ computed:{
 data() {
     return {
         shop:this.shopProp,
+        shopIntr:'',
     }
 },
 
@@ -87,8 +88,10 @@ methods:{
 
 created(){
     if(this.shopProp.shopIntro.length>20){
-        this.shop = this.shopProp;
-        this.shop.shopIntro = this.shop.shopIntro.slice(0,20) + '...';
+        this.shopIntr = this.shopProp.shopIntro.slice(0,20) + '...';
+    }
+    else{
+        this.shopIntr = this.shopProp.shopIntro;
     }
 }
 
@@ -186,6 +189,100 @@ created(){
               inset -2px -2px 12px rgba(255, 255, 255, 0.5),
               inset 2px 2px 4px rgba(255, 255, 255, 0.1),
               inset 2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+@media only screen and (orientation: portrait) {
+    .sopItemBox{
+    position: relative;
+    width: 90%;
+    left: 4%;
+    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 100px;
+    height: auto;
+    display: flex;
+    flex-flow: column nowrap;
+    transition: 0.25s;
+    border-radius: 20px;
+    border: 2px solid black;
+    box-shadow:none;
+}
+.sopItemBox:hover{
+    border: 2px solid purple;
+      box-shadow: none;
+}
+.sopItemBox:hover div:nth-of-type(2) span{
+    font-weight: 350;
+}
+
+.imgs{
+    position: relative;
+    width: 70%;
+    left: 12%;
+    margin-top: 10px;
+    height: auto;
+    flex: 14;
+}
+.imgs > img{
+  position: relative;
+    width: 100%;
+    height: auto;
+  padding-top: 0;
+  border-radius: 20px;
+  border: 2px solid seagreen;
+}
+
+
+.info{
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    flex: 100;
+    display: flex;
+    font-size: 1.45vh;
+    flex-flow: column nowrap;
+    align-items: left;
+    justify-content: space-around;
+}
+.info span{
+    position: relative;
+    font-weight:300;
+    flex: 10;
+    width: 100%;
+}
+.info button{
+    position: relative;
+    flex: 2;
+}
+
+
+.butt1{
+position: relative;
+  font-weight: 350;
+  position: relative;
+  padding: 10px;
+  width: 150px;
+  left: 100px;
+  border: 1px dashed black;
+  margin-top: 10px;
+  background-color: white;
+  right: 0;
+  letter-spacing: 2px;
+  color: black;
+  font-size: 1.8vh;
+  transition: 0.55s;
+  border-radius: 60px;
+  box-shadow: none;
+  margin-bottom: 10px;
+}
+.butt1:hover {
+  padding: 10px;
+  letter-spacing: 5px;
+  left: 100px;
+  right: 0;
+  cursor: pointer;
+  box-shadow: none;
+}
 }
 
 </style>

@@ -38,8 +38,8 @@
       width="150">
     </el-table-column>
     <el-table-column
-      prop="zip"
-      label="browseNums"
+      prop="browseNums"
+      label="浏览次数"
       align="center"
       show-overflow-tooltip
       width="150">

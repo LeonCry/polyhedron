@@ -361,4 +361,14 @@ export default {
   }
 }
 
+
+@media only screen and (orientation: portrait) {
+  .siderbar{
+    display: none;
+  }
+  .roundbar{
+    display: none;
+  }
+}
+
 </style>

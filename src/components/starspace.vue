@@ -75,7 +75,7 @@ export default {
       //   判断是否鼠标按下的判定flag
       isMove: false,
       // 此组件Z轴高度 6 - 7
-      zIndex:106,
+      zIndex:110,
       spaceUser:'',
       spaceSum:[],
       allSpaceSum:[],
@@ -98,6 +98,9 @@ export default {
   methods: {
     //   鼠标按下,开始移动
     moveBegin(e) {
+      if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
       // 获得按下的x坐标
       this.pox = e.clientX;
       // 获得按下的y坐标
@@ -113,6 +116,9 @@ export default {
       this.$bus.$emit('spaceappear',this.isShow,this.isMySpace,this.spaceUser);
     },
     changeIndex(){
+      if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',107,106,106);
@@ -352,6 +358,11 @@ this.allSpaceSum = goodsSpace;
   beforeDestroy(){
      this.$bus.$off('spaceappear');
      this.$bus.$off('changeZindex');
+  },
+  created(){
+      if(window.innerWidth<window.innerHeight){
+        this.settingLocation = {top: 10 + "px", left: 0,zIndex:110};
+      }
   }
 };
 </script>
@@ -555,6 +566,51 @@ color: rgba(0, 0, 0, 0.8);
     transform-origin: top;
     opacity: 1;
   }
+}
+
+@media only screen and (orientation: portrait) {
+.starspacebox {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  height: 180%;
+  z-index: 110;
+  background-color: #1a191b;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 1.8vh;
+  font-weight: bold;
+  color: white;
+}
+.starspacebox:hover {
+  border-radius: 0;
+  box-shadow: none;
+}
+/* 抬头 */
+.toper {
+  position: relative;
+  width: 100%;
+  height: 55px;
+  font-size: 1.8vh;
+  border-radius: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  transition: 0.55s;
+  background-color: rgba(47, 53, 66, 0.25);
+}
+/* 内容物 */
+.content{
+  position: relative;
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 }
 
 

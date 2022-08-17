@@ -1,6 +1,7 @@
 <template>
 <transition name="menuT">
   <div class="mainMenuBox" ref="back" v-show="isShow">
+    <el-button class="back"  @click="isShow = !isShow">返回主界面</el-button>
     <img class="imgs" :src="imgsrc" alt="" ref="imgg">
     <div class="blackzz"> </div>
     <div class="topper">
@@ -94,9 +95,9 @@ data(){
         },
                 // 其他
         other:{
-            oneFont:'等',
-            title:'开发中',
-            info:'开发中...',
+            oneFont:'食',
+            title:'菜谱',
+            info:'今天吃点什么呢?',
             to:'other',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4dduqv9u7j21ou0u0t9n.jpg',
         },
@@ -109,6 +110,9 @@ methods:{
         this.$refs.imgg.style.opacity = 1;
     },
     enter(){
+    },
+    back(){
+        this.isShow = false;
     }
 },
 mounted(){
@@ -135,6 +139,12 @@ mounted(){
         this.isShow = data;
     });
 
+    // 手机端
+    // if(window.innerWidth<window.innerHeight){
+    //     this.picture.to = 'baaupicSelf';
+    // }
+
+
 }
 }
 </script>
@@ -159,7 +169,15 @@ mounted(){
     height: 100%;  
     background-color: rgba(0, 0, 0, 0.5);
 }
-
+.back{
+    position: sticky;
+    top: 25px;
+    width: 30%;
+    height: 50px;
+    z-index: 81;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
 .imgs{
     position: absolute;
     width: 100%;
@@ -190,7 +208,6 @@ mounted(){
 }
 .bottommer{
     flex: 1;
-
 }
 
 .line{
@@ -207,6 +224,9 @@ mounted(){
     justify-content: space-around;
     align-items: center;
 }
+.notice{
+    display: none;
+}
 
 .menuT-enter-active{
 animation: fade-in 0.51s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
@@ -222,4 +242,50 @@ animation: fade-in 0.51s cubic-bezier(0.390, 0.575, 0.565, 1.000) both reverse;
     opacity: 1;
   }
 }
+
+@media only screen and (orientation: portrait) {
+.mainMenuBox{
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    z-index: 80;
+    transition: 0.55s;
+    font-size: 1.6vh;
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-flow: column nowrap;
+}
+.imgs{
+    display: none;
+
+}
+.line{
+    /* margin-right: 12%; */
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.line2{
+    /* margin-left: 12%; */
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.back{
+    position: sticky;
+    top: 25px;
+    width: 30%;
+    height: 50px;
+    z-index: 81;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: block;
+}
+}
+
+
+
 </style>

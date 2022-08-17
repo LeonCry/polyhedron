@@ -25,6 +25,7 @@ import axios from 'axios';
 import App from './App.vue';
 // router的使用
 import router from './router/index'
+
 // elementui使用
 Vue.use(ElementUI);
 // Vuex的适用

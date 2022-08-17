@@ -7,7 +7,7 @@
       <span>取消</span>
       </div>
       <div class="default" v-show="isReceiver && !isaccept" @click="cancelVideoReceive">
-      <img src="../assets/video.svg" alt="语音">
+      <img src="../assets/video.svg" alt="语音" >
       <span>拒绝</span>
       </div>
       <div class="accpet" v-show="isReceiver" @click="acceptoReceive">
@@ -402,4 +402,45 @@ beforeDestroy(){
   100% {
     background-color: rgba(0, 255, 0, 0.33);
   }}
+
+@media only screen and (orientation: portrait) {
+    .errorbox{
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 10px;
+        max-height: 100px;
+        text-align: center;
+        border-radius: 25px;
+        background-color: rgba(255, 0, 0, 0.666);
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.666);
+        font-size: 1.8vh;
+        color: aliceblue;
+        font-weight: bold;
+        z-index: 99;
+    }
+    .greenboxclass{
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 10px;
+        max-height: 100px;
+        text-align: center;
+        border-radius: 25px;
+        background-color: greenyellow;
+        box-shadow: 0 0 15px greenyellow;
+        font-size: 1.8vh;
+        color: dodgerblue;
+        font-weight: bold;
+    }
+
+
+}
+
+
+
 </style>

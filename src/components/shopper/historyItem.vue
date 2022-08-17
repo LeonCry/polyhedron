@@ -139,4 +139,41 @@ methods:{
               inset 2px 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+
+
+@media only screen and (orientation: portrait) {
+  .butt1{
+  font-weight: 350;
+  position: relative;
+  padding: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  right: 3px;
+  border: none;
+  letter-spacing: 2px;
+  color: black;
+  font-size: 1.4vh;
+  transition: 0.55s;
+  border-radius: 60px;
+  box-shadow: -2px -2px 8px rgba(255, 255, 255, 1),
+              -2px -2px 12px rgba(255, 255, 255, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+.butt1:hover {
+  padding: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 100%;
+  letter-spacing: 5px;
+  right: 3px;
+  cursor: pointer;
+  box-shadow: inset -2px -2px 8px rgba(255, 255, 255, 1),
+              inset -2px -2px 12px rgba(255, 255, 255, 0.5),
+              inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+              inset 2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+}
+
 </style>

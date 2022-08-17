@@ -400,5 +400,24 @@ img:hover{
 
 
 
+
+@media only screen and (orientation: portrait) {
+  .poly{
+  position: relative;
+  transition: 0.33s;
+  width: 100%;
+  font-size: 3vh;
+  overflow: hidden;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 100;
+  animation: focus-in-expand 3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+.bot{
+  display: none;
+}
+}
+
+
 </style>
 

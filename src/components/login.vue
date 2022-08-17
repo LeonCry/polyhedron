@@ -1221,4 +1221,135 @@ animation: tracking-in-contract 0s cubic-bezier(0.215, 0.610, 0.355, 1.000) both
     transform: translateX(-8px);
   }
 }
+
+
+
+@media only screen and (orientation: portrait) {
+  .loginbox {
+  position: relative;
+  width: 90%;
+  display: flex;
+  flex-flow: column;
+  background: rgba(32, 30, 35, 0.75);
+  border-radius: 15px;
+  transition: 0.55s;
+  height: 250%;
+  box-shadow: -20px 20px 20px rgba(0, 0, 0, 0.35);
+  display: flex;
+}
+.loginbutton {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  right: 33%;
+  top: 70%;
+  border-radius: 100% 100%;
+  text-align: center;
+  background: rgba(32, 30, 35, 1);
+  box-sizing: border-box;
+  border: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 10px 2px white;
+  transition: 0.5s;
+}
+.loginbutton:hover {
+  border: 30px solid black;
+  background: black;
+  box-shadow: 0 0 10px 5px black;
+}
+
+
+.loginbutton:hover img {
+  transform: rotateY(180deg);
+  top: -20px;
+  left: -15px;
+}
+.loginbutton img {
+  transform: scale(0.8);
+  position: relative;
+  transition: 0.8s;
+}
+.options {
+  position: relative;
+  width: 100%;
+  height: 15px;
+  font-size: 1vh;
+}
+
+.options button{
+  position: relative;
+  width: 80px;
+}
+/* 进入主页的按钮 */
+.enterindex {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 40px;
+  border-radius: 100% 100%;
+  text-align: center;
+  background: black;
+  box-sizing: border-box;
+  border: 20px solid black;
+  box-shadow: 0 0 20px 10px black;
+  transition: 0.5s;
+}
+.absbac{
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0);
+  border-left: 1px dashed white;
+  width: 100px;
+  height: 100px;
+  right: -50px;
+  top: -50px;
+  box-shadow: 0 0 15px 10px black;
+  border-radius: 50%;
+  transition: 2s;
+  animation: circle 2s infinite both linear;
+}
+
+.enterindex img {
+  transform: rotateZ(90deg);
+  position: relative;
+  transition: 0.8s;
+  top: -20px;
+  left: -10px;
+}
+
+/* 登录box上升的动画 */
+@keyframes slide-in-blurred-bottom {
+  0% {
+    -webkit-transform: translateY(0) scaleY(2.5) scaleX(0.2);
+    transform: translateY(0) scaleY(2.5) scaleX(0.2);
+    -webkit-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    -webkit-filter: blur(40px);
+    filter: blur(40px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(-355px) scaleY(1) scaleX(1);
+    transform: translateY(-355px) scaleY(1) scaleX(1);
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-filter: blur(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes circle {
+  0%{
+    transform: rotateZ(0);
+  }
+  100%{
+    transform: rotateZ(360deg);
+  }
+}
+
+
+
+}
+
+
+
 </style>

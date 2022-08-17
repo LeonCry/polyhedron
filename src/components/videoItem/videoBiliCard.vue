@@ -13,7 +13,7 @@
     </div>
     <div class="info">
       <br>
-      <span style="width:100%;text-align:center;font-size:2.2vh">{{bilibiliData.data.title}}</span>
+      <span style="width:100%;text-align:center;font-size:1.8vh">{{bilibiliData.data.title}}</span>
       <br>
       <div class="baseInfo">
         <!-- <span>发表时间:{{new Date(parseInt(bilibiliData.data.pubdata))
@@ -27,7 +27,7 @@
       </div>
       <br>
 
-        <span>- 类型:{{bilibiliData.data.tname}}</span>
+        <span class="disnone">- 类型:{{bilibiliData.data.tname}}</span>
 
         <br>
         <br>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import BiliData from "../../common/biliData.js";
 import { mapState } from 'vuex';
 export default {
 name:'videoBiliCard',
@@ -73,19 +74,30 @@ mounted(){
 },
 
 created(){
-  setTimeout(() => {
-    this.$axios.get('/bilibili/x/web-interface/view?bvid='+this.BVno).then(response=>{
-      this.bilibiliData = response.data;
-    },error=>{
-      console.log(error.message);
-    });
-  }, 100);
+  // setTimeout(() => {
+  //   this.$axios.get('/bilibili/x/web-interface/view?bvid='+this.BVno).then(response=>{
+  //     this.bilibiliData = response.data;
+      
+  //     console.log(response.data);
+  //   },error=>{
+  //     console.log(error.message);
+  //   });
+  // }, 100);
+  this.bilibiliData = BiliData.get(this.BVno);
 // 判断是否是自己要放大
+
   setTimeout(() => {
     if(this.scavel==this.BVno){
       this.isScal = true;
     }
   }, 200);
+
+
+
+
+
+
+
 
 
 
@@ -152,7 +164,7 @@ a{
   margin-left: 20%;
   padding: 10px;
   transition: 0.25s;
-  font-size: 1.6vh;
+  font-size: 1vh;
   font-weight: bold;
   border-radius: 15px;
   background-color: rosybrown;
@@ -160,6 +172,87 @@ a{
 a:hover{
   color: black;
   background-color: white;
+}
+
+
+@media only screen and (orientation: portrait) {
+  .vvdeoBox{
+  position: relative;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  flex-flow: row nowrap;
+  border: 4px double white;
+  border-radius: 25px;
+  /* background-color: royalblue; */
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  transition: 0.55s;
+  transform: scale(0.9);
+  filter: blur(0);
+}
+.scal{
+  transform: scale(0.9);
+  filter: blur(0);
+  z-index: 2;
+}
+.pic{
+  position: relative;
+  flex: 6;
+  
+}
+.pic img{
+  position: relative;
+  height:150px;
+  border-radius: 25px 0 0 25px;
+  
+}
+.mid{
+  flex: 2;
+  border-left: 4px double white;
+}
+.info{
+  position: relative;
+  flex: 16;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.baseInfo{
+  display: none;
+  overflow: auto;
+  flex-flow: row wrap;
+}
+.baseInfo span{
+  display: none;
+  margin: 3px;
+  font-size: 1vh;
+}
+a{
+  position: absolute;
+  bottom: 0;
+  color:white;
+  text-decoration:none;
+  outline:none;
+  text-align: center;
+  width: 100px;
+  height: 20px;
+  right: 0;
+  margin-left: 0;
+  padding: 0;
+  transition: 0.25s;
+  font-size: 1.2vh;
+  font-weight: bold;
+  border-radius: 15px;
+  background-color: rosybrown;
+}
+a:hover{
+  color: black;
+  background-color: white;
+}
+.disnone{
+  display: none;
+}
 }
 
 </style>

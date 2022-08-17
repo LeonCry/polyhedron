@@ -79,7 +79,7 @@ export default {
       isSpaceEmpty: false,
       isReceiverEmpty: false,
       isSenderEmpty: false,
-      zIndex: 108,
+      zIndex: 107,
       asSpaceData: [],
       asReceiverData: [],
       asSenderData: [],
@@ -100,6 +100,9 @@ export default {
   methods: {
     //   鼠标按下,开始移动
     moveBegin(e) {
+      if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
       // 获得按下的x坐标
       this.pox = e.clientX;
       // 获得按下的y坐标
@@ -226,6 +229,11 @@ export default {
     this.$bus.$off("changeZindex");
     this.$bus.$off("chatemoji");
   },
+    created(){
+      if(window.innerWidth<window.innerHeight){
+        this.ChatLocation = {top: 10 + "px", left: 0,zIndex:108};
+      }
+  }
 };
 </script>
 
@@ -237,7 +245,7 @@ export default {
   height: 550px;
   top: 12%;
   left: 25%;
-  z-index: 106;
+  z-index: 108;
   background-color: #1a191b;
   border-radius: 15px;
   box-shadow: 0 0 25px 5px black;
@@ -344,4 +352,52 @@ export default {
     opacity: 1;
   }
 }
+@media only screen and (orientation: portrait) {
+  /* 抬头 */
+.toper {
+  position: relative;
+  width: 100%;
+  height: 55px;
+  border-radius: 0;
+  display: flex;
+  transition: 0.55s;
+  flex-flow: row nowrap;
+  background-color: rgba(47, 53, 66, 0.25);
+}
+  /* 聊天界面box */
+.chatbox {
+  position: absolute;
+  width: 100%;
+  height: 180%;
+  top: 0;
+  left: 0;
+  z-index: 108;
+  background-color: #1a191b;
+  border-radius: 15px;
+  border-radius: 0;
+  box-shadow: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 2vh;
+  color: white;
+}
+.chatbox:hover {
+  border-radius: 0;
+  box-shadow: 0;
+}
+/* 中间框 */
+.contents {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+  top: 10px;
+  overflow-y: auto;
+  height: 50%;
+}
+
+}
+
+
+
 </style>

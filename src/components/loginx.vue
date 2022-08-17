@@ -231,5 +231,28 @@ span{
   }
 }
 
+@media only screen and (orientation: portrait) {
+  /* 已选择登录动画 */
+@keyframes slide-in-blurred-bottom {
+  0% {
+    -webkit-transform: translateY(0)  scaleY(2.5) scaleX(0.2);
+            transform: translateY(0)  scaleY(2.5) scaleX(0.2);
+    -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+    -webkit-filter: blur(40px);
+            filter: blur(40px);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: translateY(-350px) scaleY(1) scaleX(1);
+            transform: translateY(-350px)  scaleY(1) scaleX(1);
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+}
+}
 
 </style>

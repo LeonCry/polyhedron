@@ -121,4 +121,34 @@ this.$bus.$on("SYSreceive",(showIs,spaceData)=>{
     opacity: 1;
   }
 }
+
+
+
+@media only screen and (orientation: portrait) {
+  .spaceShareInChat{
+    background-color: black;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    max-height: 50%;
+    display: flex;
+    z-index: 12;
+    overflow: auto;
+    overflow-x: hidden;
+    flex-flow: column nowrap;
+}
+/* 抬头 */
+.toper {
+  position: fixed;
+  width: 100%;
+  height: 55px;
+  z-index: 2;
+  border-radius: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  transition: 0.55s;
+  background-color: rgb(113, 124, 44);
+}
+
+}
 </style>

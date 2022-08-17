@@ -66,8 +66,8 @@
       width="120">
     </el-table-column>
      <el-table-column
-      prop="zip"
-      label="receiveRemarks"
+      prop="receiveRemarks"
+      label="购买备注"
       align="center"
       show-overflow-tooltip
       width="120">
@@ -143,8 +143,8 @@
       width="120">
     </el-table-column>
     <el-table-column
-      prop="trainNumber"
-      label="发货快递"
+      prop="orderTrain"
+      label="是否隐藏"
       align="center"
       show-overflow-tooltip
       width="120">
@@ -188,10 +188,6 @@
         direction="rtl"
         >
             <el-form label-position="right" label-width="80px" :model="creatData"  class="inputs">
-                <br><br>
-                <el-form-item label="发货快递">
-                <el-input v-model="creatData.orderTrain" placeholder="发货快递..."></el-input>
-                </el-form-item>
                 <br><br>
                 <el-form-item label="快递单号">
                 <el-input v-model="creatData.trainNumber" placeholder="快递单号.."></el-input>

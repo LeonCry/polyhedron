@@ -4,7 +4,7 @@
   <!-- 右侧聊天 -->
   <div  v-if="chat.sendUserQQ!=friend.friendQQ" class="rightchaterbox" :class="{highLightShow:isHighLightShow}">
     <!-- 发送时间 -->
-    <span> {{new Date(parseInt(chat.chatTime))
+    <span class="times"> {{new Date(parseInt(chat.chatTime))
                 .toLocaleString()
                 .slice(5)}}</span>
     <!-- 消息box -->
@@ -65,7 +65,7 @@
     </div>
     </div>
       <!-- 发送时间 -->
-      <span>
+      <span class="times">
           {{new Date(parseInt(chat.chatTime))
                 .toLocaleString()
                 .slice(5)}}
@@ -151,7 +151,6 @@ export default {
   align-items: center;
   flex-flow: column nowrap;
   padding-bottom: 5px;
-
 }
 .shareBox:hover > div:nth-of-type(1){
   background-color: seashell;
@@ -505,5 +504,131 @@ p{
         color: darkgrey;
         text-align: center;
     }
+
+    @media only screen and (orientation: portrait) {
+  .rightchaterbox {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  align-self: flex-end;
+}
+.shareBox{
+  position: relative;
+  width: 350px;
+  border-radius: 10px;
+  height: 200px;
+  max-height: 400px;
+  background-color:  rgb(31, 32, 31);
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  padding-bottom: 5px;
+}
+/* 头像 */
+.rightchaterbox img {
+  position: relative;
+  height: 30px;
+  padding: 2px;
+  border-radius: 40px;
+  border: 2px solid #d2edf6;
+}
+/* 消息box */
+.rightchaterbox > div {
+  position: relative;
+  max-width: 75%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  background-color: #d2edf6;
+  border-radius: 15px;
+  margin-right: 15px;
+}
+/* 消息 */
+.chatcontent{
+  color: black;
+  font-size: 1.3vh;
+  font-weight: bold;
+  padding: 10px;
+}
+/* 发送时间 */
+.rightchaterbox > span {
+  position: relative;
+  align-self: flex-end;
+  width: 100px;
+  height: 20px;
+  color: slategray;
+  font-size: 1vh;
+  font-weight: 100;
+  text-align: center;
+}
+
+ .highLightShow{
+   animation:hight-light 2.5s both;
+   border-radius: 50px;
+ }
+
+    .leftchaterbox{
+        position: relative;
+        max-width: 100%;
+        display: flex;
+        flex-flow: row nowrap;
+        margin-left: 10px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    /* 头像 */
+    .leftchaterbox img{
+        position: relative;
+        height: 30px;
+        padding: 2px;
+        border-radius: 40px;
+        border: 2px solid pink;
+    }
+    /* 消息box */
+    .leftchaterbox > div{
+        position: relative;
+        max-width: 75%;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        background-color: #EDDFF1;
+        border-radius: 15px;
+        margin-left: 15px;
+    }
+    /* 消息 */
+    .leftchaterbox > div > span{
+        width: 100%;
+        color: black;
+        font-weight: bold;
+        padding: 15px;
+    }
+    /* 发送时间 */
+    .leftchaterbox > span{
+        position: relative;
+        align-self:flex-end;
+        width: 100px;
+        height: 20px;
+        color: slategray;
+        font-size: 1vh;
+        text-align: center;
+    }
+    .shareBox{
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  height: 200px;
+  max-height: 400px;
+  background-color:  rgb(31, 32, 31);
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  padding-bottom: 5px;
+}
+}
 
 </style>

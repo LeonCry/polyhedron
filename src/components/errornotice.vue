@@ -89,4 +89,34 @@ animation: swing-in-left-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both 
   }
 }
 
+@media only screen and (orientation: portrait) {
+  .errornoticebox{
+    position: absolute;
+    left: 5%;
+    width: 80%;
+    height: 50px;
+    background-color: rgba(26, 25, 27, 0.77);
+    top: -70px;
+    z-index: 2;
+    font-size: 1.6vh;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    border-radius: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.te{
+    position: absolute;
+    left: 40%;
+    color: rgba(26, 25, 27, 0.77);
+    font-size: 2.2vh;
+    top: 40px;
+    /* transform: rotateZ(60deg); */
+}
+}
+
+
 </style>

@@ -149,4 +149,21 @@ export default {
 span{
     font-size: 1.44vh;
 }
+@media only screen and (orientation: portrait) {
+    .mainbody{
+    position: absolute;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-x:hidden;
+    overflow-y: auto;
+    width: 100%;
+    background-color: rgba(61, 61, 61,0.9);
+    top: 30px;
+    border-radius: 15px;
+    height: 95%;
+    color: pink;
+    margin-top: 10px;
+    z-index: 6;
+}
+}
 </style>

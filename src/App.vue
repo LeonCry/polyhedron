@@ -98,6 +98,11 @@ export default {
 </script>
 
 <style>
+/* 全局样式 */
+:root{
+    --friColor: khaki;
+    --secColor: royalblue;
+}
 /*//滚动条样式设计*/
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
 ::-webkit-scrollbar {
@@ -139,7 +144,13 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  font-family: firFont;
 }
+@font-face {
+  font-family: firFont;
+  src: url(assets/font/firFont.ttf);
+}
+
 
 .videos{
   width: 100%;
@@ -159,4 +170,12 @@ export default {
 }
 
 
+
+
+
+@media only screen and (orientation: portrait) {
+  .videos{
+    display: none;
+}
+}
 </style>

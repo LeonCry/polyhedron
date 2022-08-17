@@ -233,4 +233,66 @@ beforeDestroy(){
     opacity: 1;
   }
 }
+@media only screen and (orientation: portrait) {
+    .user{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    margin: 20px;
+    text-align: center;
+    transition: 0.55s;
+    right: 0;
+    bottom: 0;
+    border-radius: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: 101;
+}
+.user img{
+    margin-top: 5px;
+}
+.user:hover{
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+}
+/* 设置box */
+.optionbox{
+    position: absolute;
+    margin: 10px;
+    width: 200px;
+    height: 50px;
+    justify-content: space-evenly;
+    display: flex;
+    flex-flow: row-reverse nowrap;
+    transition: 0.55s;
+    right: 60px;
+    bottom: 10px;
+    z-index: 101;
+    border-radius: 20px 20px 20px 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.optionbox:hover{
+    border-radius: 20px 20px 20px 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.optionbox div{
+    align-self: center;
+    width: 50px;
+    height: 35px;
+    transition: 0.55s;
+    text-align: center;
+    border-radius: 100%;
+}
+.optionbox div:hover{
+    background-color: black;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.optionbox div img{
+    margin-top: 5px;
+}
+}
+
+
+
 </style>

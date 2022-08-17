@@ -68,14 +68,14 @@
         </div>
     </div>
     <div class="details">
-      <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h4dpmq2r95j20l3acw1kx.jpg" alt="">
+      <img :src="shop.detailInfo" alt="">
     </div>
     <el-dialog
     class="confirmForm"
   title="确认购买吗?"
   :visible.sync="dialogVisible"
   append-to-body
-  width="30%">
+  :width="width">
   <span>这将从您的余额中扣除<span style="color:orangered;text-weight:500;font-size:2vh"> P{{this.shop.discountPrice*this.createData.buyNum}} </span>且不支持退款.</span>
   <br><br>
   <span>购买后余额: </span>
@@ -114,6 +114,7 @@ data(){
     isStep2:false,
     confirmStatus:null,
     percentage:0,
+    width:'30%',
     createData:{
       buyNum:1,
     },
@@ -255,7 +256,7 @@ methods:{
                   // 更新商品信息
                   // eslint-disable-next-line no-unused-vars
                   this.$axios.post('/api/updateAShopping',{shopId:this.shop.shopId,shopNums:this.shop.shopNums-this.createData.buyNum,allSales:this.shop.allSales + this.createData.buyNum}).then(response=>{
-                    this.$addPxDetail(this.user.userQQ,'支出','购买商品',this.shop.discountPrice*this.createData.buyNum,this.shop.shopName,"在南北市场中购买了"+this.createData.buyNum+"件 '"+this.shop.shopName+"' 的商品,消费了PX币:"+this.shop.discountPrice*this.createData.buyNum);
+                    this.$addPxDetail(this.user.userQQ,0,'购买商品',this.shop.discountPrice*this.createData.buyNum,this.shop.shopName,"在南北市场中购买了"+this.createData.buyNum+"件 '"+this.shop.shopName+"' 的商品,消费了PX币:"+this.shop.discountPrice*this.createData.buyNum);
                   },error=>{
                     console.log(error.message);
                   });
@@ -303,6 +304,9 @@ async getUserMoney(){
 
 },
 created(){
+  if(window.innerWidth<window.innerHeight){
+    this.width = '100%';
+  }
   // 图片created
   for (let i = 1; i <= 6; i++) {
     if(this.$route.query.shop['picSrc'+i]!=""){
@@ -377,7 +381,7 @@ created(){
 .option{
   margin-left: 1.5%;
   width: 63.5%;
-  height: 820px;
+  height: auto;
   padding-bottom: 10px;
   border-radius: 20px;
   padding-top: 10px; 
@@ -409,6 +413,8 @@ created(){
   height: 50px;
   align-self: center;
   border-radius: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   background-color: rgba(255, 68, 0, 0.5);
   box-shadow: 0 0 15px orangered;
   border: 0;
@@ -517,7 +523,120 @@ created(){
   text-align: center;
 }
 
+@media only screen and (orientation: portrait) {
+  .shopDetail{
+  position: relative;
+  width: 99%;
+  height: auto;
+  overflow: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.info{
+  position: relative;
+  width: 98%;
+  left: 0;
+  padding: 0;
+  border-radius: 0;
+  border: 5px dotted whitesmoke;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.intro{
+  position: relative;
+  text-align: left;
+  width: 100%;
+  line-height: 150%;
+  font-weight: 400;
+  font-size: 1.8vh;
+}
+.elimage{
+  border-radius: 15px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+.details{
+  position: relative;
+  top: 100px;
+  width: 98%;
+  height: auto;
+  left: 0;
+  padding: 0;
+  border-radius:0 0 20px 20px;
+  border: 5px dotted whitesmoke;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.05);
+}
 
+.details > img{
+  position: relative;
+    width: 100%;
+    height: auto;
+  padding-top: 0;
+}
+
+
+
+
+.confirmForm{
+  text-align: center;
+}
+.bought{
+  position: relative;
+  top: 60px;
+  width:98%;
+  left: 0;
+  padding: 0;
+  border-radius: 0;
+  border: 5px dotted whitesmoke;
+  background-color: rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.carousel{
+  position: relative;
+  width: 98%;
+  padding-bottom: 10px;
+  border-radius: 15px;
+  padding-top: 0; 
+  border: 1px dotted whitesmoke;
+  background-color: rgba(65, 105, 225, 0.05);
+}
+.option{
+  margin-left: 0;
+  width: 100%;
+  height: auto;
+  padding-bottom: 10px;
+  border-radius: 0;
+  padding-top: 10px; 
+  background-color: rgba(65, 105, 225, 0.05);
+  border: 1px dotted whitesmoke;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  font-size: 1.8vh;
+  font-weight: 300;
+}
+.option span{
+  flex: 2;
+  position: relative;
+  width: 90%;
+  left: 2.5%;
+  line-height: 250%;
+  padding-left: 2.5%;
+  transition: 0.25s;
+  border: 2px solid rgba(0, 0, 0, 0);
+}
+.option span:hover{
+  border-radius: 15px;
+  background-color: white;
+  border: 2px solid black;
+}
+
+
+
+
+}
 
 
 </style>

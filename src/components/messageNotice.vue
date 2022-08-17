@@ -150,4 +150,22 @@ export default {
     transform: translateY(-5px);
   }
 }
+@media only screen and (orientation: portrait) {
+  .divimg{
+    display: none;
+  }
+  .messageNoticebox {
+  position: absolute;
+  width: 300px;
+  height: 100px;
+  display: flex;
+  flex-flow: column nowrap;
+  z-index: 101;
+  bottom: 65px;
+  right: 0;
+  transition: 0.55s;
+  bottom: 0;
+
+}
+}
 </style>

@@ -24,7 +24,7 @@ methods:{
       this.$axios.post('/api/returnShopOrderByName',{buyUser:this.user.userQQ}).then(response=>{
         for (let index = 0; index < response.data.length; index++) {
           const element = response.data[index];
-          if(element.orderStatus=='正在运输'){
+          if(element.orderTrain!='是'){
             this.receiveData.push(element);
           }
         }

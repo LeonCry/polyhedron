@@ -571,4 +571,113 @@ animation: swing-in-top-fwd 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275) revers
     opacity: 1;
   }
 }
+@media only screen and (orientation: portrait) {
+    /* friend样式 */
+.friend{
+    position: absolute;
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    border:none;
+    background-color: #1A191B;
+    transition: 0.55s;
+    right: 0;
+    z-index: 100;
+}
+.friend:hover{
+        transition-delay:0;
+        right: 0;
+        bottom: 0;
+}
+/* friend整个界面hover时带动search搜索框 */
+/* friend整个界面hover时带动好友添加框 */
+.friend:hover~div{
+        transition-delay:0;
+        right: 0;
+        top: 0;
+}
+.friend-topui{
+    position: relative;
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    border-radius: 30px 30px 0 0;
+}
+.friend-topui div{
+    width: 10%;
+    margin-left: 5%;
+
+    transition: 0.55s;
+}
+.camera{
+    width: 150px;
+    background-color: #1A191B;
+}
+.minimize{
+    display: none;
+}
+/* 搜索div样式 */
+.searchbox{
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    flex-flow: row nowrap;
+    height: 40px;
+    transition: 0.55s;
+    border-radius: 20px;
+    background-color: #1A191B;
+    top: 100px;
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.7);
+    z-index: 100;
+}   
+/* 输入框 */
+.searchbox input{
+  border: 0;
+  outline: 0;
+  padding: 10px;
+  padding-left: 30px;
+  transition: 0.5s;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1.8vh;
+  color: white;
+}
+.searchbox input:focus {
+  font-size: 2vh;
+  color: greenyellow;
+}
+.searchbox button{
+  position: absolute;
+  align-self: center;
+  width: 50px;
+  height: 100%;
+  left: 125px;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1.6vh;
+  font-weight: normal;
+  cursor: pointer;
+  color: white;
+  border-radius: 15px;
+  transition: 0.55s;
+  border: 0;
+  margin-left: 38%;
+}
+.searchbox button:hover {
+  box-shadow: 0px 0px 25px rgba(99, 110, 114, 0.5);
+  background-color: rgba(99, 110, 114, 0.33);
+}
+
+
+
+
+
+
+
+}
+
+
+
 </style>

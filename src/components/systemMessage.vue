@@ -52,6 +52,7 @@ export default {
     methods:{
         // 显示聊天框
         systemPageShow(){
+            console.log("xxx");
             // 向chats组件发送数据,显示聊天框
             this.$bus.$emit('systemPageShow',true);
              // 总消息数-
@@ -289,5 +290,53 @@ span{
             transform:  rotate(-5deg);
   }
 }
+
+@media only screen and (orientation: portrait) {
+.frienditem{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    transition: 0.55s;
+    height: 60px;
+    font-size: 1.6vh;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 50px 0 0 50px;
+    background-color: rgba(255, 172, 247, 0.1);
+}
+.frienditem:hover{
+    background-color: rgba(61, 61, 61,1.0);
+    border-radius: 50px 0 0 50px;
+    box-shadow: -8px 0 25px rgba(61, 61, 61, 1);
+    color:white;
+}
+    /* 个性签名 */
+.signs{
+    position: relative;
+    margin-top: 10px;
+    transition: 0.25s;
+    display: flex;
+    width: 120%;
+    height: 20px;
+    overflow: hidden;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+.signs:hover{
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    width: 120%;
+    height: 100px;
+    overflow-y: auto;
+}
+.username img{
+    position: relative;
+    left: 50%;
+}
+}
+
 
 </style>

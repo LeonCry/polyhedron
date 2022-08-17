@@ -283,7 +283,22 @@ mounted(){
 }
 
 
+@media only screen and (orientation: portrait) {
+.cardBox{
+  position: relative;
+  width: 90%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  z-index: 2;
+  height: 370px;
+  background-color: rgba(255, 254, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 20px 20px 50px black;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
 
+}
 
 
 

@@ -45,7 +45,8 @@
               <!-- 表情图标 -->
               <div>
                   <img src="../assets/exsmile.svg" alt="表情" @click="emojiShow">
-                  <img src="../assets/picture.svg" alt="图片" @click="pictureShow">
+                  <input class="upload" ref="upload"  @change="uploadPics" type="file" accept="image/png,image/jpeg" name="file">
+                  <img ref="upimg" id="upimg" src="../assets/picture.svg" alt="图片" @click="pictureShow">
                   <img ref="video" src="../assets/video.svg" alt="视频" @click="videoShow">
                   <img ref="wind" src="../assets/wind.svg" alt="吹一吹" @click="windShow">
               </div>
@@ -132,6 +133,10 @@ export default {
     receiveChatsSum:[],
     // 仅一次请求获得的聊天json list sum
     receiveChats:[],
+    // 上传
+    file:'',
+    // 图片信息
+    picData:'',
       }
   },
   computed:{
@@ -178,6 +183,9 @@ export default {
       },
     //   鼠标按下,开始移动
         moveBegin(e){
+            if(window.innerWidth<window.innerHeight){
+        return 0;
+      }
             // 获得按下的x坐标
             this.pox = e.clientX;
             // 获得按下的y坐标
@@ -207,7 +215,41 @@ export default {
         },
            // 图片提示
     pictureShow(){
-      this.$bus.$emit('chatNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.请等待后续更新..");
+    this.$refs.upload.value = '';
+    // var event = new Event('click');
+    this.$refs.upload.click();
+    },
+    // 上传图片
+    uploadPics(e){
+        // 获得文件名和文件
+      this.file = e.target.files[0];
+      // 限制大小 < 2m
+      if(this.file.size/1024/1024>10){
+      this.$bus.$emit('chatNotice',false,"头像文件大小限制在10MB以内  ");
+      }
+      else{
+        // 可以进行图片回显和图片转二进制
+        const img = document.createElement('img');
+        // const img = document.getElementById('imgs');
+        var windowURL = window.URL || window.webkitURL;
+        var loadImg = windowURL.createObjectURL(this.file);
+        img.setAttribute('src',loadImg);
+        // let blob = new Blob([this.file], { type: "image/png" });
+        setTimeout(() => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0,  canvas.width,  canvas.height)
+        var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+        // return canvas.toDataURL('image/png') 
+        this.picData = canvas.toDataURL('image/'+ext);
+        // img.setAttribute('src',this.picData);
+        this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + "<div><img src='"+this.picData+"'</div>";
+        console.log(this.$refs.typetext.innerHTML);
+        }, 100);
+
+      }
     },
     // 视频通话
     videoShow(){
@@ -239,6 +281,9 @@ export default {
     },
         // 当前窗口鼠标点击改变index
         changeIndex(){
+       if(window.innerWidth<window.innerHeight){
+        return 0;
+      }     
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',106,107,106);
@@ -255,6 +300,7 @@ export default {
         sendMessage(){
            setTimeout(() => {    
             // 如果为空
+            console.log("this.$refs.typetext.innerHTML:",this.$refs.typetext.innerHTML);
             if(this.$refs.typetext.innerHTML == '' || this.$refs.typetext.innerHTML=='<div><br></div><div><br></div>'){
                 this.$refs.typetext.innerHTML = '';
             }
@@ -303,11 +349,13 @@ export default {
             // split . join另一种方法,但是只能在中间
             // this.message.split("&nbsp;").join(" ");
             // this.message.replaceAll("&nbsp;"," ");    
-            this.message = this.message.replaceAll("<img","<img style='max-width:400px;max-height:400px'");
+            this.message = this.message.replaceAll("<img","<img style='position: relative;;max-width:100%;max-height:100%;cursor: pointer;'");
             // 去掉enter造成的换行出现
+            if(this.message.lastIndexOf("<br>")!=-1){
             let pre = this.message.substring(0,this.message.lastIndexOf("<br>"));
             let last = this.message.substring(this.message.lastIndexOf("<br>")+4);
             this.message = pre + last;
+            }
             // this.message = this.message.replace("<img","<div><img");
         },
         // 判断滚动条是否滑动到了顶部
@@ -506,6 +554,7 @@ export default {
 
   },
   mounted(){
+    console.log((document.getElementById('pic')));
     //   实时监听鼠标移动,更改位置数据
         window.addEventListener('mousemove',(e)=>{
             if(this.isMove){
@@ -614,7 +663,12 @@ export default {
            this.$bus.$off('chatboxappear');
            this.$bus.$off('changeZindex');
            this.$bus.$off('chatemoji');
+      },
+        created(){
+      if(window.innerWidth<window.innerHeight){
+        this.settingLocation = {top: 10 + "px", left: 0,zIndex:106};
       }
+  }
 };
 </script>
 
@@ -722,6 +776,13 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     background-color: rgba(47, 53, 66,0.25);
+}
+.upload{
+  cursor: pointer;
+  position: absolute;
+  left: 8.5%;
+  width: 2.5%;
+  opacity: 0;
 }
 /* 表情svg栏 */
 .expression > div{
@@ -937,5 +998,223 @@ padding: 5px;
   }
 }
 
+@media only screen and (orientation: portrait) {
+    .chatbox{
+    position:absolute;
+    width: 100%;
+    height: 170%;
+    top: 0;
+    left: 0;
+    z-index: 106;
+    background-color: #1A191B;
+    box-shadow:0;
+    display: flex;
+    flex-flow: column nowrap;
+    font-size: 2vh;
+    color: white;
+    border-radius: 0;
+}
+.addWidth{
+    width: 100%;
+}
 
+/* 抬头 */
+.toper{
+    position: relative;
+        width: 100%;
+        height: 55px;
+        border-radius: 0;
+        display: flex;
+        transition: 0.55s;
+        flex-flow: row nowrap;
+        background-color: rgba(47, 53, 66,0.25);
+}   
+.toper:hover{
+  background-color: rgba(99, 110, 114, 0.2);
+}
+/* 用户名字 */
+.toper > span{
+    line-height: 55px;
+    flex: 1;
+    text-align: center;
+}
+
+/* 退出按钮 */
+.exit{
+    position: absolute;
+    right:0;
+    z-index: 11;
+    padding-right: 20px;
+    line-height: 65px;
+    cursor: pointer;
+}
+.exit img{
+    transition: 0.8s;
+}
+.exit img:hover{
+    transform: rotateZ(720deg) scale(1.33);
+}
+
+
+/* 中间聊天框+选项框 */
+.content{
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    height: 45%;
+}
+/* 左边聊天框 */
+.chatter{
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    flex: 10;
+}
+/* 右边选项框 */
+.morer{
+    position: relative;
+    height: 100%;
+    flex: 6;
+    transition: 0.1s;
+    background-color: rgba(45, 52, 54,0.1);
+    border-left:2.5px solid rgba(255, 255, 255, 0.1);
+}
+/* 聊天搜索框 */
+.chatsSearch{
+    position: relative;
+    height: 100%;
+    flex: 24;
+    transition: 0.55s;
+    border-left:2.5px solid rgba(255, 255, 255, 0.1);
+}
+/* 表情栏 */
+.expression{
+    position: relative;
+    width: 100%;
+    padding-top: 5px;
+    height: 35px;
+    display: flex;
+    flex-flow: row nowrap;
+    background-color: rgba(47, 53, 66,0.25);
+}
+/* 表情svg栏 */
+.expression > div{
+    position: relative;
+    flex: 15;
+    line-height: 10px;
+}
+.expression > div img{
+    position: relative;
+    margin-left: 20px;
+    margin-right: 10px;
+    transition: 0.55s;
+    cursor: pointer;
+}
+.expression > div img:hover{
+    transform: translateY(-5.55px);
+}
+/* 侧边栏按钮 */
+.expression > div:nth-child(2){
+    position: relative;
+    transition: 0.55s;
+    flex: 1;
+}
+.expression > div:nth-child(2):hover{
+    transform: translateY(-5.55px);
+}
+.expression > div:nth-child(2) img{
+    position: relative;
+    transition: 0.55s;
+    right: 0;
+     cursor: pointer;
+}
+/* 表情栏 */
+.emojicomponents{
+    top: 28%;
+}
+/* 发送消息按钮 */
+.sendMessage{
+position: relative;
+width: 10%;
+height: 100%;
+left: 90%;
+bottom: 135%;
+transition: 0.3s;
+z-index: 5;
+outline: 0;
+border-radius: 10px;
+border: 1px solid rgba(255, 255, 255, 0.2);
+background-color: rgba(0, 0, 0, 0);
+color: darkgray;
+padding: 5px;
+}
+.sendMessage:hover{
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+}
+
+/* 发送消息按钮激活 */
+.sendMessageActive{
+position: relative;
+width: 10%;
+height: 100%;
+left: 90%;
+bottom: 135%;
+transition: 0.3s;
+z-index: 5;
+outline: 0;
+border-radius: 5px;
+border: 1px solid black;
+background-color: white;
+color: black;
+padding: 5px;
+}
+
+/* 输入框 */
+.typetext{
+    position: relative;
+    width: 95%;
+    height: 135%;
+    font-size: 1.8vh;
+    font-weight: bold;
+    color: white;
+    transition: 0.55s;
+    border-radius: 0 0 15px 15px;
+    background-color: rgba(47, 53, 66,0.25);
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    line-height: 25px;
+    overflow-y: auto;
+    outline: 0;
+}
+.typetext:focus{
+    outline: 0.5px solid rgba(0, 0, 0, 0);
+}
+.typetextactive{
+    position: relative;
+    width: 95%;
+    height: 85px;
+    font-size: 1.8vh;
+    font-weight: bold;
+    color: white;
+    transition: 0.2s;
+    border-radius: 0 0 15px 15px;
+    background-color: rgba(47, 53, 66,0.25);
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    line-height: 25px;
+    overflow-y: auto;
+    box-shadow: 0 0 8px white;
+    outline: 0.1px solid white;
+}
+
+}
 </style>

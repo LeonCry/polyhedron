@@ -6,6 +6,7 @@
     <!-- 表情图片 -->
     <div>
       <img src="../assets/exsmile.svg" alt="表情" @click="emojiShow" />
+      <input class="upload" ref="upload"  @change="uploadPics" type="file" accept="image/png,image/jpeg" name="file">
         <img src="../assets/picture.svg" alt="图片" @click="pictureShow"/>
     </div>
     <transition name="emojiT">
@@ -60,10 +61,43 @@ export default {
     emojiDisappear() {
       this.isEmojiShow = false;
     },
+    // 上传图片
+     uploadPics(e){
+        // 获得文件名和文件
+      this.file = e.target.files[0];
+      // 限制大小 < 2m
+      if(this.file.size/1024/1024>10){
+      this.$bus.$emit('chatNotice',false,"头像文件大小限制在10MB以内  ");
+      }
+      else{
+        // 可以进行图片回显和图片转二进制
+        const img = document.createElement('img');
+        // const img = document.getElementById('imgs');
+        var windowURL = window.URL || window.webkitURL;
+        var loadImg = windowURL.createObjectURL(this.file);
+        img.setAttribute('src',loadImg);
+        // let blob = new Blob([this.file], { type: "image/png" });
+        setTimeout(() => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0,  canvas.width,  canvas.height)
+        var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+        // return canvas.toDataURL('image/png') 
+        this.picData = canvas.toDataURL('image/'+ext);
+        // img.setAttribute('src',this.picData);
+        console.log(loadImg);
+        this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + "<div><img src='"+this.picData+"'</div>";
+        }, 100);
+      }
+     },
+
+
     // 发表,进行存数据库
    async publish(){
       this.$bus.$emit('spaceLoading',true,"发表中..!");
-      this.publishContent = this.$refs.typetext.innerHTML.replaceAll("<img","<img style='max-width:350px;max-height:600px'");
+      this.publishContent = this.$refs.typetext.innerHTML.replaceAll("<img","<img style='position: relative;;max-width:100%;max-height:100%'");
       this.$refs.typetext.innerHTML = '';
       let data = {publishQQ:this.user.userQQ,spaceContent:this.publishContent,publishTime:Date.now()};
       // eslint-disable-next-line no-unused-vars
@@ -81,6 +115,11 @@ export default {
         this.publishContent = '';
       });
       
+    },
+    pictureShow(){
+    // var event = new Event('click');
+    this.$refs.upload.value = '';
+    this.$refs.upload.click();
     },
 
     // 发表时,发送通知到sysnotice
@@ -174,11 +213,6 @@ export default {
         // 插入
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + text;
         },
-   // 图片提示
-    pictureShow(){
-      this.$bus.$emit('spaceNotice',false,"目前仅支持截屏-粘贴到输入框的形式插入图片.");
-    },
-
   },
   mounted() {
     // 接收emoji组件的emoji信息,进行添加到输入框
@@ -218,6 +252,13 @@ export default {
   background-color: rgba(47, 53, 66, 0.25);
   overflow-y: auto;
   outline: 0;
+}
+.upload{
+  cursor: pointer;
+  position: absolute;
+  left: 8.5%;
+  width: 2.5%;
+  opacity: 0;
 }
 .writespacebox > div:focus {
   outline: 0.5px solid rgba(0, 0, 0, 0);
@@ -284,6 +325,8 @@ button:hover {
   animation: swing-in-top-fwd 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both
     reverse;
 }
+
+
 
 @keyframes swing-in-top-fwd {
   0% {

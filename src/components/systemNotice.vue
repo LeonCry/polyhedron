@@ -40,7 +40,7 @@ mounted(){
 },
 beforeDestroy(){
     this.$bus.$off('systemNotice');
-}
+},
 }
 </script>
 
