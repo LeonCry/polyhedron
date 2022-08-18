@@ -1,4 +1,5 @@
 <template>
+<div class="allBack">
   <div class="otherBox">
     <div class="topper">
       <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2jkj6o9j218z0u0wlv.jpg" alt="">
@@ -70,7 +71,40 @@
       </el-carousel-item>
     </el-carousel>
     </div>
-    <div class="empty"></div>
+    <div class="empty">
+      <div class="butes">
+        <button class="empty-buts"> <i class="el-icon-search"></i> </button>
+        <button class="empty-buts"> <i class="el-icon-fork-spoon"></i> </button>
+      </div>
+    </div>
+    <div v-show="isDetail" ref="detail" class="detail">
+      <div class="detailBox">
+      <!-- 退出按钮 -->
+      <div class="exit">
+        <img src="../assets/exit2.svg" alt="退出" @click="exitDetail" />
+      </div>
+    <div class="detailimgs">
+        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+    </div>
+    <div class="introduces">
+      <span class="detailTitle">鸡蛋花儿鸡蛋花儿鸡蛋花儿</span>
+      <br><br><br>
+      <span>剂量: 1人份 时间: 约20分钟 已做: 3份 </span>
+      <br><br>
+      <span style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+      <br><br>
+      <div class="more" >
+         详情:
+         <br>
+         鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!
+         <br><br>
+         步骤:
+         <br>
+
+      </div>
+    </div>
+      </div>
+    </div>
     <div class="fooder"  ref="fooder" @touchmove.stop>
       <div class="food-left" ref="foodLeft">
         <food-left-button v-for="type of foodTpye" :key="type.index" :foodTypeProps="type"></food-left-button>
@@ -90,9 +124,19 @@
         
       </div>
     </div>
-    <div class="hasOrder">
-
+    <div ref="hasOrder" class="hasOrder">
+      <div class="trans"></div>
+      <div class="meatsIcon">
+        <img  :src="realIcon" alt="">
+      </div>
+      <div class="orderInfo">
+        <span>菜肴 X 2</span>
+        <span>耗时:40min</span>
+        <span style="color: salmon;font-size:1.8vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+        <span>cooking...</span>
+      </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -107,8 +151,19 @@ name:'other',
 data(){
   return{
     visitorId:'',
+    isDetail:false,
     allPic:['https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2yuiguqj21900u0dmk.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2jkj6o9j218z0u0wlv.jpg'],
     foodTpye:['单人套餐','招牌套餐','热销套餐','主食','涮菜','涮菜组合','餐具'],
+    allIcons:['meea1.svg','meea2.svg','meea3.svg','meea4.svg','meea5.svg',
+              'meea6.svg','meea7.svg','meea8.svg','meea9.svg','meea10.svg',
+              'meea11.svg','meea12.svg','meea13.svg','meea14.svg','meea15.svg',
+              'meea16.svg','meea17.svg','meea18.svg','meea19.svg','meea20.svg',
+              'meea21.svg','meea22.svg','meea23.svg','meea24.svg','meea25.svg',
+              'meea26.svg'],
+    iconTime:0,
+    realIcon:require("../assets/meea/meea1.svg"),
+
+
   }
 },
 methods:{
@@ -121,33 +176,68 @@ getUniqueCode(){
         });
     });
 },
+// icon轮换
+transIcon(){
+setInterval(() => {
+  this.iconTime++;
+  if(this.iconTime==26){
+    this.iconTime = 0;
+  }
+  this.realIcon = require('../assets/meea/'+this.allIcons[this.iconTime]);
+}, 10000);
 },
-
-
-
-
+exitDetail(){
+  this.isDetail = false;
+},
+},
 mounted(){
+  this.transIcon();
   this.getUniqueCode();
+  // detail出现
+  this.$bus.$on('showDetail',(data)=>{
+    this.isDetail = true;
+  })
+  // 闪一下
+  this.$bus.$on('orderShake',(data)=>{
+    if (data=='green') {
+      this.$refs.hasOrder.style.backgroundColor = 'springgreen';
+    }
+    else{
+      this.$refs.hasOrder.style.backgroundColor = 'red';
+    }
+    setTimeout(() => {
+      this.$refs.hasOrder.style.backgroundColor = 'royalblue';
+    }, 330);
+  })
 },
+
 created(){
   // 获得屏幕长
   setTimeout(() => {
     this.$refs.fooder.style.height = window.screen.height-90+ 'px';
     this.$refs.foodLeft.style.height = window.screen.height-90+ 'px';
     this.$refs.foodRight.style.height = window.screen.height-90 + 'px';
+    this.$refs.detail.style.height = window.screen.height + 'px';
   }, 500);
 }
 }
 </script>
 
 <style scoped>
-
+.allBack{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #2b2c34;
+  z-index: 10;
+}
 .otherBox{
-    position: absolute;
+    position: relative;
     background-color: var(--friColor);
-    width: 100%;
+    width: 500px;
     height: 100%;
     z-index: 80;
+    margin-left: 35%;
     transition: 0.55s;
     font-size: 1.2vh;
     overflow: auto;
@@ -155,6 +245,74 @@ created(){
     font-weight: bolder;
     color: rgb(0, 145, 255);
 }
+.detail{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+.detailBox{
+  position: relative;
+  width: 95%;
+  left: 2.5%;
+  top: 7.5%;
+  height: 85%;
+  background-color: rgb(255, 160, 149);
+  border-radius: 15px;
+}
+.detailimgs{
+    position: relative;
+    background-color: rgba(255, 255, 255,0.33);
+    height: 250px;
+    width: auto;
+    display: flex;
+    flex-flow: row nowrap;
+    overflow: hidden;
+    border-radius: 15px;
+}
+.detailimgs img{
+    position: relative;
+    width: auto;
+    height: 250px;
+    /* object-fit: cover; */
+    border-radius: 15px 15px 0 0;
+}
+.introduces{
+  position: relative;
+  width: 100%;
+  border-radius: 15px 15px 0 0;
+  top: -30px;
+  font-size: 1.6vh;
+  color: #2b2c34;
+  height: 400px;
+  background-color: rgb(255, 160, 149);
+}
+.detailTitle{
+  position: relative;
+  font-size: 2vh;
+  color: #2b2c34;
+  width: 100%;
+  padding: 15px;
+  background-color: rgb(255, 186, 178);
+  border-radius: 15px;
+}
+.more{
+  position: relative;
+  width: 90%;
+  left: 4%;
+  max-height: 300px;
+  overflow: auto;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.1);
+  font-size: 1.65vh;
+  color: #303133;
+  padding: 5px;
+  letter-spacing: 1px;
+}
+
+
+
 .topper{
   position: relative;
   width: auto;
@@ -278,7 +436,39 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   z-index: 3;
   width: 100%;
   height: 40px;
+  display: flex;
+  flex-flow: row-reverse nowrap;
   background-color: khaki;
+}
+.butes{
+  position: relative;
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  width: 35%;
+  height: 80%;
+  top: 10%;
+  background-color: #303133;
+  border-radius: 20px;
+
+}
+.empty-buts{
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  /* margin-top: 8px; */
+  margin-right: 25px;
+  background-color: #303133;
+  color: #F2F6FC;
+  font-size: 2.3vh;
+  font-weight: bolder;
+  text-align: center;
+  transition: 0.33s;
+}
+.empty-buts:hover{
+  background-color: royalblue;
+  color: khaki;
 }
 
 .fooder{
@@ -293,6 +483,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   position: relative;
   overflow: auto;
   flex: 2;
+  border-radius: 10px 10px 0 0;
   background-color: rgb(206, 198, 100);
 }
 
@@ -303,11 +494,160 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 }
 .hasOrder{
   position: sticky;
-  width: 35%;
-  height: 80px;
+  width: 45%;
+  height: 68px;
   bottom: 0;
-  border-left: 8px solid khaki;
+  border: 1px solid khaki;
   z-index: 2;
   background-color: royalblue;
+  display: flex;
+  border-radius: 15px;
+  flex-flow: row nowrap;
+  transition: 0.33s;
+}
+.trans{
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  border-radius: 10px;
+  background-color: khaki;
+  transition: 0.55s;
+}
+.hasOrder:hover .trans{
+width: 100%;
+border: 1px solid royalblue;
+}
+.hasOrder:hover .orderInfo{
+color: #303133;
+}
+.meatsIcon{
+  position: relative;
+  width: auto;
+  height: 100%;
+  animation: round 10s linear infinite both;
+}
+.meatsIcon img{
+  position: relative;
+  width: auto;
+  height: 100%;
+  filter: blur(100px);
+  transition: 1s;
+  animation: jello-horizontal 2.7s infinite both;
+}
+.meatsIcon img:hover{
+  filter: blur(0);
+}
+.orderInfo{
+  position: relative;
+  width: 45%;
+  height: 100%;
+  color: white;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  transition: 0.55s;
+}
+.fakeRed{
+position: absolute;
+left: 0;
+opacity: 1;
+width: 15px;
+z-index: 10;
+height: 15px;
+border-radius: 50%;
+background-color: #F56C6C;
+transition: 0.8s;
+}
+.fakeGreen{
+position: absolute;
+right: 0;
+opacity: 1;
+z-index: 10;
+width: 15px;
+height: 15px;
+border-radius: 50%;
+background-color: #67C23A;
+transition: 0.8s;
+}
+/* 退出按钮 */
+.exit {
+  position: absolute;
+  right: 0;
+  z-index: 999;
+  padding-right: 20px;
+  line-height: 65px;
+  cursor: pointer;
+}
+.exit img {
+  transition: 0.8s;
+}
+.exit img:hover {
+  transform: rotateZ(720deg) scale(1.33);
+}
+
+
+@keyframes jello-horizontal {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  33.3%{
+    transform: scale3d(1, 1, 1);
+  }
+  43% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  46.2% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  49.5% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  54.45% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  57.75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  66.6%{
+    transform: scale3d(1, 1, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes round {
+  0%{
+    transform: rotateY(0) scale(0);
+  }
+  5%{
+    transform: rotateY(5deg) scale(1);
+  }
+  90%{
+    transform: rotateY(45deg) scale(1);
+  }
+  95%{
+    transform: rotateY(45deg) scale(0);
+  }
+  100%{
+    transform: rotateY(0) scale(0);
+  }
+}
+
+@media only screen and (orientation: portrait) {
+  .otherBox{
+    position: absolute;
+    background-color: var(--friColor);
+    width: 100%;
+    height: 100%;
+    z-index: 80;
+    margin-left: 0;
+    transition: 0.55s;
+    font-size: 1.2vh;
+    overflow: auto;
+    text-align: center;
+    font-weight: bolder;
+    color: rgb(0, 145, 255);
+}
 }
 </style>
