@@ -1,7 +1,7 @@
 <template>
   <div ref="item" class="foodItem"  :class="{jsChangeBackbefore:isChangeBack}">
     <div class="imgs" @click="showDetail" >
-        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5aacw5zaaj20ia0ia75q.jpg" alt="">
+        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
     </div>
     <div class="intro">
         <span style="font-size:2vh;">整鸡蛋糕儿整鸡蛋糕儿整鸡蛋糕儿</span>
@@ -159,7 +159,7 @@ methods:{
     border-radius: 10px;
 }
 .foodItem:hover{
-    background-color: var(--secColor);
+    background-color:#303133;
     color: white;
 }
 .jsChangeBackbefore{
@@ -169,14 +169,15 @@ methods:{
     position: relative;
     height: 120px;
     margin-top: 8px;
-    width: auto;
+    width: 120px;
     padding-left: 4px;
     border-radius: 10px;
 }
 .imgs img{
     position: relative;
-    width: auto;
-    height: 100%;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
     border-radius: 10px;
 }
 .intro{

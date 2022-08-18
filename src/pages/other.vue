@@ -8,7 +8,7 @@
       <div class="head">
         <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5a34he552j20fy0fytag.jpg" alt="">
       </div>
-      <h1 class="title">嗨吃嗨喝嗨皮<br>Hai eat Hai drink Hai play</h1>
+      <h1 class="title">李大厨<br>I am Chef Li</h1>
       <div class="xux"></div>
       <div class="says">
         <span>好吃程度: <i class="el-icon-star-on yellow"></i><i class="el-icon-star-on yellow"></i><i class="el-icon-star-on yellow"></i>
@@ -56,7 +56,7 @@
         <div class="sail">
           <span>总销量:9854</span>
           <span>一道菜约30分钟</span>
-          <span>平均花费: <i class="el-icon-lollipop" style="color:tomato;font-weight:bolder"></i> X15 </span>
+          <span>人均花费: <i class="el-icon-lollipop" style="color:tomato;font-weight:bolder"></i> X15 </span>
           <br><br>
           <div class="sp">高端的食材往往只需要最简单的烹饪方式,致力于健康时尚的餐饮方式,懂你的心,更懂你的胃,服务无止境,口碑永流传~</div>
         </div>
@@ -73,12 +73,15 @@
     </div>
     <div class="empty">
       <div class="butes">
-        <button class="empty-buts"> <i class="el-icon-search"></i> </button>
-        <button class="empty-buts"> <i class="el-icon-fork-spoon"></i> </button>
+        <input :class="{inputShow:isSearch}" type="text" class="input" placeholder="请输入要搜索的菜肴..">
+        <button class="empty-buts" @click="searchFood" :class="{buttedbuts:isSearch}"> <i class="el-icon-search"></i> </button>
+        <button class="empty-buts" @click="orderAllShow"> <i class="el-icon-s-order"></i> </button>
       </div>
     </div>
+    <transition name="DetailT">
     <div v-show="isDetail" ref="detail" class="detail">
-      <div class="detailBox">
+      <transition name="DetailT-1">
+      <div v-show="isDetail" class="detailBox">
       <!-- 退出按钮 -->
       <div class="exit">
         <img src="../assets/exit2.svg" alt="退出" @click="exitDetail" />
@@ -87,25 +90,51 @@
         <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
     </div>
     <div class="introduces">
-      <span class="detailTitle">鸡蛋花儿鸡蛋花儿鸡蛋花儿</span>
+      <transition name="DetailT-2">
+        <span v-show="isDetail" class="detailTitle">鸡蛋花儿鸡蛋花儿鸡蛋花儿</span>
+      </transition>
       <br><br><br>
-      <span>剂量: 1人份 时间: 约20分钟 已做: 3份 </span>
-      <br><br>
-      <span style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
-      <br><br>
-      <div class="more" >
+      <transition-group name="DetailT-3">
+      <span v-show="isDetail" key="1">剂量: 1人份 时间: 约20分钟 已做: 3份 </span>
+      <br key="3"><br key="4">
+      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+      <br key="5"><br key="6">
+      </transition-group>
+      <transition name="DetailT-4">
+        <div class="tagdiv" v-show="isDetail">
+        <span style="color:aliceblue" class="tags">1人份</span>
+        <span style="color:aliceblue" class="tags">土豆</span>
+        <span style="color:aliceblue" class="tags">鸡蛋</span>
+        <span style="color:aliceblue" class="tags">牛奶</span>
+        <span style="color:aliceblue" class="tags">洋葱</span>
+        <span style="color:aliceblue" class="tags">可乐</span>
+        <span style="color:aliceblue" class="tags">花生</span>
+        <span style="color:aliceblue" class="tags">牛奶</span>
+        <span style="color:aliceblue" class="tags">洋葱</span>
+        <span style="color:aliceblue" class="tags">可乐</span>
+        <span style="color:aliceblue" class="tags">花生</span>
+        </div>
+        </transition>
+      <transition name="DetailT-5">
+      <div v-show="isDetail" class="more" >
          详情:
          <br>
          鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!
          <br><br>
          步骤:
          <br>
-
+         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
+         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
+         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
+         <br><br>
       </div>
+      </transition>
     </div>
       </div>
+      </transition>
     </div>
-    <div class="fooder"  ref="fooder" @touchmove.stop>
+    </transition>
+    <div class="fooder"   ref="fooder" @touchmove.stop>
       <div class="food-left" ref="foodLeft">
         <food-left-button v-for="type of foodTpye" :key="type.index" :foodTypeProps="type"></food-left-button>
       </div>
@@ -124,7 +153,7 @@
         
       </div>
     </div>
-    <div ref="hasOrder" class="hasOrder">
+    <div ref="hasOrder"  @click="orderShow" class="hasOrder">
       <div class="trans"></div>
       <div class="meatsIcon">
         <img  :src="realIcon" alt="">
@@ -133,9 +162,11 @@
         <span>菜肴 X 2</span>
         <span>耗时:40min</span>
         <span style="color: salmon;font-size:1.8vh;"><i class="el-icon-lollipop"></i> X 15 </span>
-        <span>cooking...</span>
+        <span>Cooking <i class="el-icon-loading"></i> </span>
       </div>
     </div>
+    <food-orders></food-orders>
+    <food-all-order></food-all-order>
   </div>
   </div>
 </template>
@@ -144,8 +175,10 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import foodLeftButton from '@/components/foods/foodLeftButton.vue';
 import FoodItem from '@/components/foods/foodItem.vue';
+import FoodOrders from '@/components/foods/foodOrders.vue';
+import FoodAllOrder from '@/components/foods/foodAllOrder.vue';
 export default {
-  components: { foodLeftButton, FoodItem },
+  components: { foodLeftButton, FoodItem, FoodOrders, FoodAllOrder },
 // eslint-disable-next-line vue/multi-word-component-names
 name:'other',
 data(){
@@ -161,6 +194,8 @@ data(){
               'meea21.svg','meea22.svg','meea23.svg','meea24.svg','meea25.svg',
               'meea26.svg'],
     iconTime:0,
+    isSearch:false,
+    searchContent:'',
     realIcon:require("../assets/meea/meea1.svg"),
 
 
@@ -189,6 +224,22 @@ setInterval(() => {
 exitDetail(){
   this.isDetail = false;
 },
+// 展示订单
+orderShow(){
+  this.$bus.$emit('orderShow');
+},
+// 展示所有订单
+orderAllShow(){
+  this.$bus.$emit('allOrderShow');
+},
+// 搜索食物
+searchFood(){
+  this.isSearch = !this.isSearch;
+  this.searchContent = '';
+},
+
+
+
 },
 mounted(){
   this.transIcon();
@@ -206,7 +257,7 @@ mounted(){
       this.$refs.hasOrder.style.backgroundColor = 'red';
     }
     setTimeout(() => {
-      this.$refs.hasOrder.style.backgroundColor = 'royalblue';
+      this.$refs.hasOrder.style.backgroundColor = '#303133';
     }, 330);
   })
 },
@@ -258,14 +309,14 @@ created(){
   left: 2.5%;
   top: 7.5%;
   height: 85%;
-  background-color: rgb(255, 160, 149);
+  background-color: #303133;
   border-radius: 15px;
 }
 .detailimgs{
     position: relative;
     background-color: rgba(255, 255, 255,0.33);
     height: 250px;
-    width: auto;
+    width: 100%;
     display: flex;
     flex-flow: row nowrap;
     overflow: hidden;
@@ -273,42 +324,44 @@ created(){
 }
 .detailimgs img{
     position: relative;
-    width: auto;
+    width: 100%;
     height: 250px;
-    /* object-fit: cover; */
+    object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
 .introduces{
   position: relative;
   width: 100%;
-  border-radius: 15px 15px 0 0;
+  border-radius: 15px;
   top: -30px;
   font-size: 1.6vh;
-  color: #2b2c34;
+  color: aliceblue;
   height: 400px;
-  background-color: rgb(255, 160, 149);
+  background-color: #303133;
 }
 .detailTitle{
   position: relative;
   font-size: 2vh;
-  color: #2b2c34;
+  color: aliceblue;
   width: 100%;
   padding: 15px;
-  background-color: rgb(255, 186, 178);
+  background-color: #303133;
   border-radius: 15px;
 }
 .more{
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 300px;
+  max-height: 180px;
   overflow: auto;
   text-align: left;
   background-color: rgba(255, 255, 255, 0.1);
   font-size: 1.65vh;
-  color: #303133;
+  color: aliceblue;
   padding: 5px;
-  letter-spacing: 1px;
+  border-radius: 15px;
+  letter-spacing: 2px;
+  line-height: 150%;
 }
 
 
@@ -443,7 +496,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 .butes{
   position: relative;
   display: flex;
-  flex-flow: row-reverse nowrap;
+  flex-flow: row nowrap;
   width: 35%;
   height: 80%;
   top: 10%;
@@ -458,7 +511,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   border: none;
   border-radius: 10px;
   /* margin-top: 8px; */
-  margin-right: 25px;
+  margin-left: 25px;
   background-color: #303133;
   color: #F2F6FC;
   font-size: 2.3vh;
@@ -466,9 +519,31 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   text-align: center;
   transition: 0.33s;
 }
-.empty-buts:hover{
+.empty-buts:active{
   background-color: royalblue;
   color: khaki;
+}
+.buttedbuts{
+    background-color: royalblue;
+    color: khaki;
+}
+.input{
+  position: absolute;
+  width: 0;
+  height: 100%;
+  border-radius: 15px 0 0 15px;
+  padding-left: 20px;
+  /* margin-top: 8px; */
+  right: 135px;
+  border: none;
+  outline: none;
+  background-color: #303133;
+  color: #F2F6FC;
+  font-size: 1.6vh;
+  transition: 0.55s;
+}
+.inputShow{
+  width: 200px;
 }
 
 .fooder{
@@ -499,7 +574,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   bottom: 0;
   border: 1px solid khaki;
   z-index: 2;
-  background-color: royalblue;
+  background-color: #303133;
   display: flex;
   border-radius: 15px;
   flex-flow: row nowrap;
@@ -515,7 +590,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 }
 .hasOrder:hover .trans{
 width: 100%;
-border: 1px solid royalblue;
+border: 1px solid #303133;
 }
 .hasOrder:hover .orderInfo{
 color: #303133;
@@ -584,6 +659,70 @@ transition: 0.8s;
 .exit img:hover {
   transform: rotateZ(720deg) scale(1.33);
 }
+
+/* 动画效果 */
+    .DetailT-enter-active{
+        animation: slide-top 0.25s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-leave-active{
+        animation: slide-top 0.4s 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+    .DetailT-1-enter-active{
+        animation: tilt-in-right-1 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-1-leave-active{
+        animation: tilt-in-right-1 0.4s 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+    .DetailT-2-enter-active{
+        animation: slide-top 0.4s 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-2-leave-active{
+        animation: slide-top 0.2s 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+    .DetailT-3-enter-active{
+        animation: slide-top 0.4s 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-3-leave-active{
+        animation: slide-top 0.2s 0.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+    .DetailT-4-enter-active{
+        animation: slide-top 0.4s 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-4-leave-active{
+        animation: slide-top 0.2s 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+    .DetailT-5-enter-active{
+        animation: slide-top 0.4s 1.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    }
+    .DetailT-5-leave-active{
+        animation: slide-top 0.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
+    }
+
+
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes tilt-in-right-1 {
+  0% {
+    transform: rotateX(-30deg) translateX(300px) skewX(30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg) translateX(0) skewX(0deg);
+    opacity: 1;
+  }
+}
+
+
+
 
 
 @keyframes jello-horizontal {
