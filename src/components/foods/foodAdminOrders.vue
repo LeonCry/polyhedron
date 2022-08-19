@@ -21,23 +21,25 @@
         <br><br>
         <span style="color:aliceblue">下单编号: 9d6793f7bf73b05cf69767ef39e8c74b</span>
         <br><br>
-        <span style="color:aliceblue">订单状态:正在烹饪... 负责厨师: 李大厨</span>
-        <br><br>
         </div>
         </transition>
       <transition-group name="DetailT-4">
-      <span v-show="isDetail" key="1">用餐人数: 4人 已点菜肴: 3份 烹饪时间: 约60分钟 </span>
+      <span v-show="isDetail" key="1">用餐: 4人 菜肴: 3份 时间: 约60分钟 状态:正在烹饪</span>
       <br key="3"><br key="4">
       <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
       <br key="5"><br key="6">
       </transition-group>
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
+        <admin-order-item></admin-order-item>
+        <admin-order-item></admin-order-item>
+        <admin-order-item></admin-order-item>
+        <admin-order-item></admin-order-item>
+        <admin-order-item></admin-order-item>
          </div>
+      </transition>
+      <transition name="DetailT-5">
+      <button v-show="isDetail" class="updateOrder" key="2">更改状态为:{{nextStatus}}</button>
       </transition>
     </div>
     </div>
@@ -47,13 +49,15 @@
 </template>
 
 <script>
-import hasOrderItem from './hasOrderItem.vue';
+import AdminOrderItem from './adminOrderItem.vue';
 export default {
-  components: { hasOrderItem },
-name:'foodOrders',
+components: { AdminOrderItem },
+name:'foodAminOrders',
+
 data(){
   return{
     isDetail:false,
+    nextStatus:'正在烹饪',
   }
 },
 methods:{
@@ -62,7 +66,7 @@ exitDetail(){
 },
 },
 mounted(){
-this.$bus.$on('orderShow',()=>{
+this.$bus.$on('adminOrderShow',()=>{
   this.isDetail = true;
 });
 },
@@ -80,7 +84,7 @@ created(){
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 9000;
+  z-index: 9600;
   background-color: rgba(0, 0, 0, 0.55);
 }
 .order{
@@ -166,7 +170,19 @@ created(){
   line-height: 150%;
   transition: 0.66s;
 }
+.updateOrder{
+  position: relative;
+  margin-top: 15px;
+  width: 160px;
+  height: 40px;
+  border: none;
+  background-color: khaki;
+  font-size: 1.6vh;
+  border-radius: 15px;
+  box-shadow: khaki 0 0 10px;
+  color: #303133;
 
+}
 
 /* 动画效果 */
     .DetailT-enter-active{

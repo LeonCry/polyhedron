@@ -359,11 +359,11 @@ this.allSpaceSum = goodsSpace;
      this.$bus.$off('spaceappear');
      this.$bus.$off('changeZindex');
   },
-  created(){
-      if(window.innerWidth<window.innerHeight){
-        this.settingLocation = {top: 10 + "px", left: 0,zIndex:110};
-      }
-  }
+  // created(){
+  //     if(window.innerWidth<window.innerHeight){
+  //       this.settingLocation = {top: 10 + "px", left: 0,zIndex:110};
+  //     }
+  // }
 };
 </script>
 

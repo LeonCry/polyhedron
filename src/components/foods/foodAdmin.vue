@@ -8,35 +8,31 @@
         <img src="../../assets/exit2.svg" alt="退出" @click="exitDetail" />
       </div>
     <div class="detailimgs">
-        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5bc893t2cj21900u0q6q.jpg" alt="">
+        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5bc5uf82bj21940u0wgx.jpg" alt="">
     </div>
     <div class="introduces">
       <transition name="DetailT-2">
-        <span v-show="isDetail" class="detailTitle">订 单 详 情</span>
+        <span v-show="isDetail" class="detailTitle">管 理 订 单</span>
       </transition>
       <br><br>
       <transition name="DetailT-3">
         <div class="tagdiv" v-show="isDetail">
-        <span style="color:aliceblue">下单时间: 2022-2-2 13:59:40</span>
-        <br><br>
-        <span style="color:aliceblue">下单编号: 9d6793f7bf73b05cf69767ef39e8c74b</span>
-        <br><br>
-        <span style="color:aliceblue">订单状态:正在烹饪... 负责厨师: 李大厨</span>
+        <span style="color:aliceblue">总订单数: 26</span>
         <br><br>
         </div>
         </transition>
       <transition-group name="DetailT-4">
-      <span v-show="isDetail" key="1">用餐人数: 4人 已点菜肴: 3份 烹饪时间: 约60分钟 </span>
-      <br key="3"><br key="4">
+      <span v-show="isDetail" key="1">总收入棒棒糖 </span>
       <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
       <br key="5"><br key="6">
       </transition-group>
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
+        <food-admin-item></food-admin-item>
+        <food-admin-item></food-admin-item>
+        <food-admin-item></food-admin-item>
+        <food-admin-item></food-admin-item>
+        <food-admin-item></food-admin-item>
          </div>
       </transition>
     </div>
@@ -47,10 +43,10 @@
 </template>
 
 <script>
-import hasOrderItem from './hasOrderItem.vue';
+import FoodAdminItem from './foodAdminItem.vue';
 export default {
-  components: { hasOrderItem },
-name:'foodOrders',
+  components: {FoodAdminItem },
+name:'foodAdmin',
 data(){
   return{
     isDetail:false,
@@ -62,7 +58,7 @@ exitDetail(){
 },
 },
 mounted(){
-this.$bus.$on('orderShow',()=>{
+this.$bus.$on('adminBox',()=>{
   this.isDetail = true;
 });
 },
@@ -80,7 +76,7 @@ created(){
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 9000;
+  z-index: 9500;
   background-color: rgba(0, 0, 0, 0.55);
 }
 .order{
@@ -91,7 +87,6 @@ created(){
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
-  box-shadow: black 0 0 15px;
 }
 /* 退出按钮 */
 .exit {
@@ -134,13 +129,6 @@ created(){
   color: aliceblue;
   height: 400px;
   background-color: #303133;
-  transition: 0.33s;
-}
-.introduces:hover{
-    top: -150px;
-}
-.introduces:hover .more{
-    max-height: 320px;
 }
 .detailTitle{
   position: relative;
@@ -155,7 +143,7 @@ created(){
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 200px;
+  max-height: 300px;
   overflow: auto;
   text-align: left;
   font-size: 1.65vh;
@@ -164,7 +152,6 @@ created(){
   border-radius: 15px;
   letter-spacing: 2px;
   line-height: 150%;
-  transition: 0.66s;
 }
 
 

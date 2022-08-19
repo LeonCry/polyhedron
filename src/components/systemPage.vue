@@ -229,11 +229,11 @@ export default {
     this.$bus.$off("changeZindex");
     this.$bus.$off("chatemoji");
   },
-    created(){
-      if(window.innerWidth<window.innerHeight){
-        this.ChatLocation = {top: 10 + "px", left: 0,zIndex:108};
-      }
-  }
+  //   created(){
+  //     if(window.innerWidth<window.innerHeight){
+  //       this.ChatLocation = {top: 10 + "px", left: 0,zIndex:108};
+  //     }
+  // }
 };
 </script>
 

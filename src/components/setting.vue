@@ -562,12 +562,6 @@ export default {
     this.$bus.$off("settingappear");
     this.$bus.$off("changeZindex");
   },
-  created(){
-      if(window.innerWidth<window.innerHeight){
-        this.settingLocation = {top: 10 + "px", left: 0,zIndex:113};
-      }
-  }
-
 };
 </script>
 

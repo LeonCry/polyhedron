@@ -1,26 +1,21 @@
 <template>
-  <div ref="item" class="foodItem"  :class="{jsChangeBackbefore:isChangeBack}">
+  <div ref="item" class="foodItem"  :class="{jsChangeBackbefore:isChangeBack,'slideInLeft':isVisialy}">
     <div class="imgs" @click="showDetail" >
-        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+        <img :src="foodProp.foodPic" alt="">
     </div>
     <div class="intro">
-        <span style="font-size:2vh;">整鸡蛋糕儿整鸡蛋糕儿整鸡蛋糕儿</span>
+        <span style="font-size:2vh;">{{foodProp.foodName}}</span>
         <br>
         <div class="tagdiv">
-        <span class="tags">1人份</span>
-        <span class="tags">土豆</span>
-        <span class="tags">鸡蛋</span>
-        <span class="tags">牛奶</span>
-        <span class="tags">洋葱</span>
-        <span class="tags">可乐</span>
-        <span class="tags">花生</span>
+        <span class="tags">{{foodProp.foodCopy}}人份</span>    
+        <span class="tags" v-for="material of foodMaterial" :key="material.index">{{material}}</span>
         <span class="tags">. . .</span>
         </div>
-        <span>已做: 3次 </span>
-        <span>  <i class="el-icon-watch"></i>: 约20分钟</span>
+        <span>已做: {{foodProp.foodMadeNums}}份 </span>
+        <span>  <i class="el-icon-watch"></i>: 约{{foodProp.foodMadeTimes}}分钟</span>
         <br>
         <div class="cost">
-             <span><i class="el-icon-lollipop"></i> X 15 </span>
+             <span><i class="el-icon-lollipop"></i> X {{foodProp.foodPrice}} </span>
              <div class="buyButs">
                 <button ref="desbut" v-show="orderNum!=0" @click="desNum"  class="but-des"> - </button>
                 <!-- 红色小球 -->
@@ -38,12 +33,16 @@
 <script>
 export default {
 name:'foodItem',
+props:['foodProp'],
 data(){
     return{
         orderNum:0,
         isGreenActive:false,
         isRedActive:false,
         isChangeBack:false,
+        foodMaterial:[],
+        sendMaterial:[],
+        isVisialy:false,
     }
 },
 methods:{
@@ -136,8 +135,45 @@ methods:{
 
     },
     showDetail(){
-        this.$bus.$emit('showDetail');
-    }
+        this.$bus.$emit('showDetail',this.foodProp,this.sendMaterial);
+    },
+    // 将foodProp中的材料进行分块
+    foodMaterialSplit(){
+        this.foodMaterial = this.foodProp.foodMaterial.split(',');
+        this.sendMaterial = this.foodMaterial;
+        if(this.foodMaterial.length>6){
+            this.foodMaterial = this.foodMaterial.slice(0,6);
+        }
+        console.log(this.foodMaterial);
+    },
+
+},
+
+mounted(){
+    this.foodMaterialSplit();
+    if(this.$refs.item!=undefined){
+                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom<0){
+                    this.isVisialy = false;
+                }
+                else{
+                    this.isVisialy = true;
+                } 
+            }
+    this.$bus.$on('scollLinstener',()=>{
+        setTimeout(() => {
+            if(this.$refs.item!=undefined){
+                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom<0){
+                    this.isVisialy = false;
+                }
+                else{
+                    this.isVisialy = true;
+                } 
+            }
+        }, 10);
+    })
+},
+beforeDestroy(){
+
 }
 }
 </script>
@@ -148,7 +184,7 @@ methods:{
     width: 97%;
     height: 150px;
     left: 2%;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     padding-left: 3px;
     padding-bottom: 10px;
     background-color: var(--friColor);
@@ -156,7 +192,11 @@ methods:{
     flex-flow: row nowrap;
     color: #2b2c34;
     transition: 0.33s;
+    opacity: 0;
     border-radius: 10px;
+}
+.slideInLeft{
+    animation: slide-InLeft 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 .foodItem:hover{
     background-color:#303133;
@@ -194,7 +234,7 @@ methods:{
   margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
-  height: auto;
+  height: 50px;
   display: flex;
   flex-flow: row wrap;
 }
@@ -271,7 +311,7 @@ width: 15px;
 height: 15px;
 border-radius: 50%;
 background-color: #F56C6C;
-transition: 0.001s;
+/* transition: 0.001s; */
 }
 .fakeGreen{
 position: absolute;
@@ -293,10 +333,19 @@ width: 15px;
 height: 15px;
 border-radius: 50%;
 background-color: #67C23A;
-transition: 0.001s;
+/* transition: 0.001s; */
 }
 
-
+@keyframes slide-InLeft {
+    0%{
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    100%{
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
 @media only screen and (orientation: portrait) {
 .foodItem{

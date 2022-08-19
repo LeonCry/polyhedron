@@ -8,7 +8,7 @@
         <img src="../../assets/exit2.svg" alt="退出" @click="exitDetail" />
       </div>
     <div class="detailimgs">
-        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5bc893t2cj21900u0q6q.jpg" alt="">
+        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5bw5w7rqjj21900u0q7e.jpg" alt="">
     </div>
     <div class="introduces">
       <transition name="DetailT-2">
@@ -88,6 +88,7 @@ created(){
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
+  box-shadow: black 0 0 15px;
 }
 /* 退出按钮 */
 .exit {

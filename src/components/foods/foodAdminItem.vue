@@ -10,9 +10,10 @@
     <span style="color:darkgray">用餐人数: 2人</span>
     <br>
     <span style="color:darkgray">点单菜肴: 2份</span>
-    </div>
-    <div>
-        <br><span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x15</span>
+    <br>
+    <span style="color:darkgray">订单状态: 已下单|烹饪中|已完成</span>
+    <br>
+    <span style="color: salmon;font-size:1.4vh;">本单收入:<i class="el-icon-lollipop"></i>x15</span>
     </div>
   </div>
   </div>
@@ -20,13 +21,13 @@
 
 <script>
 export default {
-name:'hasOrderAllItem',
+name:'foodAdminItem',
 
 
 methods:{
     // 展示订单详情
     showDetail(){
-        this.$bus.$emit('orderShow');
+        this.$bus.$emit('adminOrderShow');
     },
 }
 }
@@ -50,15 +51,15 @@ methods:{
 }
 .dimgs{
     position: relative;
-    height: 65px;
-    width: 65px;
+    height: 100px;
+    width: 100px;
     padding: 10px;
     border-radius: 10px;
 }
 .dimgs img{
     position: relative;
-    width: 65px;
-    height: 65px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 10px;
 }

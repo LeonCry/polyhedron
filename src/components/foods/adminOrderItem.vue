@@ -14,7 +14,8 @@
     <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x15</span>
     </div>
     <div>
-       <i class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish}"></i>
+        <button v-show="!isFinish" @click="finishIt" class="updateOrder">已出锅</button>
+       <i v-show="isFinish" class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish}"></i>
     </div>
   </div>
   </div>
@@ -22,11 +23,16 @@
 
 <script>
 export default {
-name:'hasOrderItem',
+name:'adminOrderItem',
 data(){
   return{
-    isFinish:true,
+    isFinish:false,
   }
+},
+methods:{
+    finishIt(){
+        this.isFinish = true;
+    }
 }
 }
 </script>
@@ -70,10 +76,23 @@ data(){
     flex-flow: row nowrap;
     justify-content: space-around;
 }
+.updateOrder{
+  position: relative;
+  margin-top: 20px;
+  width: 60px;
+  height: 40px;
+  border: none;
+  background-color: khaki;
+  font-size: 1.2vh;
+  border-radius: 15px;
+  box-shadow: khaki 0 0 10px;
+  color: #303133;
+}
 .icon{
   margin-top: 32px;
   font-size: 2vh;
   color: khaki;
+  transition: 0.33s;
 }
 .finish{
   background-color: rgb(46, 139, 87,0.33);

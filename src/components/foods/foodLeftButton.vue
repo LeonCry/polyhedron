@@ -18,6 +18,7 @@ methods:{
     chooseIt(){
             this.isChoosen = true;
             this.$bus.$emit('foodButChoosen',this.type);
+            this.$bus.$emit('foodsByType',this.type);
     }
 },
 mounted(){

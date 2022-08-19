@@ -4,7 +4,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 //引入 userinfo相关store
 import userInfo from './userInfo'
-
+import foodOrder from './foodOrder'
 //应用Vuex插件
 Vue.use(Vuex)
    
@@ -13,5 +13,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     modules:{
         userInfo,
+        foodOrder,
     }
 })

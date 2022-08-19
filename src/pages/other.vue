@@ -1,8 +1,12 @@
 <template>
 <div class="allBack">
   <div class="otherBox">
+    <fooder-creater></fooder-creater>
+    <food-admin-orders></food-admin-orders>
+    <food-admin></food-admin>
     <div class="topper">
       <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2jkj6o9j218z0u0wlv.jpg" alt="">
+      <el-button @click="admin" class="admin" round>返回</el-button>
     </div>
     <div class="intro">
       <div class="head">
@@ -78,79 +82,13 @@
         <button class="empty-buts" @click="orderAllShow"> <i class="el-icon-s-order"></i> </button>
       </div>
     </div>
-    <transition name="DetailT">
-    <div v-show="isDetail" ref="detail" class="detail">
-      <transition name="DetailT-1">
-      <div v-show="isDetail" class="detailBox">
-      <!-- 退出按钮 -->
-      <div class="exit">
-        <img src="../assets/exit2.svg" alt="退出" @click="exitDetail" />
-      </div>
-    <div class="detailimgs">
-        <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
-    </div>
-    <div class="introduces">
-      <transition name="DetailT-2">
-        <span v-show="isDetail" class="detailTitle">鸡蛋花儿鸡蛋花儿鸡蛋花儿</span>
-      </transition>
-      <br><br><br>
-      <transition-group name="DetailT-3">
-      <span v-show="isDetail" key="1">剂量: 1人份 时间: 约20分钟 已做: 3份 </span>
-      <br key="3"><br key="4">
-      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
-      <br key="5"><br key="6">
-      </transition-group>
-      <transition name="DetailT-4">
-        <div class="tagdiv" v-show="isDetail">
-        <span style="color:aliceblue" class="tags">1人份</span>
-        <span style="color:aliceblue" class="tags">土豆</span>
-        <span style="color:aliceblue" class="tags">鸡蛋</span>
-        <span style="color:aliceblue" class="tags">牛奶</span>
-        <span style="color:aliceblue" class="tags">洋葱</span>
-        <span style="color:aliceblue" class="tags">可乐</span>
-        <span style="color:aliceblue" class="tags">花生</span>
-        <span style="color:aliceblue" class="tags">牛奶</span>
-        <span style="color:aliceblue" class="tags">洋葱</span>
-        <span style="color:aliceblue" class="tags">可乐</span>
-        <span style="color:aliceblue" class="tags">花生</span>
-        </div>
-        </transition>
-      <transition name="DetailT-5">
-      <div v-show="isDetail" class="more" >
-         详情:
-         <br>
-         鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!鸡蛋糕口感清香,滑嫩,老少皆宜!
-         <br><br>
-         步骤:
-         <br>
-         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
-         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
-         1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱1.开火 2.关火 3.热爱
-         <br><br>
-      </div>
-      </transition>
-    </div>
-      </div>
-      </transition>
-    </div>
-    </transition>
-    <div class="fooder"   ref="fooder" @touchmove.stop>
+    <food-details></food-details>
+    <div class="fooder" ref="fooder" @touchmove.stop>
       <div class="food-left" ref="foodLeft">
         <food-left-button v-for="type of foodTpye" :key="type.index" :foodTypeProps="type"></food-left-button>
       </div>
       <div class="food-right" ref="foodRight">
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-        <food-item></food-item>
-
-
-        
+        <food-item v-for="food of allFoods" :key="food.foodId" :foodProp="food"></food-item>
       </div>
     </div>
     <div ref="hasOrder"  @click="orderShow" class="hasOrder">
@@ -170,15 +108,18 @@
   </div>
   </div>
 </template>
-
 <script>
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import foodLeftButton from '@/components/foods/foodLeftButton.vue';
 import FoodItem from '@/components/foods/foodItem.vue';
 import FoodOrders from '@/components/foods/foodOrders.vue';
 import FoodAllOrder from '@/components/foods/foodAllOrder.vue';
+import FooderCreater from '@/components/foods/fooderCreater.vue';
+import FoodAdmin from '@/components/foods/foodAdmin.vue';
+import FoodAdminOrders from '@/components/foods/foodAdminOrders.vue';
+import FoodDetails from '@/components/foods/foodDetails.vue';
 export default {
-  components: { foodLeftButton, FoodItem, FoodOrders, FoodAllOrder },
+  components: { foodLeftButton, FoodItem, FoodOrders, FoodAllOrder, FooderCreater, FoodAdmin, FoodAdminOrders, FoodDetails },
 // eslint-disable-next-line vue/multi-word-component-names
 name:'other',
 data(){
@@ -186,7 +127,7 @@ data(){
     visitorId:'',
     isDetail:false,
     allPic:['https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2yuiguqj21900u0dmk.jpg','https://tva1.sinaimg.cn/large/e6c9d24ely1h5a2jkj6o9j218z0u0wlv.jpg'],
-    foodTpye:['单人套餐','招牌套餐','热销套餐','主食','涮菜','涮菜组合','餐具'],
+    foodTpye:['所有菜肴'],
     allIcons:['meea1.svg','meea2.svg','meea3.svg','meea4.svg','meea5.svg',
               'meea6.svg','meea7.svg','meea8.svg','meea9.svg','meea10.svg',
               'meea11.svg','meea12.svg','meea13.svg','meea14.svg','meea15.svg',
@@ -199,6 +140,9 @@ data(){
     realIcon:require("../assets/meea/meea1.svg"),
 
 
+    allFoods:'',
+    saveAllFoods:'',
+    foodItemShow:true,
   }
 },
 methods:{
@@ -221,9 +165,6 @@ setInterval(() => {
   this.realIcon = require('../assets/meea/'+this.allIcons[this.iconTime]);
 }, 10000);
 },
-exitDetail(){
-  this.isDetail = false;
-},
 // 展示订单
 orderShow(){
   this.$bus.$emit('orderShow');
@@ -237,17 +178,40 @@ searchFood(){
   this.isSearch = !this.isSearch;
   this.searchContent = '';
 },
-
-
+// 返回admin
+admin(){
+  this.$bus.$emit('adminShow');
+},
+scoller(){
+this.$bus.$emit('scollLinstener');
+},
+// 初始时获得所有食物信息
+getAllFoods(){
+  this.$axios.post('/api/selectAllFoods').then(response=>{
+    this.allFoods = response.data;
+    this.saveAllFoods = response.data;
+    for (let index = 0; index < response.data.length; index++) {
+      var sameType = false;
+      const element = response.data[index];
+      for (let j = 0; j < this.foodTpye.length; j++) {
+          if(element.foodType==this.foodTpye[j]){
+            sameType = true;
+          }
+      }
+      if(!sameType){
+        this.foodTpye.push(element.foodType);
+      }
+    }
+    console.log(this.foodTpye);
+  },error=>{
+    console.log(error.message);
+  });
+}
 
 },
 mounted(){
   this.transIcon();
   this.getUniqueCode();
-  // detail出现
-  this.$bus.$on('showDetail',(data)=>{
-    this.isDetail = true;
-  })
   // 闪一下
   this.$bus.$on('orderShake',(data)=>{
     if (data=='green') {
@@ -259,17 +223,42 @@ mounted(){
     setTimeout(() => {
       this.$refs.hasOrder.style.backgroundColor = '#303133';
     }, 330);
+  });
+  // 根据分类展示菜肴
+  this.$bus.$on('foodsByType',(data)=>{
+    if(data=='所有菜肴'){
+      this.allFoods = this.saveAllFoods;
+    }
+    else{
+      this.allFoods = [];
+      for (let index = 0; index < this.saveAllFoods.length; index++) {
+        const element = this.saveAllFoods[index];
+        if(element.foodType==data){
+          this.allFoods.push(element);
+        }
+      }
+    }
   })
-},
 
+// 元素滚动
+this.$refs.foodRight.addEventListener('scroll',this.scoller,true);
+window.addEventListener('scroll',this.scoller,true);
+},
+destroyed(){
+this.$refs.foodRight.removeEventListener('scroll',this.scoller,true);
+window.removeEventListener('scroll',this.scoller,true);
+},
 created(){
   // 获得屏幕长
   setTimeout(() => {
     this.$refs.fooder.style.height = window.screen.height-90+ 'px';
     this.$refs.foodLeft.style.height = window.screen.height-90+ 'px';
     this.$refs.foodRight.style.height = window.screen.height-90 + 'px';
-    this.$refs.detail.style.height = window.screen.height + 'px';
   }, 500);
+  // 初始化内容
+  setTimeout(() => {
+    this.getAllFoods();
+  }, 100);
 }
 }
 </script>
@@ -347,6 +336,18 @@ created(){
   padding: 15px;
   background-color: #303133;
   border-radius: 15px;
+}
+.admin{
+    position: absolute;
+    z-index:5;
+    background-color:rgba(0,0,0,0.5);
+    border:none;
+    font-size:1.6vh;
+    color:white;
+    /* bottom: 20%; */
+    top: 25%;
+    left: 1.5%;
+    transition: 0.33s;
 }
 .more{
   position: relative;
@@ -644,81 +645,16 @@ border-radius: 50%;
 background-color: #67C23A;
 transition: 0.8s;
 }
-/* 退出按钮 */
-.exit {
-  position: absolute;
-  right: 0;
-  z-index: 999;
-  padding-right: 20px;
-  line-height: 65px;
-  cursor: pointer;
-}
-.exit img {
-  transition: 0.8s;
-}
-.exit img:hover {
-  transform: rotateZ(720deg) scale(1.33);
-}
-
-/* 动画效果 */
-    .DetailT-enter-active{
-        animation: slide-top 0.25s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-leave-active{
-        animation: slide-top 0.4s 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
-    .DetailT-1-enter-active{
-        animation: tilt-in-right-1 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-1-leave-active{
-        animation: tilt-in-right-1 0.4s 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
-    .DetailT-2-enter-active{
-        animation: slide-top 0.4s 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-2-leave-active{
-        animation: slide-top 0.2s 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
-    .DetailT-3-enter-active{
-        animation: slide-top 0.4s 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-3-leave-active{
-        animation: slide-top 0.2s 0.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
-    .DetailT-4-enter-active{
-        animation: slide-top 0.4s 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-4-leave-active{
-        animation: slide-top 0.2s 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
-    .DetailT-5-enter-active{
-        animation: slide-top 0.4s 1.6s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-    }
-    .DetailT-5-leave-active{
-        animation: slide-top 0.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both reverse;
-    }
 
 
 
-@keyframes slide-top {
-  0% {
-    transform: translateY(100px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-@keyframes tilt-in-right-1 {
-  0% {
-    transform: rotateX(-30deg) translateX(300px) skewX(30deg);
-    opacity: 0;
-  }
-  100% {
-    transform: rotateX(0deg) translateX(0) skewX(0deg);
-    opacity: 1;
-  }
+@keyframes round2{
+    0%{
+        transform: rotate(0);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
 }
 
 

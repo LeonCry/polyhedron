@@ -18,7 +18,8 @@ import emoji from 'node-emoji';
 import  VueCookies  from 'vue-cookies';
 import PubSub from 'pubsub-js'
 Vue.prototype.$PubSub = PubSub
-
+// wow引入
+import 'wowjs/css/libs/animate.css';
 //axios的引入
 import axios from 'axios';
 
