@@ -1,3 +1,4 @@
+import axios from "axios";
 export default{
     // 开启命名空间
     namespaced:true,
@@ -10,6 +11,17 @@ export default{
         uploadOrderUser(context,value){
             context.commit('SAVEORDERUSER',value);
         },
+        // 全局保存订单内容
+        uploadOrderConent(context,value){
+            var newValue = JSON.stringify(value);
+            // eslint-disable-next-line no-unused-vars
+            axios.post('/api/updateFoodOrders',{orderId:context.state.orders.orderId,orderContent:newValue}).then(response=>{
+
+            },error=>{
+                console.log(error.message);
+            });
+            context.commit('SAVECONTENT',value);
+        },
 
     },
     mutations:{
@@ -21,11 +33,16 @@ export default{
         SAVEORDERUSER(state,value){
             state.orders.orderUser = value;
         },
+        // 保存该订单用户
+        SAVECONTENT(state,value){
+            state.orders.orderContent = value;
+        },
     },
     state:{
         orders:{
             orderId:'',
             orderUser:'',
+            orderContent:[],
         },
     },
 }

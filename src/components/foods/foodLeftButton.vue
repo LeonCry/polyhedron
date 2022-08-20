@@ -27,6 +27,11 @@ mounted(){
             this.isChoosen = false;
         }
     })
+     this.$bus.$on('leftButtonOneClick',()=>{
+        if(this.type=='所有菜肴'){
+            this.chooseIt();
+        }
+     });
 }
 }
 </script>

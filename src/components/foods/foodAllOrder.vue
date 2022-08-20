@@ -17,23 +17,20 @@
       <br><br>
       <transition name="DetailT-3">
         <div class="tagdiv" v-show="isDetail">
-        <span style="color:aliceblue">用户编号: 9d6793f7bf73b05cf69767ef39e8c74b</span>
+        <span v-if="allData" style="color:aliceblue">用户编号: {{allData[0].orderPerson}}</span>
         <br><br>
-        <span style="color:aliceblue">订单数: 26</span>
+        <span style="color:aliceblue">订单数: {{allData.length}}</span>
         <br><br>
         </div>
         </transition>
       <transition-group name="DetailT-4">
       <span v-show="isDetail" key="1">总花费棒棒糖 </span>
-      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X {{priceTotal}} </span>
       <br key="5"><br key="6">
       </transition-group>
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
-        <has-order-all-item></has-order-all-item>
-        <has-order-all-item></has-order-all-item>
-        <has-order-all-item></has-order-all-item>
-        <has-order-all-item></has-order-all-item>
+        <has-order-all-item v-for="data of allData" :key="data.orderId" :dataProp="data"></has-order-all-item>
          </div>
       </transition>
     </div>
@@ -51,6 +48,8 @@ name:'foodAllOrder',
 data(){
   return{
     isDetail:false,
+    allData:'',
+    priceTotal:0,
   }
 },
 methods:{
@@ -59,8 +58,29 @@ exitDetail(){
 },
 },
 mounted(){
-this.$bus.$on('allOrderShow',()=>{
+this.$bus.$on('allOrderShow',(data)=>{
   this.isDetail = true;
+  var price = 0;
+  this.$axios.post('/api/selectFoodOrdersByName',{orderPerson:data.orderUser}).then(response=>{
+    console.log(response.data);
+    this.allData = response.data;
+    for (let i = 0; i < this.allData.length; i++) {
+      const el1 = this.allData[i];
+      var content = JSON.parse(el1.orderContent);
+      this.allData[i].orderContent = [];
+      console.log(content);
+      this.allData[i].orderContent.push(content);
+      for (let j = 0; j < content.length; j++) {
+        const el2 = content[j];
+        if(el2.orderFoodNums!=0){
+          price += el2.orderFoodPrice*el2.orderFoodNums;
+        }
+      }
+      this.priceTotal = price;
+    }
+  },error=>{
+    console.log(error.message);
+  });
 });
 },
 created(){

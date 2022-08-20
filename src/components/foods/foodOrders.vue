@@ -17,28 +17,29 @@
       <br><br>
       <transition name="DetailT-3">
         <div class="tagdiv" v-show="isDetail">
-        <span style="color:aliceblue">下单时间: 2022-2-2 13:59:40</span>
+        <span style="color:aliceblue">订单时间: {{new Date(parseInt(allData.orderTime)).toLocaleString()}}</span>
         <br><br>
-        <span style="color:aliceblue">下单编号: 9d6793f7bf73b05cf69767ef39e8c74b</span>
+        <span style="color:aliceblue">下单编号: {{allData.orderPerson}}</span>
         <br><br>
-        <span style="color:aliceblue">订单状态:正在烹饪... 负责厨师: 李大厨</span>
+        <span style="color:aliceblue">订单状态: <span style="color:salmon">{{allData.orderStatus}}</span> 负责厨师: 李大厨</span>
         <br><br>
         </div>
         </transition>
       <transition-group name="DetailT-4">
-      <span v-show="isDetail" key="1">用餐人数: 4人 已点菜肴: 3份 烹饪时间: 约60分钟 </span>
+      <span v-show="isDetail" key="1">用餐人数: {{allData.orderDiners}}人 已点菜肴: {{foodsTotal}}份 烹饪时间: 约{{timesTotal}}分钟 </span>
       <br key="3"><br key="4">
-      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X {{priceTotal}} </span>
       <br key="5"><br key="6">
       </transition-group>
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
-        <has-order-item></has-order-item>
+        <has-order-item v-for="data of allData.orderContent" :key="data.orderFoodId" :dataProp="data"></has-order-item>
          </div>
       </transition>
+      <transition-group name="DetailT-5">
+      <button v-show="isDetail&&!isOrdered" @click="orderIt" class="updateOrder" key="2">下单</button>
+      <span key="1" v-show="isDetail&&isOrdered&&!isFinish"><br>已下单,您还可以继续添加菜品.</span>
+      </transition-group>
     </div>
     </div>
     </transition>
@@ -54,16 +55,67 @@ name:'foodOrders',
 data(){
   return{
     isDetail:false,
+    allData:'',
+    foodsTotal:0,
+    timesTotal:0,
+    priceTotal:0,
+    isOrdered:false,
+    isFinish:false,
   }
 },
 methods:{
 exitDetail(){
   this.isDetail = false;
 },
+// 下单
+orderIt(){
+  this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'已下单'}).then(response=>{
+    console.log(response.data);
+    this.isOrdered = true;
+    this.$bus.$emit('orderStatus','已下单');
+
+  },error=>{
+    console.log(error.message);
+  });
+},
 },
 mounted(){
-this.$bus.$on('orderShow',()=>{
+this.$bus.$on('orderShow',(orders)=>{
   this.isDetail = true;
+  var foods = 0;
+  var times = 0;
+  var price = 0;
+  this.$axios.post('/api/selectFoodOrdersById',{orderId:orders.orderId}).then(response=>{
+    this.allData = response.data[0];
+    var content = JSON.parse(response.data[0].orderContent);
+    this.allData.orderContent = [];
+    for (let i = 0; i < content.length; i++) {
+        const el = content[i];
+        if(el.orderFoodNums!=0){
+          this.allData.orderContent.push(el);
+          foods++;
+          times += el.orderFoodMadeTimes;
+          price += el.orderFoodPrice*el.orderFoodNums;
+        }
+    }
+    this.foodsTotal = foods;
+    this.timesTotal = times;
+    this.priceTotal = price;
+    if(this.allData.orderStatus=='已下单'||this.allData.orderStatus=='烹饪中'||this.allData.orderStatus=='已完成'){
+      this.isOrdered = true;
+    }
+    else{
+      this.isOrdered = false;
+    }
+    if(this.allData.orderStatus=='已完成'){
+      this.isFinish = true;
+    }
+    else{
+      this.isFinish = false;
+    }
+  },error=>{
+    console.log(error.message);
+  });
 });
 },
 created(){
@@ -92,6 +144,25 @@ created(){
   background-color: #303133;
   border-radius: 15px;
   box-shadow: black 0 0 15px;
+}
+.updateOrder{
+  position: relative;
+  margin-top: 5px;
+  width: 80px;
+  height: 40px;
+  border: none;
+  right: 30%;
+  z-index: 10;
+  background-color: khaki;
+  font-size: 1.5vh;
+  border-radius: 15px;
+  box-shadow: khaki 0 0 10px;
+  color: #303133;
+  transition: 0.33s;
+}
+.updateOrder:hover{
+  background-color: salmon;
+  box-shadow: salmon 0 0 10px;
 }
 /* 退出按钮 */
 .exit {

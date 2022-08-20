@@ -77,7 +77,7 @@
     </div>
     <div class="empty">
       <div class="butes">
-        <input :class="{inputShow:isSearch}" type="text" class="input" placeholder="请输入要搜索的菜肴..">
+        <input :class="{inputShow:isSearch}" type="text" class="input" @input="searchIt" placeholder="请输入要搜索的菜肴.." v-model="searchContent">
         <button class="empty-buts" @click="searchFood" :class="{buttedbuts:isSearch}"> <i class="el-icon-search"></i> </button>
         <button class="empty-buts" @click="orderAllShow"> <i class="el-icon-s-order"></i> </button>
       </div>
@@ -94,13 +94,13 @@
     <div ref="hasOrder"  @click="orderShow" class="hasOrder">
       <div class="trans"></div>
       <div class="meatsIcon">
-        <img  :src="realIcon" alt="">
+        <img class="meatsIconimg" :class="{meatsIconblur:isCooking}"  :src="realIcon" alt="">
       </div>
       <div class="orderInfo">
-        <span>菜肴 X 2</span>
-        <span>耗时:40min</span>
-        <span style="color: salmon;font-size:1.8vh;"><i class="el-icon-lollipop"></i> X 15 </span>
-        <span>Cooking <i class="el-icon-loading"></i> </span>
+        <span>菜肴 X {{foodsTotal}}</span>
+        <span>耗时:{{timesTotal}}min</span>
+        <span style="color: salmon;font-size:1.8vh;"><i class="el-icon-lollipop"></i> X {{priceTotal}} </span>
+        <span>{{statusTotal}} <i class="el-icon-loading"></i> </span>
       </div>
     </div>
     <food-orders></food-orders>
@@ -118,6 +118,7 @@ import FooderCreater from '@/components/foods/fooderCreater.vue';
 import FoodAdmin from '@/components/foods/foodAdmin.vue';
 import FoodAdminOrders from '@/components/foods/foodAdminOrders.vue';
 import FoodDetails from '@/components/foods/foodDetails.vue';
+import { mapActions, mapState } from 'vuex';
 export default {
   components: { foodLeftButton, FoodItem, FoodOrders, FoodAllOrder, FooderCreater, FoodAdmin, FoodAdminOrders, FoodDetails },
 // eslint-disable-next-line vue/multi-word-component-names
@@ -143,9 +144,18 @@ data(){
     allFoods:'',
     saveAllFoods:'',
     foodItemShow:true,
+    foodsTotal:0,
+    timesTotal:0,
+    priceTotal:0,
+    statusTotal:'',
+    isCooking:false,
   }
 },
+computed:{
+  ...mapState('foodOrder',['orders']),
+},
 methods:{
+    ...mapActions('foodOrder',['uploadOrderId','uploadOrderUser','uploadOrdeConent']),
    // 获取设备唯一标识
 getUniqueCode(){
     FingerprintJS.load().then(fp => {
@@ -167,16 +177,18 @@ setInterval(() => {
 },
 // 展示订单
 orderShow(){
-  this.$bus.$emit('orderShow');
+  this.$bus.$emit('orderShow',this.orders);
 },
 // 展示所有订单
 orderAllShow(){
-  this.$bus.$emit('allOrderShow');
+  this.$bus.$emit('allOrderShow',this.orders);
 },
 // 搜索食物
 searchFood(){
   this.isSearch = !this.isSearch;
   this.searchContent = '';
+  this.$bus.$emit('leftButtonOneClick');
+
 },
 // 返回admin
 admin(){
@@ -203,6 +215,15 @@ getAllFoods(){
       }
     }
     console.log(this.foodTpye);
+  },error=>{
+    console.log(error.message);
+  });
+},
+searchIt(){
+  this.allFoods = [];
+  this.$axios.post('/api/selectFoodsByName',{foodName:this.searchContent}).then(response=>{
+    console.log(response.data);
+    this.allFoods = response.data;
   },error=>{
     console.log(error.message);
   });
@@ -239,7 +260,9 @@ mounted(){
       }
     }
   })
-
+  this.$bus.$on('orderStatus',(data)=>{
+    this.statusTotal = data;
+  })
 // 元素滚动
 this.$refs.foodRight.addEventListener('scroll',this.scoller,true);
 window.addEventListener('scroll',this.scoller,true);
@@ -259,6 +282,33 @@ created(){
   setTimeout(() => {
     this.getAllFoods();
   }, 100);
+  // 获得订单信息
+  setTimeout(() => {
+    var foods = 0;
+    var times = 0;
+    var price = 0;
+    this.$axios.post('/api/selectFoodOrdersById',{orderId:this.orders.orderId}).then(response=>{
+      this.statusTotal = response.data[0].orderStatus;
+    if(this.statusTotal=='烹饪中'){
+      this.isCooking = true;
+    }
+    },error=>{
+      console.log(error.message);
+    });
+    for (let i = 0; i < this.orders.orderContent.length; i++) {
+      console.log("xxx");
+        const el = this.orders.orderContent[i];
+        if(el.orderFoodNums!=0){
+          foods++;
+          times += el.orderFoodMadeTimes;
+          price += el.orderFoodPrice*el.orderFoodNums;
+        }
+    }
+    this.foodsTotal = foods;
+    this.timesTotal = times;
+    this.priceTotal = price;
+    }, 1000);
+
 }
 }
 </script>
@@ -268,6 +318,7 @@ created(){
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow-x: hidden;
   background-color: #2b2c34;
   z-index: 10;
 }
@@ -281,6 +332,7 @@ created(){
     transition: 0.55s;
     font-size: 1.2vh;
     overflow: auto;
+    overflow-x: hidden;
     text-align: center;
     font-weight: bolder;
     color: rgb(0, 145, 255);
@@ -550,14 +602,16 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 .fooder{
   position: relative;
   width: 100%;
-  overflow: auto;
+  overflow-y: auto;
   display: flex;
+  overflow-x: hidden;
   flex-flow: row nowrap;
   z-index: 2;
 }
 .food-left{
   position: relative;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 2;
   border-radius: 10px 10px 0 0;
   background-color: rgb(206, 198, 100);
@@ -565,7 +619,8 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 
 .food-right{
   position: relative;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 8;
 }
 .hasOrder{
@@ -602,7 +657,7 @@ color: #303133;
   height: 100%;
   animation: round 10s linear infinite both;
 }
-.meatsIcon img{
+.meatsIconimg{
   position: relative;
   width: auto;
   height: 100%;
@@ -610,8 +665,13 @@ color: #303133;
   transition: 1s;
   animation: jello-horizontal 2.7s infinite both;
 }
-.meatsIcon img:hover{
+.meatsIconblur{
+  position: relative;
+  width: auto;
+  height: 100%;
   filter: blur(0);
+  transition: 1s;
+  animation: jello-horizontal 2.7s infinite both;
 }
 .orderInfo{
   position: relative;
@@ -717,9 +777,10 @@ transition: 0.8s;
     height: 100%;
     z-index: 80;
     margin-left: 0;
+    overflow-x: hidden;
     transition: 0.55s;
     font-size: 1.2vh;
-    overflow: auto;
+    overflow-y: auto;
     text-align: center;
     font-weight: bolder;
     color: rgb(0, 145, 255);

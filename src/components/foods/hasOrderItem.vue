@@ -5,13 +5,13 @@
   </div>
   <div class="intro">
     <div>
-    <span>整鸡蛋糕儿整鸡蛋糕儿</span>
+    <span>{{dataProp.orderFoodName}}</span>
     <br>
-    <span style="color:darkgray">1人份</span>
+    <span style="color:darkgray">{{dataProp.orderFoodCopy}}人份</span>
     <br>
-    <span style="color:darkgray">x2</span>
+    <span style="color:darkgray">x{{dataProp.orderFoodNums}}</span>
     <br>
-    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x15</span>
+    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x{{dataProp.orderFoodNums*dataProp.orderFoodPrice}}</span>
     </div>
     <div>
        <i class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish}"></i>
@@ -23,9 +23,18 @@
 <script>
 export default {
 name:'hasOrderItem',
+props:['dataProp'],
 data(){
   return{
-    isFinish:true,
+    isFinish:false,
+  }
+},
+mounted(){
+  if(this.dataProp.status==undefined){
+    this.isFinish = false;
+  }
+  else{
+    this.isFinish = true;
   }
 }
 }

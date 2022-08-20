@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { mapState,mapActions } from 'vuex';
 export default {
 name:'foodItem',
 props:['foodProp'],
@@ -43,9 +44,14 @@ data(){
         foodMaterial:[],
         sendMaterial:[],
         isVisialy:false,
+        tempOrders:[],
     }
 },
+computed:{
+  ...mapState('foodOrder',['orders']),
+},
 methods:{
+    ...mapActions('foodOrder',['uploadOrderId','uploadOrderUser','uploadOrderConent']),
     // 减法
     desNum(){
         if(this.orderNum<=1){
@@ -54,7 +60,11 @@ methods:{
         else{
             this.orderNum--;
         }
-    // 获取元素距离左侧的位置
+    // 更新订单信息--
+        this.updateFoodContent();
+
+
+    // 获取元素距离左侧的位置---动画效果
     var tp = document.documentElement.clientTop;
     var el = this.$refs.desbut;
     var rect = el.getBoundingClientRect();
@@ -98,6 +108,8 @@ methods:{
         else{
             this.orderNum++;
         }
+    // 更新订单信息--
+        this.updateFoodContent();
     // 获取元素距离左侧的位置
     var tp = document.documentElement.clientTop;
     var el = this.$refs.incbut;
@@ -146,13 +158,62 @@ methods:{
         }
         console.log(this.foodMaterial);
     },
-
+    // 点多点少的 更新store中的content
+    updateFoodContent(){
+        var hasFoodFlag = false;
+        console.log(this.tempOrders);
+        // 先查询orderContent里面有没有该food
+        for (let i = 0; i < this.tempOrders.orderContent.length; i++) {
+            const el = this.tempOrders.orderContent[i];
+            // 已经有这个food了,则更新food份数
+            if(el.orderFoodId==this.foodProp.foodId){
+                hasFoodFlag = true;
+                this.tempOrders.orderContent[i].orderFoodNums = this.orderNum;
+                this.tempOrders.orderContent[i].orderFoodName = this.foodProp.foodName;
+                this.tempOrders.orderContent[i].orderFoodPic = this.foodProp.foodPic;
+                this.tempOrders.orderContent[i].orderFoodCopy = this.foodProp.foodCopy;
+                this.tempOrders.orderContent[i].orderFoodMadeTimes = this.foodProp.foodMadeTimes;
+                this.tempOrders.orderContent[i].orderFoodPrice = this.foodProp.foodPrice;
+                this.uploadOrderConent(this.tempOrders.orderContent);
+                break;
+            }
+        }
+            // 没有这个food,则在结尾处新添加一个该food结构
+            if(!hasFoodFlag){
+                var newFood = {
+                    orderFoodId:this.foodProp.foodId,
+                    orderFoodNums:this.orderNum,
+                    orderFoodName : this.foodProp.foodName,
+                    orderFoodPic : this.foodProp.foodPic,
+                    orderFoodCopy : this.foodProp.foodCopy,
+                    orderFoodMadeTimes : this.foodProp.foodMadeTimes,
+                    orderFoodPrice : this.foodProp.foodPrice,
+                    };
+                this.tempOrders.orderContent.push(newFood);
+                this.uploadOrderConent(this.tempOrders.orderContent);
+            }
+    },
+    itemCreated(){
+            // 获取每个item的订单信息
+    setTimeout(() => {
+        if(this.orders.orderContent.length!=0){
+            console.log(this.orders.orderContent);
+            for (let i = 0; i < this.orders.orderContent.length; i++) {
+                const el = this.orders.orderContent[i];
+                if(el.orderFoodId==this.foodProp.foodId){
+                    this.orderNum = el.orderFoodNums;
+                }
+            }
+        }
+    }, 1000);
+    },
 },
 
 mounted(){
     this.foodMaterialSplit();
+    this.tempOrders = this.orders;
     if(this.$refs.item!=undefined){
-                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom<0){
+                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom + 80<0){
                     this.isVisialy = false;
                 }
                 else{
@@ -162,7 +223,7 @@ mounted(){
     this.$bus.$on('scollLinstener',()=>{
         setTimeout(() => {
             if(this.$refs.item!=undefined){
-                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom<0){
+                if(window.screen.height - this.$refs.item.getBoundingClientRect().bottom + 80<0){
                     this.isVisialy = false;
                 }
                 else{
@@ -172,9 +233,9 @@ mounted(){
         }, 10);
     })
 },
-beforeDestroy(){
-
-}
+created(){
+    this.itemCreated();
+},
 }
 </script>
 

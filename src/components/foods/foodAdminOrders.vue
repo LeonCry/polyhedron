@@ -39,7 +39,7 @@
          </div>
       </transition>
       <transition name="DetailT-5">
-      <button v-show="isDetail" class="updateOrder" key="2">更改状态为:{{nextStatus}}</button>
+      <button v-show="isDetail" class="updateOrder" >更改状态为:{{nextStatus}}</button>
       </transition>
     </div>
     </div>

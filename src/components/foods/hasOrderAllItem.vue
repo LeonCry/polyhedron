@@ -1,18 +1,18 @@
 <template>
-  <div class="hasOrderItem" @click="showDetail">
+  <div ref="hasOrderItem" class="hasOrderItem" @click="showDetail">
  <div class="dimgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+            <img :src="dataProp.orderContent[0][0].orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
-    <span>订单:2022-12-5 13:54:55</span>
+    <span>订单:{{new Date(parseInt(dataProp.orderTime)).toLocaleString()}}</span>
     <br>
-    <span style="color:darkgray">用餐人数: 2人</span>
+    <span style="color:darkgray">人数: {{dataProp.orderDiners}}人</span> <span style="color:darkgray">菜肴: {{foodNums}}份</span>
     <br>
-    <span style="color:darkgray">点单菜肴: 2份</span>
+    <span style="color:darkgray">订单状态: {{dataProp.orderStatus}}</span>
     </div>
     <div>
-        <br><span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x15</span>
+        <br><span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x{{priceTotal}}</span>
     </div>
   </div>
   </div>
@@ -21,13 +21,37 @@
 <script>
 export default {
 name:'hasOrderAllItem',
-
-
+props:['dataProp'],
+data(){
+    return{
+        foodNums:0,
+        priceTotal:0,
+    }
+},
 methods:{
     // 展示订单详情
     showDetail(){
-        this.$bus.$emit('orderShow');
+        this.$bus.$emit('orderShow',{orderId:this.dataProp.orderId});
     },
+},
+created(){
+    var nums = 0;
+    var price = 0;
+    for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
+        const element = this.dataProp.orderContent[0][i];
+        if(element.orderFoodNums!=0){
+            nums++;
+            price += element.orderFoodPrice*element.orderFoodNums;
+        }
+    }
+    this.foodNums = nums;
+    this.priceTotal = price;
+    setTimeout(() => {
+            if(this.dataProp.orderStatus=='已完成'){
+        this.$refs.hasOrderItem.style.backgroundColor = 'rgb(64, 192, 120,0.5)';
+    }
+    }, 100);
+
 }
 }
 </script>
@@ -44,9 +68,6 @@ methods:{
   flex-flow: row nowrap;
   border-radius: 15px;
   transition: 0.33s;
-}
-.hasOrderItem:hover{
-    background-color: rgb(64, 192, 120,0.33);
 }
 .dimgs{
     position: relative;

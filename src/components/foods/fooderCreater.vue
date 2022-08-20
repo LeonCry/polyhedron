@@ -61,8 +61,8 @@ computed:{
   ...mapState('foodOrder',['orders']),
 },
 methods:{
-  ...mapActions('foodOrder',['uploadOrderId','uploadOrderUser']),
-  ...mapMutations('foodOrder',['SAVEORDERID','SAVEORDERUSER']),
+  ...mapActions('foodOrder',['uploadOrderId','uploadOrderUser','uploadOrderConent']),
+  ...mapMutations('foodOrder',['SAVEORDERID','SAVEORDERUSER','SAVECONTENT']),
     pnum(p){
         var allP = ['1','2','3','4','5','6','8','12','16'];
         for (let index = 0; index < allP.length; index++) {
@@ -97,8 +97,8 @@ methods:{
         this.$axios.post('/api/insertFoodOrders',{orderPerson:this.visitorId,orderDiners:this.pnums,orderContent:'',orderStatus:'点菜中',orderTime:Date.now()}).then(response=>{
             console.log("创建订单.");
             console.log(response.data);
-                this.SAVEORDERID(response.data[0].orderId);
-                this.SAVEORDERUSER(response.data[0].orderPerson);
+                this.uploadOrderId(response.data[0].orderId);
+                this.uploadOrderUser(response.data[0].orderPerson);
         },error=>{
             console.log(error.message);
         });}
@@ -108,8 +108,8 @@ methods:{
             this.$axios.post('/api/updateFoodOrders',{orderId:this.hasOrderId,orderDiners:this.pnums}).then(response=>{
                 console.log("更新订单.");
                 console.log(response.data);
-                this.SAVEORDERID(response.data[0].orderId);
-                this.SAVEORDERUSER(response.data[0].orderPerson);
+                this.uploadOrderId(response.data[0].orderId);
+                this.uploadOrderUser(response.data[0].orderPerson);
                 this.notice = '已为您更改用餐人数';
                 setTimeout(() => {
                     this.notice = 'I am Chef Li';
@@ -157,13 +157,35 @@ methods:{
                                 // 说明没有正在进行的订单,该页面需要进行显示
                                 this.isCreated = true;
                             }
+                            else{
+                                this.uploadOrderId(response.data[0].orderId);
+                                this.uploadOrderUser(response.data[0].orderPerson);
+                                if(response.data[0].orderContent!=''){
+                                    this.SAVECONTENT(JSON.parse(response.data[0].orderContent));
+                                }
+
+                            }
                         },error=>{
                             console.log(error.message);
                         });
                     }
+                    else{
+                        this.uploadOrderId(response.data[0].orderId);
+                        this.uploadOrderUser(response.data[0].orderPerson);
+                        if(response.data[0].orderContent!=''){
+                            this.SAVECONTENT(JSON.parse(response.data[0].orderContent));
+                        }
+                    }
                 },error=>{
                     console.log(error.message);
                 });
+            }
+            else{
+                this.uploadOrderId(response.data[0].orderId);
+                this.uploadOrderUser(response.data[0].orderPerson);
+                if(response.data[0].orderContent!=''){
+                    this.SAVECONTENT(JSON.parse(response.data[0].orderContent));
+                }
             }
         },error=>{
             console.log(error.message);
@@ -227,7 +249,9 @@ created(){
     }
   }, 100);
   this.getUniqueCode();
+
 },
+// 获得订单信息
 }
 </script>
 
