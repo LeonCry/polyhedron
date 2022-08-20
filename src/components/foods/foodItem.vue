@@ -94,6 +94,7 @@ methods:{
         this.$refs.fakeRed.style.marginRight = bottomLength + 'px';
         this.$refs.fakeRed.style.marginTop = leftLength + 'px';
         this.isChangeBack = true;
+        this.$bus.$emit('updateSmallOrder',this.foodProp.foodId,this.orderNum,this.foodProp.foodMadeTimes,this.foodProp.foodPrice,'des');
         setTimeout(() => {
             this.isChangeBack = false;
         }, 330);
@@ -109,7 +110,7 @@ methods:{
             this.orderNum++;
         }
     // 更新订单信息--
-        this.updateFoodContent();
+    this.updateFoodContent();
     // 获取元素距离左侧的位置
     var tp = document.documentElement.clientTop;
     var el = this.$refs.incbut;
@@ -139,6 +140,7 @@ methods:{
         this.$refs.fakeGreen.style.marginRight = 0;
         this.$refs.fakeGreen.style.marginTop = 0;
         this.$bus.$emit('orderShake','green');
+        this.$bus.$emit('updateSmallOrder',this.foodProp.foodId,this.orderNum,this.foodProp.foodMadeTimes,this.foodProp.foodPrice,'inc');
         }, 500);
 
 

@@ -1,19 +1,19 @@
 <template>
   <div class="hasOrderItem" @click="showDetail">
  <div class="dimgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+            <img :src="dataProp.orderContent[0][0].orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
-    <span>订单:2022-12-5 13:54:55</span>
+    <span>订单: {{new Date(parseInt(dataProp.orderTime)).toLocaleString()}}</span>
     <br>
-    <span style="color:darkgray">用餐人数: 2人</span>
+    <span style="color:darkgray">用餐人数: {{dataProp.orderDiners}}人</span>
     <br>
-    <span style="color:darkgray">点单菜肴: 2份</span>
+    <span style="color:darkgray">点单菜肴: {{numTotal}}份</span>
     <br>
-    <span style="color:darkgray">订单状态: 已下单|烹饪中|已完成</span>
+    <span style="color:darkgray">订单状态: <span style="color:pink">{{data.orderStatus}}</span> </span>
     <br>
-    <span style="color: salmon;font-size:1.4vh;">本单收入:<i class="el-icon-lollipop"></i>x15</span>
+    <span style="color: salmon;font-size:1.4vh;">本单收入:<i class="el-icon-lollipop"></i>x{{priceTotal}}</span>
     </div>
   </div>
   </div>
@@ -22,13 +22,39 @@
 <script>
 export default {
 name:'foodAdminItem',
-
-
+props:['dataProp'],
+data(){
+  return{
+    numTotal:0,
+    priceTotal:0,
+    data:this.dataProp,
+  }
+},
 methods:{
     // 展示订单详情
     showDetail(){
-        this.$bus.$emit('adminOrderShow');
+        this.$bus.$emit('adminOrderShow',this.dataProp.orderId);
     },
+},
+mounted(){
+  this.$bus.$on('updateOrderStatusB',(id,newStatus)=>{
+    if(this.dataProp.orderId==id){
+      this.data.orderStatus = newStatus;
+    }
+    });
+},
+created(){
+  var price = 0;
+  var num = 0;
+  for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
+    const element = this.dataProp.orderContent[0][i];
+    if(element.orderFoodNums!=0){
+      num++;
+      price += element.orderFoodPrice*element.orderFoodNums;
+    }
+  }
+  this.numTotal = num;
+  this.priceTotal = price;
 }
 }
 </script>

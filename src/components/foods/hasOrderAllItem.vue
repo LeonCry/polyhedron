@@ -1,5 +1,5 @@
 <template>
-  <div ref="hasOrderItem" class="hasOrderItem" @click="showDetail">
+  <div v-if="this.dataProp.orderContent!=''" ref="hasOrderItem" class="hasOrderItem" @click="showDetail">
  <div class="dimgs">
             <img :src="dataProp.orderContent[0][0].orderFoodPic" alt="">
   </div>
@@ -37,6 +37,8 @@ methods:{
 created(){
     var nums = 0;
     var price = 0;
+    console.log("this.dataProp.orderContent:",this.dataProp.orderContent);
+    if(this.dataProp.orderContent!=""){
     for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
         const element = this.dataProp.orderContent[0][i];
         if(element.orderFoodNums!=0){
@@ -46,6 +48,7 @@ created(){
     }
     this.foodNums = nums;
     this.priceTotal = price;
+    }
     setTimeout(() => {
             if(this.dataProp.orderStatus=='已完成'){
         this.$refs.hasOrderItem.style.backgroundColor = 'rgb(64, 192, 120,0.5)';

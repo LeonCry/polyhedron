@@ -1,7 +1,7 @@
 <template>
   <div class="hasOrderItem" :class="{'finish':isFinish}">
  <div class="dimgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+            <img :src="dataProp.orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
@@ -36,6 +36,27 @@ mounted(){
   else{
     this.isFinish = true;
   }
+
+this.$bus.$on('contentUpdate',(newContent)=>{
+  if(this.dataProp.status==undefined){
+    for (let i = 0; i < newContent.length; i++) {
+      const element = newContent[i];
+      if(element.orderFoodId==this.dataProp.orderFoodId){
+        if(element.status=='已出锅'){
+          this.isFinish = true;
+           this.$message({
+            message: this.dataProp.orderFoodName+'出锅啦.',
+            type: 'success'
+        });
+    }
+        }
+        break;
+      }
+      
+    }
+});
+
+
 }
 }
 </script>

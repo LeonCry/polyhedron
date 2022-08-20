@@ -66,6 +66,7 @@ this.$bus.$on('allOrderShow',(data)=>{
     this.allData = response.data;
     for (let i = 0; i < this.allData.length; i++) {
       const el1 = this.allData[i];
+      if(el1.orderContent!=''){
       var content = JSON.parse(el1.orderContent);
       this.allData[i].orderContent = [];
       console.log(content);
@@ -75,6 +76,7 @@ this.$bus.$on('allOrderShow',(data)=>{
         if(el2.orderFoodNums!=0){
           price += el2.orderFoodPrice*el2.orderFoodNums;
         }
+      }
       }
       this.priceTotal = price;
     }

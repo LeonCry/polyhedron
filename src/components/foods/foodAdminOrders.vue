@@ -17,29 +17,25 @@
       <br><br>
       <transition name="DetailT-3">
         <div class="tagdiv" v-show="isDetail">
-        <span style="color:aliceblue">下单时间: 2022-2-2 13:59:40</span>
+        <span style="color:aliceblue">下单时间: {{new Date(parseInt(allData.orderTime)).toLocaleString()}}</span>
         <br><br>
-        <span style="color:aliceblue">下单编号: 9d6793f7bf73b05cf69767ef39e8c74b</span>
+        <span style="color:aliceblue">下单编号: {{allData.orderPerson}}</span>
         <br><br>
         </div>
         </transition>
       <transition-group name="DetailT-4">
-      <span v-show="isDetail" key="1">用餐: 4人 菜肴: 3份 时间: 约60分钟 状态:正在烹饪</span>
+      <span v-show="isDetail" key="1">用餐: {{allData.orderDiners}}人 菜肴: {{numTotal}}份 时间: 约{{timeTotal}}分钟 状态:{{allData.orderStatus}}</span>
       <br key="3"><br key="4">
-      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X 15 </span>
+      <span v-show="isDetail" key="2" style="color: rgb(0, 145, 255);font-size:2.2vh;"><i class="el-icon-lollipop"></i> X {{priceTotal}} </span>
       <br key="5"><br key="6">
       </transition-group>
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
-        <admin-order-item></admin-order-item>
-        <admin-order-item></admin-order-item>
-        <admin-order-item></admin-order-item>
-        <admin-order-item></admin-order-item>
-        <admin-order-item></admin-order-item>
+        <admin-order-item v-for="data of allContent" :key="data.orderFoodId" :dataProp="data" :allDataProp="allData"></admin-order-item>
          </div>
       </transition>
       <transition name="DetailT-5">
-      <button v-show="isDetail" class="updateOrder" >更改状态为:{{nextStatus}}</button>
+      <button v-show="isDetail&&!isFinish" class="updateOrder" @click="changStatus" >更改状态为:{{nextStatus}}</button>
       </transition>
     </div>
     </div>
@@ -57,17 +53,108 @@ name:'foodAminOrders',
 data(){
   return{
     isDetail:false,
-    nextStatus:'正在烹饪',
+    nextStatus:'',
+    allData:'',
+    numTotal:0,
+    timeTotal:0,
+    priceTotal:0,
+    isFinish:false,
+    allContent:'',
+    settimeIn:'',
   }
 },
 methods:{
 exitDetail(){
   this.isDetail = false;
+  clearInterval(this.settimeIn);
+},
+changStatus(){
+    if(this.allData.orderStatus=='已下单'){
+      this.nextStatus = '已完成';
+      this.isFinish = false;
+      // eslint-disable-next-line no-unused-vars
+      this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'烹饪中'}).then(response=>{
+        this.allData.orderStatus = '烹饪中';
+        this.$bus.$emit('updateOrderStatusB',this.allData.orderId,'烹饪中');
+      },error=>{
+        console.log(error.message);
+      });
+    }
+    else if(this.allData.orderStatus=='烹饪中'){
+      this.nextStatus = '已完成';
+      this.isFinish = true;
+      // eslint-disable-next-line no-unused-vars
+      this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'已完成'}).then(response=>{
+        this.allData.orderStatus = '已完成';
+        this.$bus.$emit('updateOrderStatusB',this.allData.orderId,'烹饪中');
+        clearInterval(this.settimeIn);
+      },error=>{
+        console.log(error.message);
+      });
+    }
+    else{
+      this.isFinish = true;
+    }
+},
+everyTimeCheck(){
+  this.$axios.post('/api/selectFoodOrdersById',{orderId:this.allData.orderId}).then(response=>{
+    console.log("new30:",response.data);
+    var three = response.data[0];
+    this.allData = three;
+    var content = JSON.parse(three.orderContent);
+    this.allData.orderContent = [];
+    this.allData.orderContent.push(content);
+    this.allContent = content;
+    console.log(this.allData);
+    console.log(this.allContent);
+
+  },error=>{
+    console.log(error.message);
+  });
 },
 },
 mounted(){
-this.$bus.$on('adminOrderShow',()=>{
+this.$bus.$on('adminOrderShow',(data)=>{
   this.isDetail = true;
+  var num = 0;
+  var time = 0;
+  var price = 0;
+      // 每30s查看订单一次
+    this.settimeIn = setInterval(() => {
+        this.everyTimeCheck();
+    }, 30000);
+  this.$axios.post('/api/selectFoodOrdersById',{orderId:data}).then(response=>{
+    console.log(response.data);
+    this.allData = response.data[0];
+    if(this.allData.orderStatus=='已下单'){
+      this.nextStatus = '烹饪中';
+      this.isFinish = false;
+    }
+    else if(this.allData.orderStatus=='烹饪中'){
+      this.nextStatus = '已完成';
+      this.isFinish = false;
+    }
+    else{
+      this.isFinish = true;
+    }
+    var content = JSON.parse(this.allData.orderContent);
+    this.allData.orderContent = [];
+    this.allData.orderContent.push(content);
+    this.allContent = this.allData.orderContent[0];
+    for (let i = 0; i < content.length; i++) {
+      const el = content[i];
+      if(el.orderFoodNums!=0){
+        num++;
+        time += el.orderFoodMadeTimes;
+        price += el.orderFoodPrice*el.orderFoodNums;
+      }
+    }
+    this.timeTotal = time;
+    this.priceTotal = price;
+    this.numTotal = num;
+  },error=>{
+    console.log(error.message);
+  });
 });
 },
 created(){
@@ -175,6 +262,7 @@ created(){
   margin-top: 15px;
   width: 160px;
   height: 40px;
+  right:20%;
   border: none;
   background-color: khaki;
   font-size: 1.6vh;

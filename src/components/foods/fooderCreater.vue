@@ -49,7 +49,7 @@ data(){
         isCreated:false,
         isAdmin:false,
         password:'',
-        notice:'I am Chef Li',
+        notice:'已经有一单了?可能上一单已经完成,请进入查看所有订单',
         isUser:false,
         isNewCreated:false,
         visitorId:'',

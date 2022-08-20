@@ -96,7 +96,7 @@
       <div class="meatsIcon">
         <img class="meatsIconimg" :class="{meatsIconblur:isCooking}"  :src="realIcon" alt="">
       </div>
-      <div class="orderInfo">
+      <div v-if="foodsTotal!=0" class="orderInfo">
         <span>菜肴 X {{foodsTotal}}</span>
         <span>耗时:{{timesTotal}}min</span>
         <span style="color: salmon;font-size:1.8vh;"><i class="el-icon-lollipop"></i> X {{priceTotal}} </span>
@@ -147,8 +147,10 @@ data(){
     foodsTotal:0,
     timesTotal:0,
     priceTotal:0,
+    ids:[],
     statusTotal:'',
     isCooking:false,
+    settimeIn:'',
   }
 },
 computed:{
@@ -227,6 +229,39 @@ searchIt(){
   },error=>{
     console.log(error.message);
   });
+},
+// 每30s查看订单一次
+everyTimeCheck(){
+  this.$axios.post('/api/selectFoodOrdersById',{orderId:this.orders.orderId}).then(response=>{
+    console.log("30",response.data);
+    var three = response.data[0];
+    if(three.orderContent!=""||three.orderContent==undefined){
+    var newContent = JSON.parse(three.orderContent);
+    this.$bus.$emit('contentUpdate',newContent);
+    }
+    if(this.statusTotal != three.orderStatus){
+      this.$message({
+          message: '您的订单状态有更新.',
+          type: 'success'
+        });
+    }
+    this.statusTotal = three.orderStatus;
+    this.$bus.$emit('orderStatus1',this.statusTotal);
+    if(three.orderStatus=='已完成'){
+        this.$message({
+          message: '您的订单已完成,5s后将离开本页面.',
+          type: 'success'
+        });
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
+    }
+        if(this.statusTotal=='烹饪中'){
+      this.isCooking = true;
+    }
+  },error=>{
+    console.log(error.message);
+  });
 }
 
 },
@@ -263,6 +298,44 @@ mounted(){
   this.$bus.$on('orderStatus',(data)=>{
     this.statusTotal = data;
   })
+  this.$bus.$on('updateSmallOrder',(id,num,times,price,mode)=>{
+    var flag = false;
+    if(num!=0){
+      for (let i = 0; i < this.ids.length; i++) {
+        const e = this.ids[i];
+        if(id==e){
+          flag = true;
+        }
+      }
+      // 有这个食物
+      //     foodsTotal timesTotal priceTotal
+      if(flag){
+        // 加法
+        if(mode=='inc'){
+          this.timesTotal += times;
+          this.priceTotal += price;
+        }
+        else{
+          this.timesTotal -= times;
+          this.priceTotal -= price;
+        }
+      }
+      // 无这个食物
+      else{
+          this.ids.push(id);
+          this.foodsTotal++;
+          this.timesTotal += times;
+          this.priceTotal += price;
+      }
+    }
+    else{
+          this.foodsTotal--;
+          this.timesTotal -= times;
+          this.priceTotal -= price;
+    }
+    // this.foodProp.foodId,this.orderNum,this.foodProp.foodMadeTimes,this.foodProp.foodPrice
+  });
+
 // 元素滚动
 this.$refs.foodRight.addEventListener('scroll',this.scoller,true);
 window.addEventListener('scroll',this.scoller,true);
@@ -272,6 +345,12 @@ this.$refs.foodRight.removeEventListener('scroll',this.scoller,true);
 window.removeEventListener('scroll',this.scoller,true);
 },
 created(){
+    // 每30s查看订单一次
+    this.settimeIn = setInterval(() => {
+        this.everyTimeCheck();
+    }, 30000);
+
+
   // 获得屏幕长
   setTimeout(() => {
     this.$refs.fooder.style.height = window.screen.height-90+ 'px';

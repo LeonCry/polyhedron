@@ -69,17 +69,28 @@ exitDetail(){
 },
 // 下单
 orderIt(){
+  if(this.allData.orderContent==''){
+            this.$notify.error({
+          title: '未点单',
+          message: '请添加菜肴再下单.'
+        });
+  }
+  else{
   this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'已下单'}).then(response=>{
     console.log(response.data);
     this.isOrdered = true;
     this.$bus.$emit('orderStatus','已下单');
-
+    this.allData.orderStatus = "已下单";
   },error=>{
     console.log(error.message);
   });
+  }
 },
 },
 mounted(){
+this.$bus.$on('orderStatus1',(status)=>{
+  this.allData.orderStatus = status;
+});
 this.$bus.$on('orderShow',(orders)=>{
   this.isDetail = true;
   var foods = 0;
@@ -87,6 +98,7 @@ this.$bus.$on('orderShow',(orders)=>{
   var price = 0;
   this.$axios.post('/api/selectFoodOrdersById',{orderId:orders.orderId}).then(response=>{
     this.allData = response.data[0];
+    if(response.data[0].orderContent!=''){
     var content = JSON.parse(response.data[0].orderContent);
     this.allData.orderContent = [];
     for (let i = 0; i < content.length; i++) {
@@ -97,6 +109,7 @@ this.$bus.$on('orderShow',(orders)=>{
           times += el.orderFoodMadeTimes;
           price += el.orderFoodPrice*el.orderFoodNums;
         }
+    }
     }
     this.foodsTotal = foods;
     this.timesTotal = times;

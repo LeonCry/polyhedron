@@ -1,21 +1,21 @@
 <template>
-  <div class="hasOrderItem" :class="{'finish':isFinish}">
+  <div class="hasOrderItem" :class="{'finish':isFinish}" v-show="dataProp.orderFoodNums!=0">
  <div class="dimgs">
-            <img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h57vi4iyrjj21hc0u0acn.jpg" alt="">
+            <img :src="dataProp.orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
-    <span>整鸡蛋糕儿整鸡蛋糕儿</span>
+    <span>{{dataProp.orderFoodName}}</span>
     <br>
-    <span style="color:darkgray">1人份</span>
+    <span style="color:darkgray">{{dataProp.foodCopy}}人份</span>
     <br>
-    <span style="color:darkgray">x2</span>
+    <span style="color:darkgray">x{{dataProp.orderFoodNums}}</span>
     <br>
-    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x15</span>
+    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x{{dataProp.orderFoodPrice*dataProp.orderFoodNums}}</span>
     </div>
     <div>
-        <button v-show="!isFinish" @click="finishIt" class="updateOrder">已出锅</button>
-       <i v-show="isFinish" class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish}"></i>
+        <button v-show="!isFinish" @click="finishIt" class="updateOrder">出锅</button>
+       <i v-show="isFinish" class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish,'iconFinish':isFinish}"></i>
     </div>
   </div>
   </div>
@@ -24,16 +24,38 @@
 <script>
 export default {
 name:'adminOrderItem',
+props:['dataProp','allDataProp'],
 data(){
   return{
     isFinish:false,
+    allData:this.allDataProp,
   }
 },
 methods:{
     finishIt(){
         this.isFinish = true;
+        for (let i = 0; i < this.allData.orderContent[0].length; i++) {
+          const el = this.allData.orderContent[0][i];
+          if(el.orderFoodId==this.dataProp.orderFoodId){
+            this.allData.orderContent[0][i].status = '已出锅';
+          }
+        }
+        
+      this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderContent:JSON.stringify(this.allData.orderContent[0])}).then(response=>{
+        console.log(response.data);
+      },error=>{
+        console.log(error.message);
+      });
     }
-}
+},
+created(){
+  if(this.dataProp.status=='已出锅'){
+    this.isFinish = true;
+  }
+  else{
+    this.isFinish = false;
+  }
+},
 }
 </script>
 
@@ -48,7 +70,7 @@ methods:{
   display: flex;
   flex-flow: row nowrap;
   border-radius: 15px;
-  transition: 0.25s;
+  transition: 0.33s;
 }
 .dimgs{
     position: relative;
@@ -93,8 +115,14 @@ methods:{
   font-size: 2vh;
   color: khaki;
   transition: 0.33s;
+  opacity: 0;
+}
+.iconFinish{
+  opacity: 1;
+  transition: 0.33s;
 }
 .finish{
   background-color: rgb(46, 139, 87,0.33);
+  transition: 0.33s;
 }
 </style>
