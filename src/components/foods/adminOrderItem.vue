@@ -40,7 +40,17 @@ methods:{
             this.allData.orderContent[0][i].status = '已出锅';
           }
         }
-        
+        this.$axios.post('/api/selectFoodsByName',{foodName:this.dataProp.orderFoodName}).then(response=>{
+          var foodNum = response.data[0].foodMadeNums;
+          // eslint-disable-next-line no-unused-vars
+          this.$axios.post('/api/updateFoods',{foodId:this.dataProp.orderFoodId,foodMadeNums:foodNum+this.dataProp.orderFoodNums}).then(response=>{
+
+          },error=>{
+            console.log(error.message);
+          });  
+        },error=>{
+          console.log(error.message);
+        });
       this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderContent:JSON.stringify(this.allData.orderContent[0])}).then(response=>{
         console.log(response.data);
       },error=>{

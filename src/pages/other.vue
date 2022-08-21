@@ -1,5 +1,6 @@
 <template>
 <div class="allBack">
+  <span class="presays">移动端有更好的体验哦~</span>
   <div class="otherBox">
     <fooder-creater></fooder-creater>
     <food-admin-orders></food-admin-orders>
@@ -78,8 +79,9 @@
     <div class="empty">
       <div class="butes">
         <input :class="{inputShow:isSearch}" type="text" class="input" @input="searchIt" placeholder="请输入要搜索的菜肴.." v-model="searchContent">
-        <button class="empty-buts" @click="searchFood" :class="{buttedbuts:isSearch}"> <i class="el-icon-search"></i> </button>
+        <button class="empty-buts" @click="searchFood" style="margin-left:5px" :class="{buttedbuts:isSearch}"> <i class="el-icon-search"></i> </button>
         <button class="empty-buts" @click="orderAllShow"> <i class="el-icon-s-order"></i> </button>
+        <button class="empty-buts" @click="refresh" style="right:5px">  <i class="el-icon-refresh"></i> </button>
       </div>
     </div>
     <food-details></food-details>
@@ -192,6 +194,9 @@ searchFood(){
   this.$bus.$emit('leftButtonOneClick');
 
 },
+refresh(){
+  location.reload();
+},
 // 返回admin
 admin(){
   this.$bus.$emit('adminShow');
@@ -234,6 +239,7 @@ searchIt(){
 everyTimeCheck(){
   this.$axios.post('/api/selectFoodOrdersById',{orderId:this.orders.orderId}).then(response=>{
     console.log("30",response.data);
+    if(response.data.length!=0){
     var three = response.data[0];
     if(three.orderContent!=""||three.orderContent==undefined){
     var newContent = JSON.parse(three.orderContent);
@@ -246,7 +252,9 @@ everyTimeCheck(){
         });
     }
     this.statusTotal = three.orderStatus;
+    if(this.statusTotal!=''){
     this.$bus.$emit('orderStatus1',this.statusTotal);
+    }
     if(three.orderStatus=='已完成'){
         this.$message({
           message: '您的订单已完成,5s后将离开本页面.',
@@ -258,7 +266,7 @@ everyTimeCheck(){
     }
         if(this.statusTotal=='烹饪中'){
       this.isCooking = true;
-    }
+    }}
   },error=>{
     console.log(error.message);
   });
@@ -360,17 +368,18 @@ created(){
   // 初始化内容
   setTimeout(() => {
     this.getAllFoods();
-  }, 100);
+  }, 500);
   // 获得订单信息
   setTimeout(() => {
     var foods = 0;
     var times = 0;
     var price = 0;
     this.$axios.post('/api/selectFoodOrdersById',{orderId:this.orders.orderId}).then(response=>{
+      if(response.data.length!=0){
       this.statusTotal = response.data[0].orderStatus;
     if(this.statusTotal=='烹饪中'){
       this.isCooking = true;
-    }
+    }}
     },error=>{
       console.log(error.message);
     });
@@ -378,6 +387,7 @@ created(){
       console.log("xxx");
         const el = this.orders.orderContent[i];
         if(el.orderFoodNums!=0){
+          this.ids.push(el.orderFoodId);
           foods++;
           times += el.orderFoodMadeTimes;
           price += el.orderFoodPrice*el.orderFoodNums;
@@ -386,7 +396,7 @@ created(){
     this.foodsTotal = foods;
     this.timesTotal = times;
     this.priceTotal = price;
-    }, 1000);
+    }, 2000);
 
 }
 }
@@ -401,10 +411,16 @@ created(){
   background-color: #2b2c34;
   z-index: 10;
 }
+.presays{
+  position: absolute;
+  font-size: 2vh;
+  bottom: 20px;
+  color: aliceblue;
+}
 .otherBox{
     position: relative;
     background-color: var(--friColor);
-    width: 500px;
+    width: 450px;
     height: 100%;
     z-index: 80;
     margin-left: 35%;
@@ -863,6 +879,11 @@ transition: 0.8s;
     text-align: center;
     font-weight: bolder;
     color: rgb(0, 145, 255);
+}
+.presays{
+  position: absolute;
+  font-size: 5vh;
+  display: none;
 }
 }
 </style>

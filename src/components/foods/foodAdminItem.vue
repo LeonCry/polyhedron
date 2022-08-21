@@ -1,7 +1,7 @@
 <template>
   <div class="hasOrderItem" @click="showDetail">
  <div class="dimgs">
-            <img :src="dataProp.orderContent[0][0].orderFoodPic" alt="">
+            <img v-if="dataProp.orderContent.length!=0&&dataProp.orderContent[0]!=undefined" :src="dataProp.orderContent[0][0].orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
@@ -42,10 +42,11 @@ mounted(){
       this.data.orderStatus = newStatus;
     }
     });
-},
-created(){
-  var price = 0;
-  var num = 0;
+    this.$bus.$on('adminItemChange',()=>{
+      console.log("this.dataProp.orderContent[0]",this.dataProp.orderContent[0]);
+      var price = 0;
+      var num = 0;
+        if(this.dataProp.orderContent.length!=0&&this.dataProp.orderContent[0]!=undefined){
   for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
     const element = this.dataProp.orderContent[0][i];
     if(element.orderFoodNums!=0){
@@ -55,7 +56,23 @@ created(){
   }
   this.numTotal = num;
   this.priceTotal = price;
-}
+        }
+    });
+},
+created(){
+  var price = 0;
+  var num = 0;
+  if(this.dataProp.orderContent.length!=0&&this.dataProp.orderContent[0]!=undefined){
+  for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
+    const element = this.dataProp.orderContent[0][i];
+    if(element.orderFoodNums!=0){
+      num++;
+      price += element.orderFoodPrice*element.orderFoodNums;
+    }
+  }
+  this.numTotal = num;
+  this.priceTotal = price;
+}}
 }
 </script>
 

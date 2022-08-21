@@ -21,7 +21,7 @@
                 <!-- 红色小球 -->
                 <div class="fakeRed" ref="fakeRed" :class="{fakeRed:!isRedActive,fakeRedActive:isRedActive}"></div>
                 <span v-show="orderNum!=0" class="buy-num"> {{orderNum}} </span>
-                <button ref="incbut" class="but-inc" @click="incNum"> + </button>
+                <button v-show="orderNum!=9" ref="incbut" class="but-inc" @click="incNum"> + </button>
                 <!-- 绿色小球 -->
                 <div class="fakeGreen" ref="fakeGreen" :class="{fakeGreen:!isGreenActive,fakeGreenActive:isGreenActive}"></div>
              </div>
@@ -71,7 +71,7 @@ methods:{
     var bottomLength = window.screen.height - rect.bottom + tp;
     var leftLength = rect.left-100;
     this.$refs.fakeRed.style.opacity = 1;
-    this.$refs.fakeRed.style.zIndex = 9999;
+    this.$refs.fakeRed.style.zIndex = 9;
     this.$refs.fakeRed.style.marginTop = bottomLength + 'px';
     this.$refs.fakeRed.style.marginRight = leftLength + 'px';
     setTimeout(() => {
@@ -110,6 +110,7 @@ methods:{
             this.orderNum++;
         }
     // 更新订单信息--
+    
     this.updateFoodContent();
     // 获取元素距离左侧的位置
     var tp = document.documentElement.clientTop;
@@ -118,7 +119,7 @@ methods:{
     var bottomLength = window.screen.height - rect.bottom + tp;
     var leftLength = rect.left-100;
     this.$refs.fakeGreen.style.opacity = 1;
-    this.$refs.fakeGreen.style.zIndex = 9999;
+    this.$refs.fakeGreen.style.zIndex = 9;
     this.$refs.fakeGreen.style.marginRight = 0;
     this.$refs.fakeGreen.style.marginTop = 0;
     setTimeout(() => {
@@ -254,12 +255,15 @@ created(){
     display: flex;
     flex-flow: row nowrap;
     color: #2b2c34;
-    transition: 0.33s;
+    transition: 0.5s;
     opacity: 0;
+    /* transform: translateX(-100px); */
     border-radius: 10px;
 }
 .slideInLeft{
     animation: slide-InLeft 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    opacity: 1;
+    /* transform: translateX(0); */
 }
 .foodItem:hover{
     background-color:#303133;
@@ -369,7 +373,7 @@ background-color: #F56C6C;
 position: absolute;
 right: 0;
 opacity: 1;
-z-index: 9999;
+z-index: 9;
 width: 15px;
 height: 15px;
 border-radius: 50%;
@@ -391,7 +395,7 @@ background-color: #67C23A;
 position: absolute;
 right: 0;
 opacity: 1;
-z-index: 9999;
+z-index: 9;
 width: 15px;
 height: 15px;
 border-radius: 50%;
@@ -401,12 +405,14 @@ background-color: #67C23A;
 
 @keyframes slide-InLeft {
     0%{
-        transform: translateX(100px);
-        opacity: 0;
+        /* transform: translateX(-100px); */
+        /* opacity: 1; */
+        margin-left: -100px;
     }
     100%{
-        transform: translateX(0);
-        opacity: 1;
+        /* transform: translateX(0); */
+        /* opacity: 1; */
+        margin-left: 0px;
     }
 }
 

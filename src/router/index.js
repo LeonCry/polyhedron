@@ -22,6 +22,7 @@ import hasBought from "../pages/shops/hasBought.vue"
 import shopDetail from "../pages/shops/shopDetail.vue"
 import shopHistory from "../pages/shops/shopHistory.vue"
 import shopTraining from "../pages/shops/shopTraining.vue"
+import rightFoods from "../pages/rightFoods.vue"
 // 安装插件
 Vue.use(VueRouter)
 
@@ -34,6 +35,7 @@ const routes = [
     {name:"rightPics",path:"/rightPics",components:{backs:rightPics}},
     {name:"rightFiles",path:"/rightFiles",components:{backs:rightFiles},},
     {name:"rightShop",path:"/rightShop",components:{backs:rightShop},},
+    {name:"rightFoods",path:"/rightFoods",components:{backs:rightFoods},},
     {name:"fileAndApp",path:"/fileAndApp",components:{pres:fileAndApp}},
     {name:"baaupic",path:"/baaupic",components:{pres:baaupic}},
     {name:"gameLife",path:"/gameLife",components:{pres:gameLife}},

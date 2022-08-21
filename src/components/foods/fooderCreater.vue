@@ -256,9 +256,18 @@ created(){
 </script>
 
 <style scoped>
+@media only screen and (orientation: portrait) {
 .fooderCreater{
   position: fixed;
   width: 100%;
+  top: 0;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
+.fooderCreater{
+  position: fixed;
+  width: 450px;
   top: 0;
   z-index: 9000;
   background-color: rgba(0, 0, 0, 0.55);

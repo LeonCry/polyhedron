@@ -48,19 +48,50 @@ data(){
     isDetail:false,
     allData:'',
     priceTotal:0,
+    settimeIn:'',
   }
 },
 methods:{
 exitDetail(){
   this.isDetail = false;
+  clearInterval(this.settimeIn);
 },
-
+everyTimeCheck(){
+  var price = 0;
+    this.$axios.post('/api/selectAllFoodOrders').then(response=>{
+    console.log(response.data);
+    this.allData = response.data;
+    for (let i = 0; i < this.allData.length; i++) {
+      const el1 = this.allData[i];
+      this.$bus.$emit('updateOrderStatusB',el1.orderId,el1.orderStatus);
+      if(el1.orderContent!=""){
+      var content = JSON.parse(el1.orderContent);
+      this.allData[i].orderContent = [];
+      this.allData[i].orderContent.push(content);
+      for (let j = 0; j < content.length; j++) {
+        const el2 = content[j];
+        if(el2.orderFoodNums!=0){
+          price += el2.orderFoodPrice*el2.orderFoodNums;
+        }
+      }
+      this.$bus.$emit('adminItemChange');
+      this.priceTotal = price;
+    }}
+  },error=>{
+    console.log(error.message);
+  });
+},
 
 
 
 },
 mounted(){
 this.$bus.$on('adminBox',()=>{
+      // 每30s查看订单一次
+    this.settimeIn = setInterval(() => {
+        this.everyTimeCheck();
+    }, 10000);
+
   var price = 0;
   this.isDetail = true;
   this.$axios.post('/api/selectAllFoodOrders').then(response=>{
@@ -68,6 +99,7 @@ this.$bus.$on('adminBox',()=>{
     this.allData = response.data;
     for (let i = 0; i < this.allData.length; i++) {
       const el1 = this.allData[i];
+      if(el1.orderContent!=""){
       var content = JSON.parse(el1.orderContent);
       this.allData[i].orderContent = [];
       this.allData[i].orderContent.push(content);
@@ -78,7 +110,7 @@ this.$bus.$on('adminBox',()=>{
         }
       }
       this.priceTotal = price;
-    }
+    }}
   },error=>{
     console.log(error.message);
   });
@@ -95,9 +127,18 @@ created(){
 </script>
 
 <style scoped>
+@media only screen and (orientation: portrait) {
 .orderBox{
   position: fixed;
   width: 100%;
+  top: 0;
+  z-index: 9500;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
+.orderBox{
+  position: fixed;
+  width: 450px;
   top: 0;
   z-index: 9500;
   background-color: rgba(0, 0, 0, 0.55);

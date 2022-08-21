@@ -37,7 +37,8 @@ methods:{
 created(){
     var nums = 0;
     var price = 0;
-    console.log("this.dataProp.orderContent:",this.dataProp.orderContent);
+    setTimeout(() => {
+       console.log("this.dataProp.orderContent:",this.dataProp.orderContent);
     if(this.dataProp.orderContent!=""){
     for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
         const element = this.dataProp.orderContent[0][i];
@@ -48,7 +49,8 @@ created(){
     }
     this.foodNums = nums;
     this.priceTotal = price;
-    }
+    }     
+    }, 100);
     setTimeout(() => {
             if(this.dataProp.orderStatus=='已完成'){
         this.$refs.hasOrderItem.style.backgroundColor = 'rgb(64, 192, 120,0.5)';

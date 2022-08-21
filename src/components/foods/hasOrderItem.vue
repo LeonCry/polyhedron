@@ -1,17 +1,17 @@
 <template>
   <div class="hasOrderItem" :class="{'finish':isFinish}">
  <div class="dimgs">
-            <img :src="dataProp.orderFoodPic" alt="">
+            <img :src="allData.orderFoodPic" alt="">
   </div>
   <div class="intro">
     <div>
-    <span>{{dataProp.orderFoodName}}</span>
+    <span>{{allData.orderFoodName}}</span>
     <br>
-    <span style="color:darkgray">{{dataProp.orderFoodCopy}}人份</span>
+    <span style="color:darkgray">{{allData.orderFoodCopy}}人份</span>
     <br>
-    <span style="color:darkgray">x{{dataProp.orderFoodNums}}</span>
+    <span style="color:darkgray">x{{allData.orderFoodNums}}</span>
     <br>
-    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x{{dataProp.orderFoodNums*dataProp.orderFoodPrice}}</span>
+    <span style="color: salmon;font-size:1.4vh;"><i class="el-icon-lollipop"></i>x{{allData.orderFoodNums*allData.orderFoodPrice}}</span>
     </div>
     <div>
        <i class="icon" :class="{'el-icon-loading':!isFinish,'el-icon-success':isFinish}"></i>
@@ -27,6 +27,7 @@ props:['dataProp'],
 data(){
   return{
     isFinish:false,
+    allData:this.dataProp,
   }
 },
 mounted(){
@@ -38,19 +39,19 @@ mounted(){
   }
 
 this.$bus.$on('contentUpdate',(newContent)=>{
-  if(this.dataProp.status==undefined){
+  if(this.allData.status==undefined){
     for (let i = 0; i < newContent.length; i++) {
       const element = newContent[i];
-      if(element.orderFoodId==this.dataProp.orderFoodId){
+      if(element.orderFoodId==this.allData.orderFoodId){
         if(element.status=='已出锅'){
           this.isFinish = true;
+          this.allData.status=='已出锅';
            this.$message({
             message: this.dataProp.orderFoodName+'出锅啦.',
             type: 'success'
         });
     }
         }
-        break;
       }
       
     }

@@ -30,12 +30,14 @@
       <transition name="DetailT-5">
       <div v-show="isDetail" class="more" >
          详情:
-         <br>
-         {{foodProp.foodDetails}}
          <br><br>
-         步骤:
+         <pre>{{foodProp.foodDetails}}</pre>
          <br>
-            <div>{{foodProp.foodDoingWay}}</div>
+         <div class="hr"></div>
+         <br>
+         步骤:
+         <br><br>
+            <pre>{{foodProp.foodDoingWay}}</pre>
          <br><br>
       </div>
       </transition>
@@ -67,6 +69,8 @@ mounted(){
     this.isDetail = true;
     this.foodProp = foodProp;
     this.material = material;
+
+
   });
 },
 created(){
@@ -94,6 +98,12 @@ created(){
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
+}
+.hr{
+  position: relative;
+  width: 100%;
+  height: 2px;
+  border-top: 6px dotted gray;
 }
 .detailimgs{
     position: relative;

@@ -55,7 +55,7 @@ name:'foodOrders',
 data(){
   return{
     isDetail:false,
-    allData:'',
+    allData:{},
     foodsTotal:0,
     timesTotal:0,
     priceTotal:0,
@@ -89,7 +89,11 @@ orderIt(){
 },
 mounted(){
 this.$bus.$on('orderStatus1',(status)=>{
+  console.log("status",status);
+  if(status!=''){
   this.allData.orderStatus = status;
+  }
+  console.log("this.allData.orderStatus",this.allData.orderStatus);
 });
 this.$bus.$on('orderShow',(orders)=>{
   this.isDetail = true;
@@ -141,9 +145,18 @@ created(){
 </script>
 
 <style scoped>
-.orderBox{
+@media only screen and (orientation: portrait) {
+.fooderCreater{
   position: fixed;
   width: 100%;
+  top: 0;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
+.orderBox{
+  position: fixed;
+  width: 450px;
   top: 0;
   z-index: 9000;
   background-color: rgba(0, 0, 0, 0.55);

@@ -49,9 +49,9 @@
         <span slot="title">文件夹</span>
       </el-menu-item>
       <br>
-      <el-menu-item index="5">
-        <i class="el-icon-s-home"></i>
-        <span slot="title">避难所</span>
+      <el-menu-item index="5" @click="routerTo('rightFoods')">
+        <i class="el-icon-food"></i>
+        <span slot="title">吃什么</span>
       </el-menu-item>
       <br>
        <el-menu-item index="6">

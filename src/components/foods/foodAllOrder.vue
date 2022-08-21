@@ -95,9 +95,18 @@ created(){
 </script>
 
 <style scoped>
+@media only screen and (orientation: portrait) {
 .orderBox{
   position: fixed;
   width: 100%;
+  top: 0;
+  z-index: 8000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
+.orderBox{
+  position: fixed;
+  width: 450px;
   top: 0;
   z-index: 8000;
   background-color: rgba(0, 0, 0, 0.55);

@@ -86,7 +86,7 @@ changStatus(){
       // eslint-disable-next-line no-unused-vars
       this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'已完成'}).then(response=>{
         this.allData.orderStatus = '已完成';
-        this.$bus.$emit('updateOrderStatusB',this.allData.orderId,'烹饪中');
+        this.$bus.$emit('updateOrderStatusB',this.allData.orderId,'已完成');
         clearInterval(this.settimeIn);
       },error=>{
         console.log(error.message);
@@ -97,6 +97,9 @@ changStatus(){
     }
 },
 everyTimeCheck(){
+  var num = 0;
+  var time = 0;
+  var price = 0;
   this.$axios.post('/api/selectFoodOrdersById',{orderId:this.allData.orderId}).then(response=>{
     console.log("new30:",response.data);
     var three = response.data[0];
@@ -107,6 +110,17 @@ everyTimeCheck(){
     this.allContent = content;
     console.log(this.allData);
     console.log(this.allContent);
+    for (let i = 0; i < content.length; i++) {
+      const el = content[i];
+      if(el.orderFoodNums!=0){
+        num++;
+        time += el.orderFoodMadeTimes;
+        price += el.orderFoodPrice*el.orderFoodNums;
+      }
+    }
+    this.timeTotal = time;
+    this.priceTotal = price;
+    this.numTotal = num;
 
   },error=>{
     console.log(error.message);
@@ -137,6 +151,7 @@ this.$bus.$on('adminOrderShow',(data)=>{
     else{
       this.isFinish = true;
     }
+    if(this.allData.orderContent!=""){
     var content = JSON.parse(this.allData.orderContent);
     this.allData.orderContent = [];
     this.allData.orderContent.push(content);
@@ -152,6 +167,7 @@ this.$bus.$on('adminOrderShow',(data)=>{
     this.timeTotal = time;
     this.priceTotal = price;
     this.numTotal = num;
+    }
   },error=>{
     console.log(error.message);
   });
