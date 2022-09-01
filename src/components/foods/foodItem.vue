@@ -68,8 +68,12 @@ methods:{
     var tp = document.documentElement.clientTop;
     var el = this.$refs.desbut;
     var rect = el.getBoundingClientRect();
-    var bottomLength = window.screen.height - rect.bottom + tp;
+    
+    var bottomLength = window.innerHeight - rect.bottom + tp;
     var leftLength = rect.left-100;
+     if(window.innerWidth>window.innerHeight){
+        leftLength = leftLength - 650;
+     }
     this.$refs.fakeRed.style.opacity = 1;
     this.$refs.fakeRed.style.zIndex = 9;
     this.$refs.fakeRed.style.marginTop = bottomLength + 'px';
@@ -116,8 +120,11 @@ methods:{
     var tp = document.documentElement.clientTop;
     var el = this.$refs.incbut;
     var rect = el.getBoundingClientRect();
-    var bottomLength = window.screen.height - rect.bottom + tp;
+    var bottomLength = window.innerHeight - rect.bottom + tp;
     var leftLength = rect.left-100;
+     if(window.innerWidth>window.innerHeight){
+        leftLength = leftLength - 650;
+     }
     this.$refs.fakeGreen.style.opacity = 1;
     this.$refs.fakeGreen.style.zIndex = 9;
     this.$refs.fakeGreen.style.marginRight = 0;
@@ -159,12 +166,10 @@ methods:{
         if(this.foodMaterial.length>6){
             this.foodMaterial = this.foodMaterial.slice(0,6);
         }
-        console.log(this.foodMaterial);
     },
     // 点多点少的 更新store中的content
     updateFoodContent(){
         var hasFoodFlag = false;
-        console.log(this.tempOrders);
         // 先查询orderContent里面有没有该food
         for (let i = 0; i < this.tempOrders.orderContent.length; i++) {
             const el = this.tempOrders.orderContent[i];
@@ -200,7 +205,6 @@ methods:{
             // 获取每个item的订单信息
     setTimeout(() => {
         if(this.orders.orderContent.length!=0){
-            console.log(this.orders.orderContent);
             for (let i = 0; i < this.orders.orderContent.length; i++) {
                 const el = this.orders.orderContent[i];
                 if(el.orderFoodId==this.foodProp.foodId){

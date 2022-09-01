@@ -6,6 +6,7 @@
     <span>{{notice}}</span>
     </div>
     <el-button ref="admin" @click="admin" :class="{salmon:isAdmin}" class="admin" icon="el-icon-s-help" circle></el-button>
+    <span class="admisn">管理员登录</span>
     <img class="imgs" src="https://tva1.sinaimg.cn/large/e6c9d24ely1h5bwnqjwtrj20u01900yw.jpg" alt="">
      <transition name="DetailT-2" appear>
     <div v-show="isCreated" class="fooder">
@@ -49,7 +50,7 @@ data(){
         isCreated:false,
         isAdmin:false,
         password:'',
-        notice:'已经有一单了?可能上一单已经完成,请进入查看所有订单',
+        notice:'I am Chef Li',
         isUser:false,
         isNewCreated:false,
         visitorId:'',
@@ -95,8 +96,6 @@ methods:{
         // 创建一个订单
         this.isNewCreated = false;
         this.$axios.post('/api/insertFoodOrders',{orderPerson:this.visitorId,orderDiners:this.pnums,orderContent:'',orderStatus:'点菜中',orderTime:Date.now()}).then(response=>{
-            console.log("创建订单.");
-            console.log(response.data);
                 this.uploadOrderId(response.data[0].orderId);
                 this.uploadOrderUser(response.data[0].orderPerson);
         },error=>{
@@ -106,8 +105,6 @@ methods:{
         else{
             //更新订单
             this.$axios.post('/api/updateFoodOrders',{orderId:this.hasOrderId,orderDiners:this.pnums}).then(response=>{
-                console.log("更新订单.");
-                console.log(response.data);
                 this.uploadOrderId(response.data[0].orderId);
                 this.uploadOrderUser(response.data[0].orderPerson);
                 this.notice = '已为您更改用餐人数';
@@ -256,15 +253,7 @@ created(){
 </script>
 
 <style scoped>
-@media only screen and (orientation: portrait) {
-.fooderCreater{
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 9000;
-  background-color: rgba(0, 0, 0, 0.55);
-}
-}
+
 .fooderCreater{
   position: fixed;
   width: 450px;
@@ -297,6 +286,24 @@ created(){
     left: 44%;
     transition: 0.33s;
 }
+.admisn{
+    position: absolute;
+    z-index:2;
+    background-color:rgba(0,0,0,0);
+    border:none;
+    font-size:1.6vh;
+    color:white;
+    bottom: 18%;
+    left: 41.5%;
+    transition: 0.33s;
+}
+.admisn::after{
+    content: "▲";
+    position:  absolute;
+    left: 3.15vh;
+    color: khaki;
+    margin-top: -15px;
+}
 .notice{
     position: absolute;
     z-index:2;
@@ -322,7 +329,7 @@ created(){
   position: relative;
   width: 100%;
   height: auto;
-  padding: 20px;
+  padding-top: 20px;
   display: flex;
   flex-flow: row wrap;
 }
@@ -452,5 +459,14 @@ created(){
     transform: rotateX(0deg) translateX(0) skewX(0deg);
     opacity: 1;
   }
+}
+@media only screen and (orientation: portrait) {
+.fooderCreater{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
 }
 </style>

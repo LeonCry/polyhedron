@@ -101,15 +101,12 @@ everyTimeCheck(){
   var time = 0;
   var price = 0;
   this.$axios.post('/api/selectFoodOrdersById',{orderId:this.allData.orderId}).then(response=>{
-    console.log("new30:",response.data);
     var three = response.data[0];
     this.allData = three;
     var content = JSON.parse(three.orderContent);
     this.allData.orderContent = [];
     this.allData.orderContent.push(content);
     this.allContent = content;
-    console.log(this.allData);
-    console.log(this.allContent);
     for (let i = 0; i < content.length; i++) {
       const el = content[i];
       if(el.orderFoodNums!=0){
@@ -138,7 +135,6 @@ this.$bus.$on('adminOrderShow',(data)=>{
         this.everyTimeCheck();
     }, 30000);
   this.$axios.post('/api/selectFoodOrdersById',{orderId:data}).then(response=>{
-    console.log(response.data);
     this.allData = response.data[0];
     if(this.allData.orderStatus=='已下单'){
       this.nextStatus = '烹饪中';
@@ -185,7 +181,7 @@ created(){
 <style scoped>
 .orderBox{
   position: fixed;
-  width: 100%;
+  width: 450px;
   top: 0;
   z-index: 9600;
   background-color: rgba(0, 0, 0, 0.55);
@@ -194,7 +190,7 @@ created(){
   position: relative;
   width: 95%;
   left: 2.5%;
-  top: 7.5%;
+  top: 5%;
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
@@ -218,7 +214,7 @@ created(){
 .detailimgs{
     position: relative;
     background-color: rgba(255, 255, 255,0.33);
-    height: 250px;
+    height: 32%;
     width: 100%;
     display: flex;
     flex-flow: row nowrap;
@@ -228,7 +224,7 @@ created(){
 .detailimgs img{
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 100%;
     object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
@@ -239,7 +235,7 @@ created(){
   top: -30px;
   font-size: 1.6vh;
   color: aliceblue;
-  height: 400px;
+  height: 65%;
   background-color: #303133;
   transition: 0.33s;
 }
@@ -247,7 +243,7 @@ created(){
     top: -150px;
 }
 .introduces:hover .more{
-    max-height: 320px;
+    max-height: 81%;
 }
 .detailTitle{
   position: relative;
@@ -262,7 +258,7 @@ created(){
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 200px;
+  max-height: 60%;
   overflow: auto;
   text-align: left;
   font-size: 1.65vh;
@@ -345,6 +341,15 @@ created(){
     transform: rotateX(0deg) translateX(0) skewX(0deg);
     opacity: 1;
   }
+}
+@media only screen and (orientation: portrait) {
+.orderBox{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 8000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
 }
 
 

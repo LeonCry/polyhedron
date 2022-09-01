@@ -32,6 +32,13 @@ mounted(){
             this.chooseIt();
         }
      });
+},
+created(){
+    setTimeout(() => {
+        if(this.type=='所有菜肴'){
+            this.chooseIt();
+        }
+    }, 100);
 }
 }
 </script>
@@ -51,7 +58,7 @@ mounted(){
     position: relative;
     width: 102%;
     padding-top: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 30px;
     height: 15px;
     font-size: 1.6vh;
     color: #2b2c34;
@@ -61,7 +68,7 @@ mounted(){
 .but{
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 30px;
     font-size: 1.6vh;
     border: none;
     background-color: rgba(0, 0, 0, 0);

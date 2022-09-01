@@ -96,7 +96,7 @@ data(){
                 // 其他
         other:{
             oneFont:'食',
-            title:'菜谱',
+            title:'吃什么',
             info:'今天吃点什么呢?',
             to:'other',
             bacsrc:'https://tva1.sinaimg.cn/large/e6c9d24ely1h4dduqv9u7j21ou0u0t9n.jpg',

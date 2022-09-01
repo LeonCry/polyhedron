@@ -1,6 +1,6 @@
 <template>
       <transition name="DetailT">
-    <div v-show="isDetail" ref="detail" class="detail">
+    <div v-show="isDetail" ref="detail" class="detail2">
       <transition name="DetailT-1">
       <div v-show="isDetail" class="detailBox">
       <!-- 退出按钮 -->
@@ -31,13 +31,13 @@
       <div v-show="isDetail" class="more" >
          详情:
          <br><br>
-         <pre>{{foodProp.foodDetails}}</pre>
+         <pre class="pres">{{foodProp.foodDetails}}</pre>
          <br>
          <div class="hr"></div>
          <br>
          步骤:
          <br><br>
-            <pre>{{foodProp.foodDoingWay}}</pre>
+            <pre class="pres">{{foodProp.foodDoingWay}}</pre>
          <br><br>
       </div>
       </transition>
@@ -83,10 +83,10 @@ created(){
 </script>
 
 <style scoped>
-.detail{
+.detail2{
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 450px;
   z-index: 9999;
   background-color: rgba(0, 0, 0, 0.55);
 }
@@ -94,7 +94,7 @@ created(){
   position: relative;
   width: 95%;
   left: 2.5%;
-  top: 7.5%;
+  top: 5%;
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
@@ -108,7 +108,7 @@ created(){
 .detailimgs{
     position: relative;
     background-color: rgba(255, 255, 255,0.33);
-    height: 250px;
+    height: 32%;
     width: 100%;
     display: flex;
     flex-flow: row nowrap;
@@ -118,7 +118,7 @@ created(){
 .detailimgs img{
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 100%;
     object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
@@ -129,7 +129,7 @@ created(){
   top: -30px;
   font-size: 1.6vh;
   color: aliceblue;
-  height: 400px;
+  height: 65%;
   background-color: #303133;
 }
 .detailTitle{
@@ -145,12 +145,12 @@ created(){
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 180px;
+  max-height: 70%;
   overflow: auto;
   text-align: left;
   background-color: rgba(255, 255, 255, 0.1);
   font-size: 1.65vh;
-  color: aliceblue;
+  color: pink;
   padding: 5px;
   border-radius: 15px;
   letter-spacing: 2px;
@@ -238,7 +238,11 @@ created(){
 .exit img:hover {
   transform: rotateZ(720deg) scale(1.33);
 }
-
+pre{
+white-space: pre-wrap;
+word-wrap: break-word;
+color: aliceblue;
+}
 
 @keyframes slide-top {
   0% {
@@ -319,6 +323,15 @@ created(){
   100%{
     transform: rotateY(0) scale(0);
   }
+}
+@media only screen and (orientation: portrait) {
+.detail2{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.55);
+}
 }
 
 </style>

@@ -72,8 +72,8 @@ this.$refs.soit.style.backgroundColor = 'pink';
 },
 // 删除订单
 deleteOrder(){
+  // eslint-disable-next-line no-unused-vars
   this.$axios.post('/api/updateAShopOrder',{orderId:this.orderProp.orderId,orderTrain:'是'}).then(response=>{
-    console.log(response.data);
     this.$message({
           message: '已删除订单',
           type: 'success'

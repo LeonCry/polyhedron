@@ -162,11 +162,11 @@ export default {
             // 说明是修改
             if(this.isEdit){
                 this.isEdit = false;
+                // eslint-disable-next-line no-unused-vars
                 this.$axios.post('/api/updateFoods',{foodId:this.creatFiles.foodId,foodName:this.creatFiles.foodName,foodPic:this.creatFiles.foodPic ,foodType: this.creatFiles.foodType,foodCopy: this.creatFiles.foodCopy,foodMadeTimes: this.creatFiles.foodMadeTimes,foodMaterial:this.creatFiles.foodMaterial ,foodMadeNums:this.creatFiles.foodMadeNums,foodPrice:this.creatFiles.foodPrice,foodDetails:this.creatFiles.foodDetails,foodDoingWay:this.creatFiles.foodDoingWay}).then(response=>{
                 this.clearInputs();
                 this.$bus.$emit('backNotice',true,"更新成功!");
                 this.fileCreatedFun();
-                console.log(response.data);
             },error=>{
                 console.log(error.message);
             });

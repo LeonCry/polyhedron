@@ -76,8 +76,8 @@ orderIt(){
         });
   }
   else{
+    // eslint-disable-next-line no-unused-vars
   this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderStatus:'已下单'}).then(response=>{
-    console.log(response.data);
     this.isOrdered = true;
     this.$bus.$emit('orderStatus','已下单');
     this.allData.orderStatus = "已下单";
@@ -85,15 +85,19 @@ orderIt(){
     console.log(error.message);
   });
   }
+  // eslint-disable-next-line no-unused-vars
+  this.$axios.post('/api/orderNotice',{orderPerson:this.allData.orderPerson,orderStatus:new Date(parseInt(this.allData.orderTime)).toLocaleString()}).then(response=>{
+
+  },error=>{
+    console.log(error.message);
+  });
 },
 },
 mounted(){
 this.$bus.$on('orderStatus1',(status)=>{
-  console.log("status",status);
   if(status!=''){
   this.allData.orderStatus = status;
   }
-  console.log("this.allData.orderStatus",this.allData.orderStatus);
 });
 this.$bus.$on('orderShow',(orders)=>{
   this.isDetail = true;
@@ -145,15 +149,7 @@ created(){
 </script>
 
 <style scoped>
-@media only screen and (orientation: portrait) {
-.fooderCreater{
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 9000;
-  background-color: rgba(0, 0, 0, 0.55);
-}
-}
+
 .orderBox{
   position: fixed;
   width: 450px;
@@ -165,7 +161,7 @@ created(){
   position: relative;
   width: 95%;
   left: 2.5%;
-  top: 7.5%;
+  top: 5%;
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
@@ -208,7 +204,7 @@ created(){
 .detailimgs{
     position: relative;
     background-color: rgba(255, 255, 255,0.33);
-    height: 250px;
+    height: 32%;
     width: 100%;
     display: flex;
     flex-flow: row nowrap;
@@ -218,7 +214,7 @@ created(){
 .detailimgs img{
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 100%;
     object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
@@ -229,7 +225,7 @@ created(){
   top: -30px;
   font-size: 1.6vh;
   color: aliceblue;
-  height: 400px;
+  height: 65%;
   background-color: #303133;
   transition: 0.33s;
 }
@@ -237,7 +233,7 @@ created(){
     top: -150px;
 }
 .introduces:hover .more{
-    max-height: 320px;
+    max-height: 81%;
 }
 .detailTitle{
   position: relative;
@@ -252,7 +248,7 @@ created(){
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 200px;
+  max-height: 60%;
   overflow: auto;
   text-align: left;
   font-size: 1.65vh;
@@ -323,6 +319,14 @@ created(){
     opacity: 1;
   }
 }
-
+@media only screen and (orientation: portrait) {
+.orderBox{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
 
 </style>

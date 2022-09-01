@@ -59,7 +59,6 @@ exitDetail(){
 everyTimeCheck(){
   var price = 0;
     this.$axios.post('/api/selectAllFoodOrders').then(response=>{
-    console.log(response.data);
     this.allData = response.data;
     for (let i = 0; i < this.allData.length; i++) {
       const el1 = this.allData[i];
@@ -95,7 +94,6 @@ this.$bus.$on('adminBox',()=>{
   var price = 0;
   this.isDetail = true;
   this.$axios.post('/api/selectAllFoodOrders').then(response=>{
-    console.log(response.data);
     this.allData = response.data;
     for (let i = 0; i < this.allData.length; i++) {
       const el1 = this.allData[i];
@@ -117,7 +115,6 @@ this.$bus.$on('adminBox',()=>{
 });
 },
 created(){
-
   // 获得屏幕长
   setTimeout(() => {
     this.$refs.orderBox.style.height = window.screen.height + 'px';
@@ -127,15 +124,7 @@ created(){
 </script>
 
 <style scoped>
-@media only screen and (orientation: portrait) {
-.orderBox{
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 9500;
-  background-color: rgba(0, 0, 0, 0.55);
-}
-}
+
 .orderBox{
   position: fixed;
   width: 450px;
@@ -147,7 +136,7 @@ created(){
   position: relative;
   width: 95%;
   left: 2.5%;
-  top: 7.5%;
+  top: 5%;
   height: 85%;
   background-color: #303133;
   border-radius: 15px;
@@ -170,7 +159,7 @@ created(){
 .detailimgs{
     position: relative;
     background-color: rgba(255, 255, 255,0.33);
-    height: 250px;
+    height: 32%;
     width: 100%;
     display: flex;
     flex-flow: row nowrap;
@@ -180,7 +169,7 @@ created(){
 .detailimgs img{
     position: relative;
     width: 100%;
-    height: 250px;
+    height: 100%;
     object-fit: cover;
     border-radius: 15px 15px 0 0;
 }
@@ -191,7 +180,7 @@ created(){
   top: -30px;
   font-size: 1.6vh;
   color: aliceblue;
-  height: 400px;
+  height: 65%;
   background-color: #303133;
 }
 .detailTitle{
@@ -207,7 +196,7 @@ created(){
   position: relative;
   width: 90%;
   left: 4%;
-  max-height: 300px;
+  max-height: 70%;
   overflow: auto;
   text-align: left;
   font-size: 1.65vh;
@@ -277,6 +266,14 @@ created(){
     opacity: 1;
   }
 }
-
+@media only screen and (orientation: portrait) {
+.orderBox{
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9500;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+}
 
 </style>

@@ -38,7 +38,6 @@ created(){
     var nums = 0;
     var price = 0;
     setTimeout(() => {
-       console.log("this.dataProp.orderContent:",this.dataProp.orderContent);
     if(this.dataProp.orderContent!=""){
     for (let i = 0; i < this.dataProp.orderContent[0].length; i++) {
         const element = this.dataProp.orderContent[0][i];

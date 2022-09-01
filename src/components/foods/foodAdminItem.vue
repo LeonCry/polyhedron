@@ -43,7 +43,6 @@ mounted(){
     }
     });
     this.$bus.$on('adminItemChange',()=>{
-      console.log("this.dataProp.orderContent[0]",this.dataProp.orderContent[0]);
       var price = 0;
       var num = 0;
         if(this.dataProp.orderContent.length!=0&&this.dataProp.orderContent[0]!=undefined){

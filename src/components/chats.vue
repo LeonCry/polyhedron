@@ -224,8 +224,8 @@ export default {
         // 获得文件名和文件
       this.file = e.target.files[0];
       // 限制大小 < 2m
-      if(this.file.size/1024/1024>10){
-      this.$bus.$emit('chatNotice',false,"头像文件大小限制在10MB以内  ");
+      if(this.file.size/1024/1024>2){
+      this.$bus.$emit('chatNotice',false,"头像文件大小限制在2MB以内  ");
       }
       else{
         // 可以进行图片回显和图片转二进制
@@ -246,7 +246,6 @@ export default {
         this.picData = canvas.toDataURL('image/'+ext);
         // img.setAttribute('src',this.picData);
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + "<div><img src='"+this.picData+"'</div>";
-        console.log(this.$refs.typetext.innerHTML);
         }, 100);
 
       }
@@ -300,7 +299,6 @@ export default {
         sendMessage(){
            setTimeout(() => {    
             // 如果为空
-            console.log("this.$refs.typetext.innerHTML:",this.$refs.typetext.innerHTML);
             if(this.$refs.typetext.innerHTML == '' || this.$refs.typetext.innerHTML=='<div><br></div><div><br></div>'){
                 this.$refs.typetext.innerHTML = '';
             }
@@ -554,7 +552,6 @@ export default {
 
   },
   mounted(){
-    console.log((document.getElementById('pic')));
     //   实时监听鼠标移动,更改位置数据
         window.addEventListener('mousemove',(e)=>{
             if(this.isMove){

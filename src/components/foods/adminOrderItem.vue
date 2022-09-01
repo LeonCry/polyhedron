@@ -51,8 +51,8 @@ methods:{
         },error=>{
           console.log(error.message);
         });
+      // eslint-disable-next-line no-unused-vars
       this.$axios.post('/api/updateFoodOrders',{orderId:this.allData.orderId,orderContent:JSON.stringify(this.allData.orderContent[0])}).then(response=>{
-        console.log(response.data);
       },error=>{
         console.log(error.message);
       });

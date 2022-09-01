@@ -97,7 +97,6 @@ export default {
                 _this.percent = parseInt(100 * (progress.loaded / progress.total));
                 _this.$refs.down.style.height = _this.percent + '%';
                 // this.$refs.down.style.height = this.percent + '%';
-                console.log(_this.percent);
                 }}
                 // eslint-disable-next-line no-unused-vars
                 ).then(response=>{

@@ -41,9 +41,9 @@
       <div class="tagdiv">
         <span class="tags">点评高分店铺</span>
         <span class="tags">高回头客率</span> 
+        <span class="tags">口碑飙升</span>
         <span class="tags">海鲜人气榜第1名</span>
         <span class="tags">水果人气榜第1名</span>
-        <span class="tags">口碑飙升</span>
         <span class="tags">热情掌柜</span>
         <span class="tags">韩料人气榜第1名</span>
         <span class="tags">非遗厨师</span>
@@ -165,7 +165,6 @@ getUniqueCode(){
     FingerprintJS.load().then(fp => {
         fp.get().then(result => {
            this.visitorId = result.visitorId;
-          console.log('获取设备唯一标识：',this.visitorId);
         });
     });
 },
@@ -221,7 +220,6 @@ getAllFoods(){
         this.foodTpye.push(element.foodType);
       }
     }
-    console.log(this.foodTpye);
   },error=>{
     console.log(error.message);
   });
@@ -229,7 +227,6 @@ getAllFoods(){
 searchIt(){
   this.allFoods = [];
   this.$axios.post('/api/selectFoodsByName',{foodName:this.searchContent}).then(response=>{
-    console.log(response.data);
     this.allFoods = response.data;
   },error=>{
     console.log(error.message);
@@ -238,7 +235,6 @@ searchIt(){
 // 每30s查看订单一次
 everyTimeCheck(){
   this.$axios.post('/api/selectFoodOrdersById',{orderId:this.orders.orderId}).then(response=>{
-    console.log("30",response.data);
     if(response.data.length!=0){
     var three = response.data[0];
     if(three.orderContent!=""||three.orderContent==undefined){
@@ -384,7 +380,6 @@ created(){
       console.log(error.message);
     });
     for (let i = 0; i < this.orders.orderContent.length; i++) {
-      console.log("xxx");
         const el = this.orders.orderContent[i];
         if(el.orderFoodNums!=0){
           this.ids.push(el.orderFoodId);
@@ -423,7 +418,7 @@ created(){
     width: 450px;
     height: 100%;
     z-index: 80;
-    margin-left: 35%;
+    margin-left: 700px;
     transition: 0.55s;
     font-size: 1.2vh;
     overflow: auto;
@@ -528,7 +523,7 @@ created(){
 .intro{
   position: relative;
   width: 100%;
-  height: 400px;
+  height: auto;
   z-index: 3;
   border-radius: 20px 20px 0 0;
   background-color: var(--friColor);
@@ -561,6 +556,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 .says{
   position: relative;
   width: 100%;
+  height: auto;
   font-size: 1.6vh;
   font-weight: 100;
   color: #2b2c34;
@@ -577,9 +573,12 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 }
 .tagdiv{
   position: relative;
-  width: 100%;
+  width: 90%;
+  left: 5%;
   height: auto;
-  padding: 15px;
+  overflow: auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
   display: flex;
   flex-flow: row wrap;
 }
@@ -610,7 +609,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   width: 100%;
   font-size: 1.6vh;
   height: auto;
-  padding: 20px;
+  padding-left: 20px;
   padding-top: 0;
   text-align: left;
 }
@@ -620,6 +619,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 .pictrans{
   position: relative;
   width: 98%;
+  margin-bottom: 5px;
   height: 200px;
   left: 1%;
   z-index: 4;
@@ -627,6 +627,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
 
 }
 .ppiicc{
+  position: relative;
   box-shadow: #2b2c34 0 0 8px;
 }
 .elimage{
@@ -646,6 +647,7 @@ border-top: 5px dotted rgba(73, 37, 80, 0.237);
   display: flex;
   flex-flow: row nowrap;
   width: 35%;
+  margin-right: 2%;
   height: 80%;
   top: 10%;
   background-color: #303133;

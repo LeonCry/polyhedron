@@ -1,5 +1,5 @@
 <template>
-  <div class="allback">
+  <div class="allback" ref="allback">
     <video v-if="videoN!=-1" class="videos" ref="videos" :src="require(`./assets/videos/${videoArray[videoN]}`)" autoplay muted loop></video>
     <tops></tops>
      <all-back-ground></all-back-ground>
@@ -42,11 +42,43 @@ export default {
       isAdmain : false,
       videoArray:['trees.mp4','trees2.mp4','floors.mp4','floors2.mp4'],
       videoN:-1,
-
     }
   },
   computed:{
     ...mapState('userInfo',['user']),
+  },
+  methods:{
+    // 节流
+  debounce (fn,wait){
+    var context;
+    var args;
+    var dataTime = 0;
+    var flag = true;
+    var run = ()=>{
+        setTimeout(() => {
+            fn.apply(context,args);
+            flag = true;
+        }, wait);
+    }
+    return function (){
+        if((new Date().getTime()-wait > dataTime)&&flag){
+            args = [...arguments];
+            context = this;
+            document.querySelector('.allback').style.width = window.innerWidth + 'px';
+            document.querySelector('.videos').style.width = window.innerWidth + 'px';
+            console.log(window.innerWidth);
+            run();
+            flag = false;
+            dataTime = new Date().getTime();
+        }
+    }
+
+},
+// 改变窗口大小
+  boxChange(){
+   document.querySelector('.allback').style.width = 100 + "%";
+   document.querySelector('.videos').style.width = 100 + "%";
+  },
   },
   mounted(){
     // 接收来自top组件或者adminlogin的数据,使adminlogin组件显示
@@ -80,7 +112,10 @@ export default {
       }
     })
   
-  
+  // window监听窗口变化
+    window.addEventListener('resize',this.debounce(this.boxChange,1200));
+
+
   },
     
   created(){

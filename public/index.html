@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <link rel="stylesheet" href="./index.css">
   <title><%= htmlWebpackPlugin.options.title %></title>
@@ -17,13 +17,4 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
-
-<script>
-  // 控制App高度始终拉伸到全部的监听器
-  var appHeight = function () {
-    document.body.style.height = window.innerHeight;
-  }
-  // 给window加上调整窗口大小就会响应的监听器
-  window.addEventListener('resize', appHeight);
-</script>
 </html>

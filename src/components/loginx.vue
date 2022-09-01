@@ -8,13 +8,16 @@
       <span v-show="islogin" :class="{hasloginclass:changeTop}">——</span>
       <img v-show="islogin" :class="{hasloginclass:loadingstate1,loadings:loadingstate2}" src="../assets/loading.svg" alt="loading">
       <span v-show="islogin" :class="{hasloginclass:changeTop}" style="color: darkgray">—</span>
-      <transition name="loginxT" appear>
+      <transition  name="loginxT" appear>
       <img v-show="islogin" :class="{hasloginclass:changeTop}" :src="svgBackward" alt="登录">
       </transition>
     </div>
     <transition name="svgMoveT" appear>
     <img v-show="svgMove" class="fakeaim"  src="../assets/login_v.svg" alt="暂时存在的假人">
     </transition>
+    <div v-show="!loginx&&!islogin" style="width:100%;text-align:center;transform: scale(0.8);">
+      <span style="color:salmon">亲爱的面试官你好,如果想直接登录请用管理员账户:<br> <br>username: SYSTEM <br>password: 0 <br>▼</span>
+    </div>
   </div>
 </template>
 
