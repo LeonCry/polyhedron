@@ -1,77 +1,75 @@
 // const { defineConfig } = require('@vue/cli-service')
 module.exports = {
   transpileDependencies: true,
-  lintOnSave:false,
-  publicPath:'./',
+  lintOnSave: false,
+  publicPath: './',
   // 开启服务代理
   devServer: {
     proxy: {
-      "/api": {
-        target: 'http://localhost:8088',
+      '/api': {
+        target: 'http://139.196.147.138:8088',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/api':''
-        }
+        pathRewrite: {
+          '^/api': '',
+        },
       },
       '/socket': {
-        target: 'ws://120.48.41.143:8088',//后端目标接口地址
-        changeOrigin: true,//是否允许跨域
+        target: 'ws://120.48.41.143:8088', //后端目标接口地址
+        changeOrigin: true, //是否允许跨域
         pathRewrite: {
-          '^/socket': '',//重写,
+          '^/socket': '', //重写,
         },
-        ws: true //开启ws, 如果是http代理此处可以不用设置
+        ws: true, //开启ws, 如果是http代理此处可以不用设置
       },
-      "/QQicon": {
+      '/QQicon': {
         target: 'http://q2.qlogo.cn',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/QQicon':''
+        pathRewrite: {
+          '^/QQicon': '',
         },
       },
-      "/QQname": {
+      '/QQname': {
         target: 'http://users.qzone.qq.com',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/QQname':''
+        pathRewrite: {
+          '^/QQname': '',
         },
       },
-      "/location": {
+      '/location': {
         target: 'https://ip.taobao.com',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/location':''
+        pathRewrite: {
+          '^/location': '',
         },
       },
-      "/bilibili": {
+      '/bilibili': {
         target: 'https://api.bilibili.com',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/bilibili':''
+        pathRewrite: {
+          '^/bilibili': '',
         },
       },
-      "/ces": {
+      '/ces': {
         target: ' https://chromedriver.storage.googleapis.com',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/ces':''
+        pathRewrite: {
+          '^/ces': '',
         },
-        
       },
-      "/train": {
+      '/train': {
         target: 'https://api.binstd.com',
         // ws: true,
         changeOrigin: true,
-        pathRewrite:{
-          '^/train':''
+        pathRewrite: {
+          '^/train': '',
         },
       },
-    }
+    },
   },
-
 }
