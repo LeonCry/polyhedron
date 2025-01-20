@@ -4,7 +4,7 @@
     <div>
       <div v-show="isShow" class="frienditem">
         <!-- 头像 -->
-        <img v-if="getUser.userHead" :src="`${publicPath}/HeadsAndBacks/Heads/${getUser.userHead}`" alt="" />
+        <img v-if="getUser.userHead" :src="`/polyhedronX/HeadsAndBacks/Heads/${getUser.userHead}`" alt="" />
         <!-- 网名,个签内容物 -->
         <div class="content">
           <!-- 名字和签名 -->

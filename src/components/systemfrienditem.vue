@@ -10,7 +10,7 @@
       }"
     >
       <!-- 头像 -->
-      <img v-if="notice.userHead" :src="(`${publicPath}/HeadsAndBacks/Heads/${notice.userHead}`)" alt="头像" />
+      <img v-if="notice.userHead" :src="`${publicPath}/HeadsAndBacks/Heads/${notice.userHead}`" alt="头像" />
       <!-- 网名,个签内容物 -->
       <div class="content">
         <!-- 名字和签名 -->
@@ -24,11 +24,7 @@
               <span>{{ suffix }}</span></span
             >
             <!-- 最后消息时间 -->
-            <span>{{
-              new Date(parseInt(noticeprops.noticeTime))
-                .toLocaleString()
-                .slice(5)
-            }}</span>
+            <span>{{ new Date(parseInt(noticeprops.noticeTime)).toLocaleString().slice(5) }}</span>
           </div>
           <!-- 聊天内容 -->
           <div class="chats">
@@ -43,27 +39,9 @@
             alt="空间"
             @click="enterHerSpace"
           /> -->
-          <img
-            v-show="consider"
-            class="accpet"
-            src="../assets/yes.svg"
-            alt="接受"
-            @click="accpetAsFriend"
-          />
-          <img
-            v-show="consider"
-            class="refuse"
-            src="../assets/x.svg"
-            alt="拒绝"
-            @click="refuseAsFriend"
-          />
-          <img
-            v-show="!consider"
-            class="delete"
-            src="../assets/delete.svg"
-            alt="删除"
-            @click="deleteNotice"
-          />
+          <img v-show="consider" class="accpet" src="../assets/yes.svg" alt="接受" @click="accpetAsFriend" />
+          <img v-show="consider" class="refuse" src="../assets/x.svg" alt="拒绝" @click="refuseAsFriend" />
+          <img v-show="!consider" class="delete" src="../assets/delete.svg" alt="删除" @click="deleteNotice" />
         </div>
       </div>
     </div>
@@ -71,11 +49,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
-  name: "systemfrienditem",
-  props: ["noticeprops"],
+  name: 'systemfrienditem',
+  props: ['noticeprops'],
   data() {
     return {
       isShow: true,
@@ -88,15 +66,15 @@ export default {
       // 删除按钮出现
       consider: true,
       // 一个接收的notice对象
-      notice: "",
+      notice: '',
       // 页面展示的内容
-      prefix: "",
-      suffix: "",
+      prefix: '',
+      suffix: '',
       publicPath: process.env.BASE_URL,
-    };
+    }
   },
   computed: {
-    ...mapState("userInfo", ["user","socket"]),
+    ...mapState('userInfo', ['user', 'socket']),
   },
   methods: {
     // 进入她的空间
@@ -106,30 +84,30 @@ export default {
     // },
     // 接受作为好友的状态class
     greenAccept() {
-      this.isAccept = true;
-      this.isRefuse = false;
-      this.isNormal = false;
-      this.consider = false;
+      this.isAccept = true
+      this.isRefuse = false
+      this.isNormal = false
+      this.consider = false
     },
     // 拒绝作为好友的状态class
     redAccept() {
-      this.isAccept = false;
-      this.isRefuse = true;
-      this.isNormal = false;
-      this.consider = false;
+      this.isAccept = false
+      this.isRefuse = true
+      this.isNormal = false
+      this.consider = false
     },
     // 发送好友请求通知
-    sendNoticeByWST(msg){
-            let message = "A9wadv::NEW" + this.user.userName + msg; 
-            this.socket.send(JSON.stringify({from:this.noticeprops.receiveUserQQ,to:this.noticeprops.sendUserQQ,message:message}));
+    sendNoticeByWST(msg) {
+      let message = 'A9wadv::NEW' + this.user.userName + msg
+      this.socket.send(JSON.stringify({ from: this.noticeprops.receiveUserQQ, to: this.noticeprops.sendUserQQ, message: message }))
     },
     // 接受为好友,更新数据
     accpetAsFriend() {
       // 发送消息--已接受
-      this.sendNoticeByWST("已接受好友请求.");
+      this.sendNoticeByWST('已接受好友请求.')
       // 更新数据
       this.$axios
-        .post("/api/updateNoticeData", {
+        .post('/api/updateNoticeData', {
           sendUserQQ: this.noticeprops.sendUserQQ,
           receiveUserQQ: this.user.userQQ,
           isAccept: 1,
@@ -137,49 +115,48 @@ export default {
         .then(
           // eslint-disable-next-line no-unused-vars
           (response) => {
-            this.$bus.$emit('refreshLists');
-            this.greenAccept();
+            this.$bus.$emit('refreshLists')
+            this.greenAccept()
           },
           (error) => {
-            this.$bus.$emit("systemNotice", false, error.message);
+            this.$bus.$emit('systemNotice', false, error.message)
           }
-        );
+        )
       //   向FriendList数据库中添加数据
       this.$axios
-        .post("/api/addOneFriend", {
+        .post('/api/addOneFriend', {
           userQQ: this.user.userQQ,
           friendQQ: this.noticeprops.sendUserQQ,
-          friendName:this.notice.userName,
+          friendName: this.notice.userName,
           beFriendTime: Date.now(),
         })
         .then(
           // eslint-disable-next-line no-unused-vars
           (response) => {
             // 更新名称信息
-            this.$axios.post("/api/updateFriend",{userQQ: this.noticeprops.sendUserQQ,friendQQ:this.user.userQQ,friendName:this.user.userName}).then(
+            this.$axios.post('/api/updateFriend', { userQQ: this.noticeprops.sendUserQQ, friendQQ: this.user.userQQ, friendName: this.user.userName }).then(
               // eslint-disable-next-line no-unused-vars
-              (response)=>{
-                this.$bus.$emit("systemNotice", true, "已接受该好友请求~");
+              (response) => {
+                this.$bus.$emit('systemNotice', true, '已接受该好友请求~')
               },
-              (error)=>{
-                console.log(error.message);
-                
+              (error) => {
+                console.log(error.message)
               }
             )
           },
           (error) => {
-            console.log(error.message);
-            this.$bus.$emit("systemNotice", false, error.message);
+            console.log(error.message)
+            this.$bus.$emit('systemNotice', false, error.message)
           }
-        );
+        )
     },
     // 拒绝为好友,更新数据
     refuseAsFriend() {
       // 拒绝通知
-      this.sendNoticeByWST("已拒绝好友请求.");
+      this.sendNoticeByWST('已拒绝好友请求.')
       // 更新数据
       this.$axios
-        .post("/api/updateNoticeData", {
+        .post('/api/updateNoticeData', {
           sendUserQQ: this.noticeprops.sendUserQQ,
           receiveUserQQ: this.user.userQQ,
           isAccept: 2,
@@ -187,20 +164,20 @@ export default {
         .then(
           // eslint-disable-next-line no-unused-vars
           (response) => {
-            this.$bus.$emit("systemNotice", false, "已拒绝该好友请求~");
-            this.redAccept();
+            this.$bus.$emit('systemNotice', false, '已拒绝该好友请求~')
+            this.redAccept()
           },
           (error) => {
-            this.$bus.$emit("systemNotice", false, error.message);
+            this.$bus.$emit('systemNotice', false, error.message)
           }
-        );
+        )
     },
     // 删除该条通知
     deleteNotice() {
       // 如果是我发出的信息
       if (this.user.userQQ == this.noticeprops.sendUserQQ) {
         this.$axios
-          .post("/api/updateNoticeData", {
+          .post('/api/updateNoticeData', {
             sendUserQQ: this.user.userQQ,
             receiveUserQQ: this.noticeprops.receiveUserQQ,
             isDelete: 1,
@@ -208,15 +185,15 @@ export default {
           .then(
             // eslint-disable-next-line no-unused-vars
             (response) => {
-              this.isShow = false;
+              this.isShow = false
             },
             (error) => {
-              this.$bus.$emit("systemNotice", false, error.message);
+              this.$bus.$emit('systemNotice', false, error.message)
             }
-          );
+          )
       } else {
         this.$axios
-          .post("/api/updateNoticeData", {
+          .post('/api/updateNoticeData', {
             sendUserQQ: this.noticeprops.sendUserQQ,
             receiveUserQQ: this.user.userQQ,
             isDelete: 1,
@@ -224,67 +201,63 @@ export default {
           .then(
             // eslint-disable-next-line no-unused-vars
             (response) => {
-              this.isShow = false;
+              this.isShow = false
             },
             (error) => {
-              this.$bus.$emit("systemNotice", false, error.message);
+              this.$bus.$emit('systemNotice', false, error.message)
             }
-          );
+          )
       }
     },
     // 判断+ 头像请求和用户名
     headRequest() {
       // 如果是我发出的请求,则请求我的信息,删除接收和拒绝方法
       if (this.user.userQQ == this.noticeprops.sendUserQQ) {
-        this.consider = false;
-        this.prefix = "你申请添加 ";
-        this.suffix = "为好友";
-        this.$axios
-          .post("api/getUser", { userQQ: this.noticeprops.receiveUserQQ })
-          .then(
-            (response) => {
-              this.notice = response.data;
-            },
-            (error) => {
-              console.log(error.message);
-            }
-          );
+        this.consider = false
+        this.prefix = '你申请添加 '
+        this.suffix = '为好友'
+        this.$axios.post('/api/getUser', { userQQ: this.noticeprops.receiveUserQQ }).then(
+          (response) => {
+            this.notice = response.data
+          },
+          (error) => {
+            console.log(error.message)
+          }
+        )
       } else {
-        this.consider = true;
-        this.prefix = "";
-        this.suffix = "申请添加为好友";
-        this.$axios
-          .post("api/getUser", { userQQ: this.noticeprops.sendUserQQ })
-          .then(
-            (response) => {
-              this.notice = response.data;
-            },
-            (error) => {
-              console.log(error.message);
-            }
-          );
+        this.consider = true
+        this.prefix = ''
+        this.suffix = '申请添加为好友'
+        this.$axios.post('/api/getUser', { userQQ: this.noticeprops.sendUserQQ }).then(
+          (response) => {
+            this.notice = response.data
+          },
+          (error) => {
+            console.log(error.message)
+          }
+        )
       }
     },
     // 判断是已接受还是拒绝状态还是删除
     stateJudgment() {
       if (this.noticeprops.isDelete == 1) {
-        this.isShow = false;
-        return 0;
+        this.isShow = false
+        return 0
       }
       if (this.noticeprops.isAccept == 1) {
-        this.greenAccept();
+        this.greenAccept()
       } else if (this.noticeprops.isAccept == 2) {
-        this.redAccept();
+        this.redAccept()
       }
     },
   },
   mounted() {
     // 头像请求和同户名
-    this.headRequest();
+    this.headRequest()
     // 判断是已接受还是拒绝状态还是删除
-    this.stateJudgment();
+    this.stateJudgment()
   },
-};
+}
 </script>
 
 <style scoped>
@@ -357,17 +330,17 @@ export default {
   overflow: hidden;
   justify-content: space-between;
 }
-.username  span:nth-of-type(1){
- flex: 9;
+.username span:nth-of-type(1) {
+  flex: 9;
 }
-.username  span:nth-of-type(2){
+.username span:nth-of-type(2) {
   margin-left: 10px;
- flex: 4;
+  flex: 4;
 }
-.username:hover{
-    height: 100px;
-    border-radius: 5px;
-    overflow-y: auto;
+.username:hover {
+  height: 100px;
+  border-radius: 5px;
+  overflow-y: auto;
 }
 
 /* 个性签名 */
@@ -514,8 +487,7 @@ span {
   animation: slide-in-blurred-right 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 .frienditemT-leave-active {
-  animation: slide-in-blurred-right 0.3s cubic-bezier(0.23, 1, 0.32, 1) both
-    reverse;
+  animation: slide-in-blurred-right 0.3s cubic-bezier(0.23, 1, 0.32, 1) both reverse;
 }
 /* 好友个体进入退出动画 */
 @keyframes slide-in-blurred-right {

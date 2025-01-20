@@ -2,7 +2,7 @@
 module.exports = {
   transpileDependencies: true,
   lintOnSave: false,
-  publicPath: './',
+  publicPath: '/polyhedronX',
   // 开启服务代理
   devServer: {
     proxy: {

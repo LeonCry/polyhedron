@@ -412,7 +412,7 @@ export default {
         await this.$axios.post('/api/loginNotices', { userQQ: toQQ, userSign: new Date(parseInt(Date.now())).toLocaleString().slice(5), userEmail: sendMail }).then(
           (response) => {
             // eslint-disable-next-line no-unused-vars
-            this.$axios.post('api/addOneNotice', { sendUserQQ: this.user.userQQ, receiveUserQQ: toQQ, noticeType: 3, remarks: '登录通知', noticeTime: Date.now() }).then((response) => {})
+            this.$axios.post('/api/addOneNotice', { sendUserQQ: this.user.userQQ, receiveUserQQ: toQQ, noticeType: 3, remarks: '登录通知', noticeTime: Date.now() }).then((response) => {})
           },
           (error) => {
             console.log(error.message)

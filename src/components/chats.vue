@@ -56,8 +56,8 @@
               </div>
           </div>
           <!-- 键入文字栏 -->
-          <div  contenteditable ref="typetext" :class="{typetextactive:SendActice,typetext:!SendActice}"  @focus="emojiDisappear" @keydown.enter="sendMessage" @keydown.shift.enter="iskeyEnter = true"> 
-              
+          <div  contenteditable ref="typetext" :class="{typetextactive:SendActice,typetext:!SendActice}"  @focus="emojiDisappear" @keydown.enter="sendMessage" @keydown.shift.enter="iskeyEnter = true">
+
           </div>
         <button @click="sendMessage" :class="{sendMessageActive:SendActice,sendMessage:!SendActice}">发送/Enter</button>
       </div>
@@ -146,7 +146,7 @@ export default {
       morerButtonStyle(){
           return{'transform':'rotateZ('+this.nrrorRotateZ+')'};
       },
-      //改变聊天窗口的位置   
+      //改变聊天窗口的位置
       ChatLocation(){
           return{top:this.poy-30+'px',left:this.pox-300+'px',zIndex:this.zIndex};
       },
@@ -242,7 +242,7 @@ export default {
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0,  canvas.width,  canvas.height)
         var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
-        // return canvas.toDataURL('image/png') 
+        // return canvas.toDataURL('image/png')
         this.picData = canvas.toDataURL('image/'+ext);
         // img.setAttribute('src',this.picData);
         this.$refs.typetext.innerHTML = this.$refs.typetext.innerHTML + "<div><img src='"+this.picData+"'</div>";
@@ -258,7 +258,7 @@ export default {
     windShow(){
         // 已经正在吹一吹了
         if(this.isWinding){
-         this.$bus.$emit('chatNotice',false,"您正在向对方发送 🌪  中...");    
+         this.$bus.$emit('chatNotice',false,"您正在向对方发送 🌪  中...");
         }
         else{
         this.isWinding = true;
@@ -282,7 +282,7 @@ export default {
         changeIndex(){
        if(window.innerWidth<window.innerHeight){
         return 0;
-      }     
+      }
       // 聚焦,改变高度,同时降低其他两个窗口的高度
       // 从左往右分别为 空间\聊天\设置
       this.$bus.$emit('changeZindex',106,107,106);
@@ -297,7 +297,7 @@ export default {
         },
         // 发送消息
         sendMessage(){
-           setTimeout(() => {    
+           setTimeout(() => {
             // 如果为空
             if(this.$refs.typetext.innerHTML == '' || this.$refs.typetext.innerHTML=='<div><br></div><div><br></div>'){
                 this.$refs.typetext.innerHTML = '';
@@ -324,21 +324,21 @@ export default {
             this.socket.send(JSON.stringify({from:this.user.userQQ,to:this.friend.friendQQ,message:this.message}));
             this.sendMessageRequest(this.message);
             setTimeout(() => {
-               this.$refs.typetext.innerHTML = ''; 
+               this.$refs.typetext.innerHTML = '';
                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
             }, 20);
             }
             }, 100);
 
             setTimeout(() => {
-               this.SendActice = false; 
+               this.SendActice = false;
             }, 350);
 
 
 
 
             }
-           }, 5); 
+           }, 5);
         },
 
         // 特殊字符替换
@@ -346,7 +346,7 @@ export default {
             // str.replace(/需要替换的字符串/g，"新字符串") 一种方法
             // split . join另一种方法,但是只能在中间
             // this.message.split("&nbsp;").join(" ");
-            // this.message.replaceAll("&nbsp;"," ");    
+            // this.message.replaceAll("&nbsp;"," ");
             this.message = this.message.replaceAll("<img","<img style='position: relative;;max-width:100%;max-height:100%;cursor: pointer;'");
             // 去掉enter造成的换行出现
             if(this.message.lastIndexOf("<br>")!=-1){
@@ -386,15 +386,15 @@ export default {
                 var scrollHighAfter = this.$refs.chatters.scrollHeight;
                 // 则当前高度为两者之差
                 this.$refs.chatters.scrollTop = scrollHighAfter - scrollHighBefore;
-                   this.$refs.chatters.addEventListener('scroll',this.isScrollTop); 
+                   this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
                 }, 10);
             },error=>{
                 console.log(error.message);
-                
-            });    
+
+            });
 
             }
-            
+
         },
         // 加载聊天记录
        async loadingChats(){
@@ -426,7 +426,7 @@ export default {
                 const uuser = this.allusers[index];
                 if(uuser.username==toQQ){
                     isOnline = true;
-                    
+
                 }
             }
             if(!isOnline){
@@ -436,7 +436,7 @@ export default {
                     isNotice=true;
                     }
             },error=>{
-                console.log(error.message); 
+                console.log(error.message);
             });
             }
             // 如果设置允许,查看是否在5分钟内
@@ -449,7 +449,7 @@ export default {
                     isInFive = true;
                 }
              },error=>{
-                console.log(error.message); 
+                console.log(error.message);
              });
             }
             // 如果在5分钟内,则邮件发送,同时新增sysnotice一条消息
@@ -460,10 +460,10 @@ export default {
                 console.log(error.message);
              });
              // eslint-disable-next-line no-unused-vars
-             await this.$axios.post('api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
+             await this.$axios.post('/api/addOneNotice',{sendUserQQ:this.user.userQQ,receiveUserQQ:toQQ,noticeType:3,remarks:"邮件发送相关",noticeTime:Date.now()}).then(response=>{
              },error=>{console.log(error.message);});
-             
-                
+
+
             }
         },
 
@@ -472,8 +472,8 @@ export default {
         var e = event || window.event
         // 阻止默认粘贴
         if(e.clipboardData.getData('text/plain')==''){
-            return 0; 
-        }    
+            return 0;
+        }
         e.preventDefault();
         // 粘贴事件有一个clipboardData的属性，提供了对剪贴板的访问
         // clipboardData的getData(fomat) 从剪贴板获取指定格式的数据
@@ -575,8 +575,8 @@ export default {
             this.$bus.$on('saveVideoMessage',(data)=>{
                 this.saveVideoMessage(data);
             })
-            
-            
+
+
             // 接收来自friendrecentitem和friendlistitem组件的数据
             // 进行展示与否
         this.$bus.$on('chatboxappear',(data1)=>{
@@ -594,16 +594,16 @@ export default {
         this.$bus.$on('toChatBox',(data)=>{
             this.friend = data;
             // 向morer组件传送该friend数据
-            this.$bus.$emit('friendToMorer',this.friend);              
-            
+            this.$bus.$emit('friendToMorer',this.friend);
+
         })
         this.$bus.$on('receiveChat',(data)=>{
             this.receiveChats = [];
             this.receiveChats = data;
             this.receiveChats.forEach(chat => {
-               this.receiveChatsSum.unshift(chat); 
+               this.receiveChatsSum.unshift(chat);
             });
-            
+
         })
         // 滚动条滚动到顶部的触发函数
         this.$refs.chatters.addEventListener('scroll',this.isScrollTop);
@@ -621,7 +621,7 @@ export default {
                     this.windowFly();
                 }
                 else if(data.text.substring(0,6)=="A9wadv"){
-                    console.log("A"); 
+                    console.log("A");
                 }
                 else{
                 // 构建合法的Json
@@ -630,16 +630,16 @@ export default {
                 // 向目前聊天界面中添加数据,以保证实时
                 this.receiveChatsSum.push(receive);
                 setTimeout(() => {
-                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;     
+                this.$refs.chatters.scrollTop =  this.$refs.chatters.scrollHeight;
                 }, 10);
                 }
 
             }
-            
+
         })
         // 检查是否正在聊天
         this.$bus.$on('isChatting',(data)=>{
-            if(data.friendQQ==this.friend.friendQQ && data.userQQ==this.user.userQQ){         
+            if(data.friendQQ==this.friend.friendQQ && data.userQQ==this.user.userQQ){
                 // 返回数据-表示是否正在聊天
                 if(this.isShow){
                     this.$bus.$emit('returnIsChatting',{friendQQ:this.friend.user.userQQ,userQQ:this.user.userQQ,isChatting:true});
@@ -696,7 +696,7 @@ export default {
         transition: 0.55s;
         flex-flow: row nowrap;
         background-color: rgba(47, 53, 66,0.25);
-}   
+}
 .toper:hover{
   background-color: rgba(99, 110, 114, 0.2);
 }
@@ -1021,7 +1021,7 @@ padding: 5px;
         transition: 0.55s;
         flex-flow: row nowrap;
         background-color: rgba(47, 53, 66,0.25);
-}   
+}
 .toper:hover{
   background-color: rgba(99, 110, 114, 0.2);
 }
