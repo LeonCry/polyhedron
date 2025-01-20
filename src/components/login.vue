@@ -704,7 +704,7 @@ export default {
         }
         // 开启一个websocket服务
         // localhost:8088 may need to change : 120.48.41.143:8088
-        socket = new WebSocket('ws://120.48.41.143:8088/imserver/' + userQQ)
+        socket = new WebSocket('ws://139.196.147.138:8088/imserver/' + userQQ)
         socket.onopen = function () {
           console.log('websocket已打开..')
         }
